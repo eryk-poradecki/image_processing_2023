@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.9)
 
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -lX11")
+
 project("ImageProc" CXX)
 
 set(CMAKE_CXX_STANDARD 11)
