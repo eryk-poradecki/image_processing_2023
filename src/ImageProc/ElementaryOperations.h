@@ -6,8 +6,8 @@
 #include "../../libs/CImg.h"
 
 namespace elementary {
-    void adjustBrightness(cimg_library::CImg<unsigned char>& image, float factor);
-
+    void adjustBrightness(cimg_library::CImg<unsigned char>& image, int constant);
+    
 
 } // namespace elementary
 
