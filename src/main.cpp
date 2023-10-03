@@ -19,8 +19,8 @@ int main(int argc, char** argv)
     const std::string& filename = input.getCmdOption("-f");
     if (!filename.empty()) { 
         CImg<unsigned char> image(filename.c_str());
-        if (input.cmdOptionExists("-b")) {
-            float factor = std::stof(input.getCmdOption("-b"));
+        if (input.cmdOptionExists("--brightness")) {
+            float factor = std::stof(input.getCmdOption("--brightness"));
             elementary::adjustBrightness(image, factor);
             image.save("output.bmp");
         }
