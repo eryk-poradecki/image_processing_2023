@@ -6,6 +6,7 @@
 #include "CLI/InputParser.hpp"
 #include "ImageProc/Image.h"
 #include "config.hpp"
+#include "ImageProc/ElementaryOperations.h"
 
 using namespace cimg_library;
 
@@ -16,6 +17,13 @@ int main(int argc, char** argv)
         std::cout << config::programUsageInfo << std::endl;
     }
     const std::string& filename = input.getCmdOption("-f");
-    if (!filename.empty()) { }
+    if (!filename.empty()) { 
+        CImg<unsigned char> image(filename.c_str());
+        if (input.cmdOptionExists("-b")) {
+            float factor = std::stof(input.getCmdOption("-b"));
+            elementary::adjustBrightness(image, factor);
+            image.save("output.bmp");
+        }
+    }
     return 0;
 }
