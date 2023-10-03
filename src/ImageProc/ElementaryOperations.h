@@ -8,6 +8,7 @@
 namespace elementary {
     void adjustBrightness(cimg_library::CImg<unsigned char>& image, int constant);
     
+    void adjustContrast(cimg_library::CImg<unsigned char>& image, float factor);
 
 } // namespace elementary
 

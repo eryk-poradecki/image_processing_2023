@@ -24,6 +24,11 @@ int main(int argc, char** argv)
             elementary::adjustBrightness(image, factor);
             image.save("output.bmp");
         }
+        else if (input.cmdOptionExists("--contrast")) {
+            float factor = std::stof(input.getCmdOption("--contrast"));
+            elementary::adjustContrast(image, factor);
+            image.save("output.bmp");
+        }
     }
     return 0;
 }
