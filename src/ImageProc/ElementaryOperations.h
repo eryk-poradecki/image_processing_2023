@@ -10,9 +10,9 @@ namespace ImageProc{
 namespace elementary {
     void adjustBrightness(Image& image, int brightness);
     
-    void adjustContrast(Image& image,int spectrum, float factor);
+    void adjustContrast(Image& image, float factor);
 
-    void createNegative(Image& image, int spectrum);
+    void createNegative(Image& image);
 
 } // namespace elementary
 } // namespace ImageProc

@@ -7,7 +7,7 @@
 using namespace cimg_library;
 using namespace ImageProc;
 
-void copyImageDataBack(CImg<unsigned char>& cimgImage, const Image& imageArray);
+void copyImageDataBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray);
 
 int main(int argc, char** argv)
 {
@@ -34,22 +34,34 @@ int main(int argc, char** argv)
 		Image img = Image(imageArray,spectrum);
 
         if (input.cmdOptionExists("--brightness")) {
-            float factor = std::stof(input.getCmdOption("--brightness"));
+            int factor = std::stof(input.getCmdOption("--brightness"));
             elementary::adjustBrightness(img, factor);
+            copyImageDataBack(image, img.getImgVec());
+            image.save("output.bmp");
+        }
+        if (input.cmdOptionExists("--contrast")) {
+            float factor = std::stof(input.getCmdOption("--contrast"));
+            elementary::adjustContrast(img, factor);
+            copyImageDataBack(image, img.getImgVec());
+            image.save("output.bmp");
+        }
+        if (input.cmdOptionExists("--negative")) {
+            elementary::createNegative(img);
+            copyImageDataBack(image, img.getImgVec());
             image.save("output.bmp");
         }
 	}
     return 0;
 }
 
-/* void copyImageDataBack(CImg<unsigned char>& cimgImage, const Image& imageArray) { */
-/*     int width = cimgImage.width(); */
-/*     int height = cimgImage.height(); */
-/*     int spectrum = cimgImage.spectrum(); */
-/*  */
-/*     for (int i = 0; i < height; ++i) { */
-/*         for (int j = 0; j < width * spectrum; ++j) { */
-/*             cimgImage.data()[i * width * spectrum + j] = imageArray[i][j]; */
-/*         } */
-/*     } */
-/* } */
+void copyImageDataBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray) {
+    int width = cimgImage.width();
+    int height = cimgImage.height();
+    int spectrum = cimgImage.spectrum();
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width * spectrum; ++j) {
+            cimgImage.data()[i * width * spectrum + j] = imageArray[i][j];
+        }
+    }
+}
