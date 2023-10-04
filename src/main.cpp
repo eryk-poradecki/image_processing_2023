@@ -1,8 +1,8 @@
-#include <iostream>
 #include "CLI/InputParser.hpp"
+#include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
-#include "ImageProc/ElementaryOperations.h"
+#include <iostream>
 
 using namespace cimg_library;
 using namespace ImageProc;
@@ -16,12 +16,12 @@ int main(int argc, char** argv)
         std::cout << config::programUsageInfo << std::endl;
     }
     const std::string& filename = input.getCmdOption("-f");
-    if (!filename.empty()) { 
+    if (!filename.empty()) {
         CImg<unsigned char> image(filename.c_str());
         int width = image.width();
         int height = image.height();
         int spectrum = image.spectrum();
-		
+
         imgVec imageArray(height, std::vector<unsigned char>(width * spectrum));
 
         for (int i = 0; i < height; ++i) {
@@ -29,9 +29,8 @@ int main(int argc, char** argv)
                 imageArray[i][j] = image.data()[i * width * spectrum + j];
             }
         }
-		
 
-		Image img = Image(imageArray,spectrum);
+        Image img = Image(imageArray, spectrum);
 
         if (input.cmdOptionExists("--brightness")) {
             int factor = std::stof(input.getCmdOption("--brightness"));
@@ -50,11 +49,12 @@ int main(int argc, char** argv)
             copyImageDataBack(image, img.getImgVec());
             image.save("output.bmp");
         }
-	}
+    }
     return 0;
 }
 
-void copyImageDataBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray) {
+void copyImageDataBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray)
+{
     int width = cimgImage.width();
     int height = cimgImage.height();
     int spectrum = cimgImage.spectrum();
