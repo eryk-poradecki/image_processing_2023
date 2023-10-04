@@ -3,9 +3,10 @@ add_executable(ImageProcApp
     config.hpp)
 
 add_library(ImageProc
-    ImageProc/Image.cpp
-    ImageProc/ElementaryOperations.cpp)
-
+	ImageProc/Types.cpp
+	ImageProc/Types.h
+    ImageProc/ElementaryOperations.cpp
+    ImageProc/ElementaryOperations.h)
 add_library(CLI
     CLI/InputParser.cpp
     CLI/InputParser.hpp)
