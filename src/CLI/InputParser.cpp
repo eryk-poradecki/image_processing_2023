@@ -1,4 +1,5 @@
 #include "InputParser.hpp"
+#include <algorithm>
 
 using namespace cli;
 
