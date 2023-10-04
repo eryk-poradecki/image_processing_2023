@@ -3,7 +3,6 @@
 
 #define cimg_display 0
 
-#include "../../libs/CImg.h"
 #include "Types.h"
 
 namespace ImageProc{
