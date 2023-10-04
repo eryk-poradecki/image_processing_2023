@@ -21,47 +21,35 @@ int main(int argc, char** argv)
         int width = image.width();
         int height = image.height();
         int spectrum = image.spectrum();
-
-        Image imageArray(height, std::vector<unsigned char>(width * spectrum));
+		
+        imgVec imageArray(height, std::vector<unsigned char>(width * spectrum));
 
         for (int i = 0; i < height; ++i) {
             for (int j = 0; j < width * spectrum; ++j) {
                 imageArray[i][j] = image.data()[i * width * spectrum + j];
             }
         }
+		
+
+		Image img = Image(imageArray,spectrum);
 
         if (input.cmdOptionExists("--brightness")) {
             float factor = std::stof(input.getCmdOption("--brightness"));
-            elementary::adjustBrightness(imageArray, width, height, spectrum, factor);
-
-            copyImageDataBack(image, imageArray);
+            elementary::adjustBrightness(img, factor);
             image.save("output.bmp");
         }
-        else if (input.cmdOptionExists("--contrast")) {
-            float factor = std::stof(input.getCmdOption("--contrast"));
-            elementary::adjustContrast(imageArray, width, height, spectrum, factor);
-
-            copyImageDataBack(image, imageArray);
-            image.save("output.bmp");
-        }
-        else if (input.cmdOptionExists("--negative")) {
-            elementary::createNegative(imageArray, width, height, spectrum);
-
-            copyImageDataBack(image, imageArray);
-            image.save("output.bmp");
-        }
-    }
+	}
     return 0;
 }
 
-void copyImageDataBack(CImg<unsigned char>& cimgImage, const Image& imageArray) {
-    int width = cimgImage.width();
-    int height = cimgImage.height();
-    int spectrum = cimgImage.spectrum();
-
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width * spectrum; ++j) {
-            cimgImage.data()[i * width * spectrum + j] = imageArray[i][j];
-        }
-    }
-}
+/* void copyImageDataBack(CImg<unsigned char>& cimgImage, const Image& imageArray) { */
+/*     int width = cimgImage.width(); */
+/*     int height = cimgImage.height(); */
+/*     int spectrum = cimgImage.spectrum(); */
+/*  */
+/*     for (int i = 0; i < height; ++i) { */
+/*         for (int j = 0; j < width * spectrum; ++j) { */
+/*             cimgImage.data()[i * width * spectrum + j] = imageArray[i][j]; */
+/*         } */
+/*     } */
+/* } */
