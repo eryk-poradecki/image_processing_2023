@@ -1,3 +1,4 @@
+#define cimg_display 0
 #include "CImg.h"
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
