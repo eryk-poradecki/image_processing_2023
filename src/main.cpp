@@ -2,6 +2,7 @@
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
+#include "CImg.h"
 #include <iostream>
 
 using namespace cimg_library;
