@@ -1,9 +1,9 @@
+#include "CImg.h"
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
 #include <iostream>
-
 using namespace cimg_library;
 using namespace ImageProc;
 
