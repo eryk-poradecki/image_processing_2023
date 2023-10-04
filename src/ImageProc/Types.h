@@ -3,6 +3,9 @@
 
 #include <vector>
 
-typedef std::vector<std::vector<unsigned char>> Image;
+namespace ImageProc {
 
+using Image = std::vector<std::vector<unsigned char>>;
+
+} // namespace ImageProc
 #endif // IMAGE_H

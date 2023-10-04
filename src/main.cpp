@@ -5,6 +5,7 @@
 #include "ImageProc/ElementaryOperations.h"
 
 using namespace cimg_library;
+using namespace ImageProc;
 
 void copyImageDataBack(CImg<unsigned char>& cimgImage, const Image& imageArray);
 

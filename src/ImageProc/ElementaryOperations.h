@@ -6,6 +6,7 @@
 #include "../../libs/CImg.h"
 #include "Types.h"
 
+namespace ImageProc{
 namespace elementary {
     void adjustBrightness(Image& imageArray, int width, int height, int spectrum, float constant);
     
@@ -14,5 +15,6 @@ namespace elementary {
     void createNegative(Image& imageArray, int width, int height, int spectrum);
 
 } // namespace elementary
+} // namespace ImageProc
 
 #endif // ELEMENTARY_OPERATIONS_H

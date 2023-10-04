@@ -1,5 +1,6 @@
 #include "ElementaryOperations.h"
 
+namespace ImageProc {
 namespace elementary {
 
 void adjustBrightness(Image& imageArray, int width, int height, int spectrum, float constant) {
@@ -37,3 +38,4 @@ void createNegative(Image& imageArray, int width, int height, int spectrum) {
 }
 
 } // namespace elementary
+} // namespace ImageProc
