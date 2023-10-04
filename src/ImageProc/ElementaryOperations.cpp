@@ -3,7 +3,7 @@
 namespace ImageProc {
 namespace elementary {
 
-void adjustBrightness(Image& imageArray, int width, int height, int spectrum, float constant) {
+void adjustBrightness(Image& imageArray, int width, int height, int spectrum, int constant) {
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width * spectrum; ++j) {
             int new_value = imageArray[i][j] + constant;

@@ -8,7 +8,7 @@
 
 namespace ImageProc{
 namespace elementary {
-    void adjustBrightness(Image& imageArray, int width, int height, int spectrum, float constant);
+    void adjustBrightness(Image& imageArray, int width, int height, int spectrum, int constant);
     
     void adjustContrast(Image& imageArray, int width, int height, int spectrum, float factor);
 
