@@ -3,10 +3,13 @@
 CMAKE = cmake
 BUILD_DIR = build
 
-all: compile
+all: test
 
 $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
+
+test: compile
+	ctest   --test-dir build
 
 configure: $(BUILD_DIR)
 	$(CMAKE) -S . -B $(BUILD_DIR)
@@ -20,5 +23,5 @@ clean:
 format:
 	find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=file -i {} \;
 
-.PHONY: all configure compile clean format
+.PHONY: all configure compile clean format test
 

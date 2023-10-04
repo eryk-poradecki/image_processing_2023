@@ -10,6 +10,10 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON) 
 
-include_directories(include)
+# include_directories(include)
+
+enable_testing()
 
 add_subdirectory(src)
+add_subdirectory(tests)
+

@@ -1,10 +1,11 @@
+#define cimg_display 0
+#include "CImg.h"
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
 #include "CImg.h"
 #include <iostream>
-
 using namespace cimg_library;
 using namespace ImageProc;
 
