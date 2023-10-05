@@ -1,13 +1,17 @@
 cmake_minimum_required(VERSION 3.12)
-
 project(tests)
 
+if(CMAKE_SYSTEM_NAME MATCHES "Darwin")
+    ### MACOS
+    include_directories(/usr/local/include)
+    link_directories(/usr/local/lib)
+    ###
+endif()
 
 find_package(GTest REQUIRED)
 
-add_executable( runUnitTests elementary_operations_test.cpp )
+add_executable(runUnitTests elementary_operations_test.cpp)
 
-target_link_libraries(runUnitTests
- gtest gtest_main  ImageProc)
+target_link_libraries(runUnitTests gtest gtest_main ImageProc)
 
-add_test( runUnitTests runUnitTests)
+add_test(runUnitTests runUnitTests)
