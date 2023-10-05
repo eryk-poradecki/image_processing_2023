@@ -25,10 +25,8 @@ void adjustContrast(Image& image, float factor)
     int width = imgMatrix[0].size();
     int spectrum = image.getSpectrum();
 
-    for (int y = 0; y < height; ++y) {
-        for (int x = 0; x < width; ++x) {
-            unsigned char& pixel = imgMatrix[y][x];
-
+    for (auto& row : imgMatrix) {
+        for (auto& pixel : row) {
             float contrastFactor = (259.0f * (factor + 255.0f)) / (255.0f * (259.0f - factor));
 
             int newRed = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
@@ -36,8 +34,11 @@ void adjustContrast(Image& image, float factor)
             int newBlue = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
 
             pixel = static_cast<unsigned char>(std::min(255, std::max(0, newRed)));
+            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newGreen)));
+            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newBlue)));
         }
     }
+
 }
 
 
