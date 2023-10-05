@@ -9,6 +9,7 @@
 using namespace cimg_library;
 using namespace ImageProc;
 
+// declaration
 void copyImageDataBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray);
 
 int main(int argc, char** argv)
