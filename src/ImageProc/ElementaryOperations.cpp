@@ -18,31 +18,29 @@ namespace elementary {
         }
     }
 
-    void adjustContrast(Image& image, float factor)
-    {
-        float average = 0;
+void adjustContrast(Image& image, float factor)
+{
+    auto& imgMatrix = image.getImgVec();
+    int height = imgMatrix.size();
+    int width = imgMatrix[0].size();
+    int spectrum = image.getSpectrum();
 
-        auto& imgMatrix = image.getImgVec();
+    for (auto& row : imgMatrix) {
+        for (auto& pixel : row) {
+            float contrastFactor = (259.0f * (factor + 255.0f)) / (255.0f * (259.0f - factor));
 
-        int height = imgMatrix.size();
-        int width = imgMatrix[0].size();
-        int spectrum = image.getSpectrum();
+            int newRed = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
+            int newGreen = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
+            int newBlue = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
 
-        for (auto& row : imgMatrix) {
-            for (auto& element : row) {
-                average += element;
-            }
-        }
-        average /= (height * width * spectrum);
-
-        for (auto& row : imgMatrix) {
-            for (auto& element : row) {
-                float new_value = average + factor * (element - average);
-                element = (new_value > 255) ? 255 : (new_value < 0) ? 0
-                                                                    : new_value;
-            }
+            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newRed)));
+            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newGreen)));
+            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newBlue)));
         }
     }
+
+}
+
 
     void createNegative(Image& image)
     {

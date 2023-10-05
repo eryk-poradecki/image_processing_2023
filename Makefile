@@ -9,7 +9,7 @@ $(BUILD_DIR):
 	mkdir -p $(BUILD_DIR)
 
 test: compile
-	ctest   --test-dir build
+	ctest -V --test-dir build
 
 configure: $(BUILD_DIR)
 	$(CMAKE) -S . -B $(BUILD_DIR)
