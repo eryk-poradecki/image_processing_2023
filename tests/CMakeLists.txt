@@ -10,7 +10,10 @@ endif()
 
 find_package(GTest REQUIRED)
 
-add_executable(runUnitTests elementary_operations_test.cpp)
+add_executable(runUnitTests 
+    elementary_operations_test.cpp
+    analysis_operation_test.cpp
+    )
 
 target_link_libraries(runUnitTests gtest gtest_main ImageProc)
 
