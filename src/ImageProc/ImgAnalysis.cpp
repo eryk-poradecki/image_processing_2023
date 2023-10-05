@@ -2,6 +2,7 @@
 #include "Exceptions.h"
 #include "Helpers.h"
 #include "Types.h"
+#include <cmath>
 
 using namespace ImageProc;
 
@@ -34,4 +35,14 @@ float analysis::calculateMSE(const Image& img1, const Image& img2)
 
     mse /= static_cast<double>(numRows * numCols);
     return mse;
+}
+
+float analysis::calculatePSNR(const Image& img1, const Image& img2)
+{
+    // In the equation, R is the maximum fluctuation in the input image data type. For example, if the input image has a double-precision floating-point data type, then R is 1. If it has an 8-bit unsigned integer data type, R is 255
+    int R = 255;
+
+    float mse = analysis::calculateMSE(img1, img2);
+    int numerator = R * R;
+    return 10 * std::log10(numerator / mse);
 }

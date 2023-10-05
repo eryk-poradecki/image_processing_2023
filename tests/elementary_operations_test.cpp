@@ -122,29 +122,28 @@ TEST(ElementaryOperations, AdjustContrastTest)
     inputVec[2] = { 4, 5, 6, 1, 2, 3 };
     Image img = Image(inputVec, 3);
 
-    float contrastFactor = 1.5; 
+    float contrastFactor = 1.5;
 
     imgVec expectedVec(3, std::vector<unsigned char>(inputVec[0].size()));
-        for (auto& row : expectedVec) {
-            for (auto& pixel : row) {
-                unsigned char inputPixel = inputVec[&row - &expectedVec[0]][&pixel - &row[0]];
+    for (auto& row : expectedVec) {
+        for (auto& pixel : row) {
+            unsigned char inputPixel = inputVec[&row - &expectedVec[0]][&pixel - &row[0]];
 
-                float expectedFactor = (259.0f * (contrastFactor + 255.0f)) / (255.0f * (259.0f - contrastFactor));
+            float expectedFactor = (259.0f * (contrastFactor + 255.0f)) / (255.0f * (259.0f - contrastFactor));
 
-                int newRed = static_cast<int>(expectedFactor * (static_cast<float>(inputPixel) - 128.0f) + 128.0f);
-                int newGreen = static_cast<int>(expectedFactor * (static_cast<float>(inputPixel) - 128.0f) + 128.0f);
-                int newBlue = static_cast<int>(expectedFactor * (static_cast<float>(inputPixel) - 128.0f) + 128.0f);
+            int newRed = static_cast<int>(expectedFactor * (static_cast<float>(inputPixel) - 128.0f) + 128.0f);
+            int newGreen = static_cast<int>(expectedFactor * (static_cast<float>(inputPixel) - 128.0f) + 128.0f);
+            int newBlue = static_cast<int>(expectedFactor * (static_cast<float>(inputPixel) - 128.0f) + 128.0f);
 
-                newRed = std::max(0, std::min(255, newRed));
-                newGreen = std::max(0, std::min(255, newGreen));
-                newBlue = std::max(0, std::min(255, newBlue));
+            newRed = std::max(0, std::min(255, newRed));
+            newGreen = std::max(0, std::min(255, newGreen));
+            newBlue = std::max(0, std::min(255, newBlue));
 
-                pixel = static_cast<unsigned char>(newRed);
-                pixel = static_cast<unsigned char>(newGreen);
-                pixel = static_cast<unsigned char>(newBlue);
-            }
+            pixel = static_cast<unsigned char>(newRed);
+            pixel = static_cast<unsigned char>(newGreen);
+            pixel = static_cast<unsigned char>(newBlue);
         }
-
+    }
 
     elementary::adjustContrast(img, contrastFactor);
 
@@ -176,9 +175,6 @@ TEST(ElementaryOperations, AdjustContrastTest)
 
     EXPECT_TRUE(areVectorsEqual(expectedVec1, img1.getImgVec()));
 }
-
-
-
 
 TEST(ElementaryOperations, CreateNegativeTest)
 {
