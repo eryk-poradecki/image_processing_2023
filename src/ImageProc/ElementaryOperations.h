@@ -1,6 +1,4 @@
-#ifndef ELEMENTARY_OPERATIONS_H
-#define ELEMENTARY_OPERATIONS_H
-
+#pragma once
 
 #include "Types.h"
 
@@ -14,5 +12,3 @@ namespace elementary {
 
 } // namespace elementary
 } // namespace ImageProc
-
-#endif // ELEMENTARY_OPERATIONS_H
