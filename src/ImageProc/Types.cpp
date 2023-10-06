@@ -7,7 +7,7 @@ Image::Image(imgVec& img, short spectrum)
     , mSpectrum(spectrum)
 {
     mHeight = img.size();
-    mWidht = img[0].size();
+    mWidth = img[0].size();
 }
 imgVec& Image::getImgVec() const
 {
@@ -18,9 +18,9 @@ int Image::getHeight() const
 {
     return mHeight;
 }
-int Image::getWidht() const
+int Image::getWidth() const
 {
-    return mWidht;
+    return mWidth;
 }
 int Image::getSpectrum() const
 {

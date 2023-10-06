@@ -12,11 +12,11 @@ class Image{
 	Image(imgVec& img, const short spectrum);
 	imgVec& getImgVec() const;
 	int getHeight() const;
-	int getWidht() const;
+	int getWidth() const;
 	int getSpectrum() const;
 
 	private:
-	int mWidht, mHeight;
+	int mWidth, mHeight;
 	imgVec& mImgVec;
 	const short mSpectrum;
 };
