@@ -2,10 +2,10 @@
 #include "CImg.h"
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
-#include "ImageProc/GeometricOperations.h"
+// #include "ImageProc/GeometricOperations.h"
+#include "CImg.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
-#include "CImg.h"
 #include <iostream>
 using namespace cimg_library;
 using namespace ImageProc;
@@ -13,7 +13,6 @@ using namespace ImageProc;
 imgVec convertCimgtoImageVector(const CImg<unsigned char>& image);
 
 void convertToCimgAndCopyBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray);
-
 
 int main(int argc, char** argv)
 {
@@ -27,11 +26,9 @@ int main(int argc, char** argv)
         int width = image.width();
         int height = image.height();
         int spectrum = image.spectrum();
-
         imgVec imageArray = convertCimgtoImageVector(image);
 
         Image img = Image(imageArray);
-
         if (input.cmdOptionExists("--brightness")) {
             int factor = std::stof(input.getCmdOption("--brightness"));
             elementary::adjustBrightness(img, factor);
@@ -46,17 +43,15 @@ int main(int argc, char** argv)
             elementary::createNegative(img);
             convertToCimgAndCopyBack(image, img.getImgVec());
         }
-        if (input.cmdOptionExists("--vflip")) {
-            geometric::verticalFlip(img);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--hflip")) {
-            geometric::horizontalFlip(img);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        image.save("output.bmp");
-
-
+        //   if (input.cmdOptionExists("--vflip")) {
+        //       geometric::verticalFlip(img);
+        //       convertToCimgAndCopyBack(image, img.getImgVec());
+        //   }
+        //   if (input.cmdOptionExists("--hflip")) {
+        //       geometric::horizontalFlip(img);
+        //       convertToCimgAndCopyBack(image, img.getImgVec());
+        //   }
+        image.save("test.bmp");
     }
     return 0;
 }
@@ -67,27 +62,26 @@ imgVec convertCimgtoImageVector(const CImg<unsigned char>& image)
     int height = image.height();
     int spectrum = image.spectrum();
 
-	imgVec imageArray(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum)));
+    imgVec imageArray(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum)));
 
     for (int i = 0; i < height; i++) {
         for (int j = 0; j < width; j++) {
             // https://stackoverflow.com/questions/3291923/how-to-get-rgb-value-by-cimg
-			for(int k=0; k<spectrum;k++){
-            imageArray[i][j][k] = image(i, j, 0, k);
+            for (int k = 0; k < spectrum; k++) {
+                imageArray[i][j][k] = image(i, j, 0, k);
+            }
         }
-		}
     }
 
     return imageArray;
 }
 
-
-void convertToCimgAndCopyBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray) {
+void convertToCimgAndCopyBack(CImg<unsigned char>& cimgImage, const imgVec& imageArray)
+{
     for (int i = 0; i < imageArray.size(); i++) {
         for (int j = 0; j < imageArray[0].size(); j++) {
-			for(int k =0; k< imageArray[0][0].size();j++)
-            cimgImage(i, j, 0, k) = imageArray[i][j][k];
+            for (int k = 0; k < imageArray[0][0].size(); k++)
+                cimgImage(i, j, 0, k) = imageArray[i][j][k];
         }
     }
 }
-

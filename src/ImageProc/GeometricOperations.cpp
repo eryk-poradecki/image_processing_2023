@@ -3,24 +3,23 @@
 
 namespace ImageProc {
 
-    namespace geometric {
+namespace geometric {
 
-        void horizontalFlip(Image& image) {
-            imgVec& imgMatrix = image.getImgVec();
+    void horizontalFlip(Image& image)
+    {
+        imgVec& imgMatrix = image.getImgVec();
 
-            std::reverse(imgMatrix.begin(), imgMatrix.end());
+        std::reverse(imgMatrix.begin(), imgMatrix.end());
+    }
 
+    void verticalFlip(Image& image)
+    {
+        imgVec& imgMatrix = image.getImgVec();
+
+        for (auto& row : imgMatrix) {
+            std::reverse(row.begin(), row.end());
         }
-
-        void verticalFlip(Image& image) {
-            imgVec& imgMatrix = image.getImgVec();
-
-            for (auto& row : imgMatrix) {
-                std::reverse(row.begin(), row.end());
-            }
-        }
-
-
+    }
 
 } // namespace geometric
 } // namespace ImageProc

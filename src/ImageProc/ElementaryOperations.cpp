@@ -1,5 +1,6 @@
 #include "ElementaryOperations.h"
 #include "Types.h"
+#include <algorithm>
 
 namespace ImageProc {
 namespace elementary {
@@ -8,15 +9,14 @@ namespace elementary {
     {
         imgVec& imgMatrix = image.getImgVec();
 
-        for (auto& row : imgMatrix) {
-            for (Pixel& pixel : row) {
-                int new_value_r = pixel.r + brightness;
-                int new_value_g = pixel.g + brightness;
-                int new_value_b = pixel.b + brightness;
+        for (auto& column : imgMatrix) {
+            for (auto& row : column) {
+                for (auto& pixel : row) {
+                    int newPixel = pixel + brightness;
 
-                pixel.r = (new_value_r > 255) ? 255 : (new_value_r < 0) ? 0 : new_value_r;
-                pixel.g = (new_value_g > 255) ? 255 : (new_value_g < 0) ? 0 : new_value_g;
-                pixel.b = (new_value_b > 255) ? 255 : (new_value_b < 0) ? 0 : new_value_b;
+                    pixel = (newPixel > 255) ? 255 : (newPixel < 0) ? 0
+                                                                    : newPixel;
+                }
             }
         }
     }
@@ -25,17 +25,15 @@ namespace elementary {
     {
         auto& imgMatrix = image.getImgVec();
 
-        for (auto& row : imgMatrix) {
-            for (Pixel& pixel : row) {
-                float contrastFactor = (259.0f * (factor + 255.0f)) / (255.0f * (259.0f - factor));
+        float contrastFactor = (259.0f * (factor + 255.0f)) / (255.0f * (259.0f - factor));
+        for (auto& column : imgMatrix) {
+            for (auto& row : column) {
+                for (auto& pixel : row) {
 
-                int newRed = static_cast<int>(contrastFactor * (static_cast<float>(pixel.r) - 128.0f) + 128.0f);
-                int newGreen = static_cast<int>(contrastFactor * (static_cast<float>(pixel.g) - 128.0f) + 128.0f);
-                int newBlue = static_cast<int>(contrastFactor * (static_cast<float>(pixel.b) - 128.0f) + 128.0f);
+                    int newPixel = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
 
-                pixel.r = static_cast<unsigned char>(std::min(255, std::max(0, newRed)));
-                pixel.g = static_cast<unsigned char>(std::min(255, std::max(0, newGreen)));
-                pixel.b = static_cast<unsigned char>(std::min(255, std::max(0, newBlue)));
+                    pixel = static_cast<unsigned char>(std::min(255, std::max(0, newPixel)));
+                }
             }
         }
     }
@@ -44,14 +42,13 @@ namespace elementary {
     {
         imgVec& imgMatrix = image.getImgVec();
 
-        for (auto& row : imgMatrix) {
-            for (Pixel& pixel : row) {
-                pixel.r = 255 - pixel.r;
-                pixel.g = 255 - pixel.g;
-                pixel.b = 255 - pixel.b;
+        for (auto& column : imgMatrix) {
+            for (auto& row : column) {
+                for (auto& pixel : row) {
+                    pixel = 255 - pixel;
+                }
             }
         }
     }
-
 } // namespace elementary
 } // namespace ImageProc

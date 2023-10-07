@@ -1,5 +1,5 @@
-#include <vector>
 #include "ImageProc/Types.h"
+#include <vector>
 
 bool areVectorsEqual(const std::vector<std::vector<unsigned char>>& vector1, const std::vector<std::vector<unsigned char>>& vector2);
 

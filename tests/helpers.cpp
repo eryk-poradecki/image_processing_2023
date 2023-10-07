@@ -27,9 +27,7 @@ bool areImageVectorsEqual(const std::vector<std::vector<ImageProc::Pixel>>& vect
 
     for (int i = 0; i < vector1.size(); ++i) {
         for (int j = 0; j < vector1[0].size(); ++j) {
-            if (vector1[i][j].r != vector2[i][j].r ||
-                vector1[i][j].g != vector2[i][j].g ||
-                vector1[i][j].b != vector2[i][j].b) {
+            if (vector1[i][j].r != vector2[i][j].r || vector1[i][j].g != vector2[i][j].g || vector1[i][j].b != vector2[i][j].b) {
                 return false;
             }
         }
@@ -38,7 +36,8 @@ bool areImageVectorsEqual(const std::vector<std::vector<ImageProc::Pixel>>& vect
     return true;
 }
 
-void printImageVector(const std::vector<std::vector<ImageProc::Pixel>>& imageVector) {
+void printImageVector(const std::vector<std::vector<ImageProc::Pixel>>& imageVector)
+{
     for (const auto& row : imageVector) {
         for (const ImageProc::Pixel& pixel : row) {
             std::cout << "{" << static_cast<int>(pixel.r) << ", " << static_cast<int>(pixel.g) << ", " << static_cast<int>(pixel.b) << "} ";

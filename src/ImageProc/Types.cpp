@@ -7,7 +7,7 @@ Image::Image(imgVec& img)
 {
     mHeight = img.size();
     mWidth = img[0].size();
-	mSpectrum = img[0][0].size();
+    mSpectrum = img[0][0].size();
 }
 imgVec& Image::getImgVec() const
 {
