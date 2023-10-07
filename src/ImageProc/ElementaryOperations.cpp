@@ -31,12 +31,12 @@ namespace elementary {
                 for (auto& pixel : row) {
 
                     int newPixel = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
-
                     pixel = static_cast<unsigned char>(std::min(255, std::max(0, newPixel)));
                 }
             }
         }
     }
+
 
     void createNegative(Image& image)
     {
