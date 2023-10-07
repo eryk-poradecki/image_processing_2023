@@ -5,7 +5,11 @@
 
 namespace ImageProc {
 
-using imgVec = std::vector<std::vector<unsigned char>>;
+struct Pixel {
+	unsigned char r, g, b;
+};
+
+using imgVec = std::vector<std::vector<Pixel>>;
 
 class Image{
 	public:
