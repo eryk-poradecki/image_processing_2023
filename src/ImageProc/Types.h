@@ -5,20 +5,22 @@
 
 namespace ImageProc {
 
-using imgVec = std::vector<std::vector<unsigned char>>;
+
+
+using imgVec = std::vector<std::vector<std::vector<unsigned char>>>;
 
 class Image{
 	public:
-	Image(imgVec& img, const short spectrum);
+	Image(imgVec& img);
 	imgVec& getImgVec() const;
 	int getHeight() const;
-	int getWidht() const;
+	int getWidth() const;
 	int getSpectrum() const;
 
 	private:
-	int mWidht, mHeight;
+	int mWidth, mHeight;
 	imgVec& mImgVec;
-	const short mSpectrum;
+	short mSpectrum;
 };
 
 

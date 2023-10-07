@@ -14,6 +14,7 @@ add_executable( runUnitTests
 elementary_operations_test.cpp
 helpers.cpp
 helpers.hpp
+geometric_operations_test.cpp
 analysis_operation_test.cpp
 )
 

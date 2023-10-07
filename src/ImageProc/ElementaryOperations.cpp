@@ -1,57 +1,54 @@
 #include "ElementaryOperations.h"
 #include "Types.h"
+#include <algorithm>
 
 namespace ImageProc {
 namespace elementary {
 
     void adjustBrightness(Image& image, int brightness)
     {
-
         imgVec& imgMatrix = image.getImgVec();
 
-        for (auto& row : imgMatrix) {
-            for (unsigned char& element : row) {
-                int new_value = element + brightness;
-                element = (new_value > 255) ? 255 : (new_value < 0) ? 0
-                                                                    : new_value;
+        for (auto& column : imgMatrix) {
+            for (auto& row : column) {
+                for (auto& pixel : row) {
+                    int newPixel = pixel + brightness;
+
+                    pixel = (newPixel > 255) ? 255 : (newPixel < 0) ? 0
+                                                                    : newPixel;
+                }
             }
         }
     }
 
-void adjustContrast(Image& image, float factor)
-{
-    auto& imgMatrix = image.getImgVec();
-    int height = imgMatrix.size();
-    int width = imgMatrix[0].size();
-    int spectrum = image.getSpectrum();
+    void adjustContrast(Image& image, float factor)
+    {
+        auto& imgMatrix = image.getImgVec();
 
-    for (auto& row : imgMatrix) {
-        for (auto& pixel : row) {
-            float contrastFactor = (259.0f * (factor + 255.0f)) / (255.0f * (259.0f - factor));
+        float contrastFactor = (259.0f * (factor + 255.0f)) / (255.0f * (259.0f - factor));
+        for (auto& column : imgMatrix) {
+            for (auto& row : column) {
+                for (auto& pixel : row) {
 
-            int newRed = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
-            int newGreen = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
-            int newBlue = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
-
-            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newRed)));
-            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newGreen)));
-            pixel = static_cast<unsigned char>(std::min(255, std::max(0, newBlue)));
+                    int newPixel = static_cast<int>(contrastFactor * (static_cast<float>(pixel) - 128.0f) + 128.0f);
+                    pixel = static_cast<unsigned char>(std::min(255, std::max(0, newPixel)));
+                }
+            }
         }
     }
-
-}
 
 
     void createNegative(Image& image)
     {
         imgVec& imgMatrix = image.getImgVec();
 
-        for (auto& row : imgMatrix) {
-            for (unsigned char& element : row) {
-                element = 255 - element;
+        for (auto& column : imgMatrix) {
+            for (auto& row : column) {
+                for (auto& pixel : row) {
+                    pixel = 255 - pixel;
+                }
             }
         }
     }
-
 } // namespace elementary
 } // namespace ImageProc
