@@ -25,15 +25,18 @@ float analysis::calculateMSE(const Image& img1, const Image& img2)
     double mse = 0.0;
     int numRows = imgMatrix2.size();
     int numCols = imgMatrix2[0].size();
+	int numPixels = imgMatrix2[0][0].size();
 
     for (int i = 0; i < numRows; ++i) {
         for (int j = 0; j < numCols; ++j) {
-            double diff = static_cast<double>(imgMatrix1[i][j]) - static_cast<double>(imgMatrix2[i][j]);
+			for (int k =0; k< numPixels; ++k){
+            double diff = static_cast<double>(imgMatrix1[i][j][k]) - static_cast<double>(imgMatrix2[i][j][k]);
             mse += diff * diff;
         }
     }
+	}
 
-    mse /= static_cast<double>(numRows * numCols);
+    mse /= static_cast<double>(numRows * numCols *numPixels);
     return mse;
 }
 
@@ -42,7 +45,13 @@ float analysis::calculatePSNR(const Image& img1, const Image& img2)
     // In the equation, R is the maximum fluctuation in the input image data type. For example, if the input image has a double-precision floating-point data type, then R is 1. If it has an 8-bit unsigned integer data type, R is 255
     int R = 255;
 
-    float mse = analysis::calculateMSE(img1, img2);
+    imgVec imgMatrix1 = img1.getImgVec();
+    
+    int numRows = imgMatrix1.size();
+    int numCols = imgMatrix1[0].size();
+	int numPixels = imgMatrix1[0][0].size();
+
+	float mse = analysis::calculateMSE(img1, img2) * numPixels*numCols*numRows;
     int numerator = R * R;
     return 10 * std::log10(numerator / mse);
 }
@@ -67,15 +76,18 @@ int analysis::calculatePMS(const Image& img1, const Image& img2)
     int peak = 0.0;
     int numRows = imgMatrix2.size();
     int numCols = imgMatrix2[0].size();
+	int numPixels = imgMatrix2[0][0].size();
 
     for (int i = 0; i < numRows; ++i) {
         for (int j = 0; j < numCols; ++j) {
-            int diff = imgMatrix1[i][j] - imgMatrix2[i][j];
+			for(int k = 0; k < numPixels; ++k){
+            int diff = imgMatrix1[i][j][k] - imgMatrix2[i][j][k];
             diff *= diff;
             if (peak < diff) {
                 peak = diff;
             }
         }
     }
+	}
     return peak;
 }
