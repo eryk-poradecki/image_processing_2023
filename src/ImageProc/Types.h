@@ -5,15 +5,13 @@
 
 namespace ImageProc {
 
-struct Pixel {
-	unsigned char r, g, b;
-};
 
-using imgVec = std::vector<std::vector<Pixel>>;
+
+using imgVec = std::vector<std::vector<std::vector<unsigned char>>>;
 
 class Image{
 	public:
-	Image(imgVec& img, const short spectrum);
+	Image(imgVec& img);
 	imgVec& getImgVec() const;
 	int getHeight() const;
 	int getWidth() const;
@@ -22,7 +20,7 @@ class Image{
 	private:
 	int mWidth, mHeight;
 	imgVec& mImgVec;
-	const short mSpectrum;
+	short mSpectrum;
 };
 
 

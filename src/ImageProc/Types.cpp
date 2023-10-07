@@ -2,12 +2,12 @@
 
 using namespace ImageProc;
 
-Image::Image(imgVec& img, short spectrum)
+Image::Image(imgVec& img)
     : mImgVec(img)
-    , mSpectrum(spectrum)
 {
     mHeight = img.size();
     mWidth = img[0].size();
+	mSpectrum = img[0][0].size();
 }
 imgVec& Image::getImgVec() const
 {
