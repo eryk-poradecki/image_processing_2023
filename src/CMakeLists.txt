@@ -6,7 +6,9 @@ add_library(ImageProc
 	ImageProc/Types.cpp
 	ImageProc/Types.h
     ImageProc/ElementaryOperations.cpp
-    ImageProc/ElementaryOperations.h)
+    ImageProc/ElementaryOperations.h
+    ImageProc/GeometricOperations.h
+    ImageProc/GeometricOperations.cpp)
 
 add_library(CLI
     CLI/InputParser.cpp
