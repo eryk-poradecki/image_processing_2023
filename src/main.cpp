@@ -2,7 +2,7 @@
 #include "CImg.h"
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
-// #include "ImageProc/GeometricOperations.h"
+#include "ImageProc/GeometricOperations.h"
 #include "CImg.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
@@ -43,14 +43,14 @@ int main(int argc, char** argv)
             elementary::createNegative(img);
             convertToCimgAndCopyBack(image, img.getImgVec());
         }
-        //   if (input.cmdOptionExists("--vflip")) {
-        //       geometric::verticalFlip(img);
-        //       convertToCimgAndCopyBack(image, img.getImgVec());
-        //   }
-        //   if (input.cmdOptionExists("--hflip")) {
-        //       geometric::horizontalFlip(img);
-        //       convertToCimgAndCopyBack(image, img.getImgVec());
-        //   }
+        if (input.cmdOptionExists("--vflip")) {
+            geometric::verticalFlip(img);
+            convertToCimgAndCopyBack(image, img.getImgVec());
+        }
+        if (input.cmdOptionExists("--hflip")) {
+            geometric::horizontalFlip(img);
+            convertToCimgAndCopyBack(image, img.getImgVec());
+        }
         image.save("test.bmp");
     }
     return 0;

@@ -1,6 +1,6 @@
 #include "GeometricOperations.h"
 #include "Types.h"
-
+#include <algorithm>
 namespace ImageProc {
 
 namespace geometric {
