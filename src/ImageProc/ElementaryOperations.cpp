@@ -14,23 +14,23 @@ namespace elementary {
                 for (auto& pixel : row) {
                     int newPixel = pixel + brightness;
 
-                    pixel = (newPixel > 255) ? 255 : (newPixel < 0) ? 0
-                                                                    : newPixel;
+                    pixel = std::min(255, std::max(0, newPixel));
                 }
             }
         }
     }
 
+
     void adjustContrast(Image& image, int factor)
     {
         auto& imgMatrix = image.getImgVec();
 
-        int contrastFactor = (259 * (factor + 255)) / (255 * (259 - factor));
+        int contrastFactor = (255 * (factor + 255)) / (255 * (255 - factor));
         for (auto& column : imgMatrix) {
             for (auto& row : column) {
                 for (auto& pixel : row) {
 
-                    int newPixel = contrastFactor * (static_cast<float>(pixel) - 128) + 128;
+                    int newPixel = contrastFactor * (pixel - 128) + 128;
                     pixel = std::min(255, std::max(0, newPixel));
                 }
             }
