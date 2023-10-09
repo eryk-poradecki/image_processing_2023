@@ -32,9 +32,9 @@ TEST(ElementaryOperations, AdjustPositiveBrightnessWithDiffSpectrumTest)
     //=================================================
     // spectrum 1
 
-    inputVec[0] = { {255}, {0}, {0}, {255}, {255}, {0} };
-    inputVec[1] = { {1}, {128}, {128}, {64}, {64}, {5} };
-    inputVec[2] = { {4}, {5}, {6}, {1}, {2}, {3} };
+    inputVec[0] = { { 255 }, { 0 }, { 0 }, { 255 }, { 255 }, { 0 } };
+    inputVec[1] = { { 1 }, { 128 }, { 128 }, { 64 }, { 64 }, { 5 } };
+    inputVec[2] = { { 4 }, { 5 }, { 6 }, { 1 }, { 2 }, { 3 } };
 
     Image img1(inputVec);
 
@@ -46,7 +46,6 @@ TEST(ElementaryOperations, AdjustPositiveBrightnessWithDiffSpectrumTest)
 
     EXPECT_TRUE(areVectorsEqual(expectedVec, img1.getImgVec()));
 }
-
 
 TEST(ElementaryOperations, AdjustNegativeBrightnessWithDiffSpectrumTest)
 {
@@ -73,16 +72,15 @@ TEST(ElementaryOperations, AdjustNegativeBrightnessWithDiffSpectrumTest)
     //=================================================
     // spectrum 1
 
-    inputVec[0] = { {255}, {0}, {0}, {255}, {255}, {0} };
-    inputVec[1] = { {1}, {128}, {128}, {64}, {64}, {5} };
-    inputVec[2] = { {4}, {5}, {6}, {1}, {2}, {3} };
+    inputVec[0] = { { 255 }, { 0 }, { 0 }, { 255 }, { 255 }, { 0 } };
+    inputVec[1] = { { 1 }, { 128 }, { 128 }, { 64 }, { 64 }, { 5 } };
+    inputVec[2] = { { 4 }, { 5 }, { 6 }, { 1 }, { 2 }, { 3 } };
 
     Image img1(inputVec);
 
     expectedVec[0] = { { 245 }, { 0 }, { 0 }, { 245 }, { 245 }, { 0 } };
     expectedVec[1] = { { 0 }, { 118 }, { 118 }, { 54 }, { 54 }, { 0 } };
     expectedVec[2] = { { 0 }, { 0 }, { 0 }, { 0 }, { 0 }, { 0 } };
-
 
     elementary::adjustBrightness(img1, -10);
 
@@ -116,15 +114,15 @@ TEST(ElementaryOperations, AdjustConstrastWithDiffSpectrumTest)
 
     imgVec inputVec1(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    inputVec1[0] = { {255}, {0}, {0}, {255}, {255}, {0} };
-    inputVec1[1] = { {1}, {128}, {128}, {64}, {64}, {5} };
-    inputVec1[2] = { {4}, {5}, {6}, {1}, {2}, {3} };
+    inputVec1[0] = { { 255 }, { 0 }, { 0 }, { 255 }, { 255 }, { 0 } };
+    inputVec1[1] = { { 1 }, { 128 }, { 128 }, { 64 }, { 64 }, { 5 } };
+    inputVec1[2] = { { 4 }, { 5 }, { 6 }, { 1 }, { 2 }, { 3 } };
 
     imgVec expectedVec1(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    expectedVec1[0] = { {245}, {0}, {0}, {245}, {245}, {0} };
-    expectedVec1[1] = { {0}, {118}, {118}, {54}, {54}, {0} };
-    expectedVec1[2] = { {0}, {0}, {0}, {0}, {0}, {0} };
+    expectedVec1[0] = { { 245 }, { 0 }, { 0 }, { 245 }, { 245 }, { 0 } };
+    expectedVec1[1] = { { 0 }, { 118 }, { 118 }, { 54 }, { 54 }, { 0 } };
+    expectedVec1[2] = { { 0 }, { 0 }, { 0 }, { 0 }, { 0 }, { 0 } };
 
     Image img1(inputVec1);
     elementary::adjustBrightness(img1, -10);
