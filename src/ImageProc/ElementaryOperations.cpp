@@ -20,7 +20,6 @@ namespace elementary {
         }
     }
 
-
     void adjustContrast(Image& image, int factor)
     {
         auto& imgMatrix = image.getImgVec();

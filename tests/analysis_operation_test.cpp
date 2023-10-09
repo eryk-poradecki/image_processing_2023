@@ -1,5 +1,6 @@
 #include "ImageProc/ImgAnalysis.h"
 #include "ImageProc/Types.h"
+#include <cmath>
 #include <gtest/gtest.h>
 
 using namespace ImageProc;
@@ -7,22 +8,24 @@ using namespace analysis;
 
 TEST(CalculateMSETest, ValidInput)
 {
-    imgVec inputVec(2, std::vector<unsigned char>(2));
+    // spectrum 3
+    imgVec inputVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    inputVec[0] = { 1, 5 };
-    inputVec[1] = { 4, 4 };
+    inputVec[0] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    inputVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    inputVec[2] = { { 0, 0, 0 }, { 0, 0, 1 } };
 
-    imgVec testVec(2, std::vector<unsigned char>(2));
+    imgVec expectedVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    testVec[0] = { 0, 5 };
-    testVec[1] = { 4, 4 };
+    expectedVec[0] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[2] = { { 0, 0, 0 }, { 0, 0, 0 } };
 
-    Image img1 = Image(inputVec, 1);
+    Image img1 = Image(inputVec);
 
-    Image img2 = Image(testVec, 1);
-    ;
+    Image img2 = Image(expectedVec);
 
-    float expected = 0.25;
+    float expected = 1.0 / 18;
     ASSERT_NO_THROW({
         float actual = calculateMSE(img1, img2);
         double tolerance = 1e-6;
@@ -32,21 +35,23 @@ TEST(CalculateMSETest, ValidInput)
 
 TEST(CalculatePSNRTest, ValidInput)
 {
-    imgVec inputVec(2, std::vector<unsigned char>(2));
+    imgVec inputVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    inputVec[0] = { 1, 5 };
-    inputVec[1] = { 4, 4 };
+    inputVec[0] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    inputVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    inputVec[2] = { { 0, 0, 0 }, { 0, 0, 1 } };
 
-    imgVec testVec(2, std::vector<unsigned char>(2));
+    imgVec expectedVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    testVec[0] = { 0, 5 };
-    testVec[1] = { 4, 4 };
+    expectedVec[0] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[2] = { { 0, 0, 0 }, { 0, 0, 0 } };
 
-    Image img1 = Image(inputVec, 1);
+    Image img1 = Image(inputVec);
 
-    Image img2 = Image(testVec, 1);
+    Image img2 = Image(expectedVec);
 
-    float expected = 54.1514;
+    float expected = 10 * std::log10(255 * 255);
 
     ASSERT_NO_THROW({
         float actual = calculatePSNR(img1, img2);
@@ -57,25 +62,53 @@ TEST(CalculatePSNRTest, ValidInput)
 
 TEST(CalculatePMSTest, ValidInput)
 {
-    imgVec inputVec(2, std::vector<unsigned char>(2));
+    imgVec inputVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    inputVec[0] = { 1, 0 };
-    inputVec[1] = { 4, 4 };
+    inputVec[0] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    inputVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    inputVec[2] = { { 0, 0, 0 }, { 0, 0, 1 } };
 
-    imgVec testVec(2, std::vector<unsigned char>(2));
+    imgVec expectedVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
 
-    testVec[0] = { 0, 5 };
-    testVec[1] = { 4, 4 };
+    expectedVec[0] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[2] = { { 0, 0, 0 }, { 0, 0, 0 } };
 
-    Image img1 = Image(inputVec, 1);
+    Image img1 = Image(inputVec);
 
-    Image img2 = Image(testVec, 1);
+    Image img2 = Image(expectedVec);
 
-    float expected = 25;
+    float expected = (1.0 / 18) / (255 * 255);
 
     ASSERT_NO_THROW({
-        float actual = calculatePMS(img1, img2);
+        float actual = calculatePMSE(img1, img2);
         float tolerance = 1e-6;
         ASSERT_NEAR(actual, expected, tolerance);
+    });
+}
+
+TEST(CalculateMDTest, ValidInput)
+{
+    imgVec inputVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
+
+    inputVec[0] = { { 10, 0, 0 }, { 0, 0, 0 } };
+    inputVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    inputVec[2] = { { 0, 0, 0 }, { 0, 0, 1 } };
+
+    imgVec expectedVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));
+
+    expectedVec[0] = { { 4, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[1] = { { 0, 0, 0 }, { 0, 0, 0 } };
+    expectedVec[2] = { { 0, 0, 0 }, { 0, 0, 0 } };
+
+    Image img1 = Image(inputVec);
+
+    Image img2 = Image(expectedVec);
+
+    int expected = 6;
+
+    ASSERT_NO_THROW({
+        float actual = calculateMD(img1, img2);
+        ASSERT_EQ(actual, expected);
     });
 }

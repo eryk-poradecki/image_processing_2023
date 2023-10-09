@@ -35,8 +35,6 @@ bool areVectorsEqual(const std::vector<std::vector<std::vector<unsigned char>>>&
     return true;
 }
 
-
-
 // void printImageVector(const std::vector<std::vector<unsigned char>>& imageVector)
 // {
 //     for (const auto& row : imageVector) {
