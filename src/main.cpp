@@ -1,5 +1,4 @@
 #define cimg_display 0
-#include "CImg.h"
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/GeometricOperations.h"
@@ -51,7 +50,35 @@ int main(int argc, char** argv)
             geometric::horizontalFlip(img);
             convertToCimgAndCopyBack(image, img.getImgVec());
         }
-        image.save("test.bmp");
+        if (input.cmdOptionExists("--hflip")) {
+            geometric::horizontalFlip(img);
+            convertToCimgAndCopyBack(image, img.getImgVec());
+        }
+        if (input.cmdOptionExists("--dflip")) {
+            geometric::diagonalFlip(img);
+            convertToCimgAndCopyBack(image, img.getImgVec());
+        }
+        if (input.cmdOptionExists("--shrink")) {
+            int shrinkFactor = std::stoi(input.getCmdOption("--shrink"));
+            imgVec shrunkImageVec = geometric::shrinkImage(img, shrinkFactor);
+
+            CImg<unsigned char> cimgShrunkImage(shrunkImageVec.size(),shrunkImageVec[0].size(),1,shrunkImageVec[0][0].size(),0);
+
+            convertToCimgAndCopyBack(cimgShrunkImage, shrunkImageVec);
+
+            cimgShrunkImage.save("shrunken_image.bmp");
+        }
+        if (input.cmdOptionExists("--enlarge")) {
+            int enlargeFactor = std::stoi(input.getCmdOption("--enlarge"));
+            imgVec enlargedImageVec = geometric::enlargeImage(img, enlargeFactor);
+            
+            CImg<unsigned char> cimgEnlargedImage(enlargedImageVec.size(),enlargedImageVec[0].size(),1,enlargedImageVec[0][0].size(),0);
+
+            convertToCimgAndCopyBack(cimgEnlargedImage, enlargedImageVec);
+
+            cimgEnlargedImage.save("enlarged_image.bmp");
+        }
+        image.save("output.bmp");
     }
     return 0;
 }
