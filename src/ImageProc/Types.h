@@ -17,6 +17,9 @@ class Image{
 	int getWidth() const;
 	int getSpectrum() const;
 
+	bool operator!=(const Image& other) const;
+	bool operator==(const Image& other) const;
+	
 	private:
 	int mWidth, mHeight;
 	imgVec& mImgVec;
