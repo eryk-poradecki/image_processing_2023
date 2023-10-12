@@ -86,7 +86,6 @@ TEST(CalculatePMSTest, ValidInput)
         ASSERT_NEAR(actual, expected, tolerance);
     });
 }
-
 TEST(CalculateMDTest, ValidInput)
 {
     imgVec inputVec(3, std::vector<std::vector<unsigned char>>(3 * 2, std::vector<unsigned char>(3)));

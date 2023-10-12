@@ -26,3 +26,11 @@ int Image::getSpectrum() const
 {
     return mSpectrum;
 }
+
+bool Image::operator!=(const Image& other) const{
+	return this->getImgVec() != other.getImgVec();
+}
+
+bool Image::operator==(const Image& other) const{
+	return this->getImgVec() == other.getImgVec();
+}
