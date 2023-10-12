@@ -112,21 +112,21 @@ float calculatSNR(const Image&  img1,const Image&  img2){
     int numPixels = imgMatrix2[0][0].size();
 	
 	
-	int dominator = 1;
+	int denominator = 1;
 	int numerator = 0; 
 
     for (int i = 0; i < numRows; ++i) {
         for (int j = 0; j < numCols; ++j) {
             for (int k = 0; k < numPixels; ++k) {
                 int diff = imgMatrix1[i][j][k] - imgMatrix2[i][j][k];
-				dominator += diff *diff;
+				denominator += diff *diff;
 				numerator += imgMatrix1[i][j][k] *imgMatrix1[i][j][k];
              }
         }
     }
 	 
 
-	return 10 * std::log10(numerator/dominator);
+	return 10 * std::log10(numerator/denominator);
 
 }
 
