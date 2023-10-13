@@ -4,11 +4,13 @@ add_executable(ImageProcApp
 
 set(SOURCE_FILES
     ImageProc/Types.cpp
-	  ImageProc/Types.h
+	ImageProc/Types.h
     ImageProc/ElementaryOperations.cpp
     ImageProc/ElementaryOperations.h
     ImageProc/GeometricOperations.h
     ImageProc/GeometricOperations.cpp
+    ImageProc/NoiseRemoval.h
+    ImageProc/NoiseRemoval.cpp
     ImageProc/Helpers.h
     ImageProc/Helpers.cpp
     ImageProc/Exceptions.h
