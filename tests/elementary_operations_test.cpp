@@ -27,7 +27,7 @@ TEST(ElementaryOperations, AdjustPositiveBrightnessWithDiffSpectrumTest)
 
     elementary::adjustBrightness(img3, 10);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img3.getImgVec()));
+    EXPECT_TRUE(expectedVec == img3.getImgVec());
 
     //=================================================
     // spectrum 1
@@ -44,7 +44,7 @@ TEST(ElementaryOperations, AdjustPositiveBrightnessWithDiffSpectrumTest)
 
     elementary::adjustBrightness(img1, 10);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img1.getImgVec()));
+    EXPECT_TRUE(expectedVec == img1.getImgVec());
 }
 
 TEST(ElementaryOperations, AdjustNegativeBrightnessWithDiffSpectrumTest)
@@ -67,7 +67,7 @@ TEST(ElementaryOperations, AdjustNegativeBrightnessWithDiffSpectrumTest)
 
     elementary::adjustBrightness(img3, -10);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img3.getImgVec()));
+    EXPECT_TRUE(expectedVec == img3.getImgVec());
 
     //=================================================
     // spectrum 1
@@ -84,7 +84,7 @@ TEST(ElementaryOperations, AdjustNegativeBrightnessWithDiffSpectrumTest)
 
     elementary::adjustBrightness(img1, -10);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img1.getImgVec()));
+    EXPECT_TRUE(expectedVec == img1.getImgVec());
 }
 
 TEST(ElementaryOperations, AdjustConstrastWithDiffSpectrumTest)
@@ -107,7 +107,7 @@ TEST(ElementaryOperations, AdjustConstrastWithDiffSpectrumTest)
 
     elementary::adjustBrightness(img3, 10);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img3.getImgVec()));
+    EXPECT_TRUE(expectedVec == img3.getImgVec());
 
     //=================================================
     // spectrum 1
@@ -127,7 +127,7 @@ TEST(ElementaryOperations, AdjustConstrastWithDiffSpectrumTest)
     Image img1(inputVec1);
     elementary::adjustBrightness(img1, -10);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec1, img1.getImgVec()));
+    EXPECT_TRUE(expectedVec1 == img1.getImgVec());
 }
 
 TEST(ElementaryOperations, CreateNegativeTest)
@@ -148,5 +148,5 @@ TEST(ElementaryOperations, CreateNegativeTest)
 
     elementary::createNegative(img);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img.getImgVec()));
+    EXPECT_TRUE(expectedVec == img.getImgVec());
 }
