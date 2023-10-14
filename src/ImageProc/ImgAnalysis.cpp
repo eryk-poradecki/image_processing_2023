@@ -98,35 +98,32 @@ int analysis::calculateMD(const Image& img1, const Image& img2)
     return peak;
 }
 
-float calculatSNR(const Image&  img1,const Image&  img2){
-	
+float calculatSNR(const Image& img1, const Image& img2)
+{
+
     imgVec imgMatrix1 = img1.getImgVec();
     imgVec imgMatrix2 = img2.getImgVec();
-	
-	if(img1 != img2){
-		throw  DimImgValueException();
-	}
+
+    if (img1 != img2) {
+        throw DimImgValueException();
+    }
 
     int numRows = imgMatrix2.size();
     int numCols = imgMatrix2[0].size();
     int numPixels = imgMatrix2[0][0].size();
-	
-	
-	int denominator = 1;
-	int numerator = 0; 
+
+    int denominator = 1;
+    int numerator = 0;
 
     for (int i = 0; i < numRows; ++i) {
         for (int j = 0; j < numCols; ++j) {
             for (int k = 0; k < numPixels; ++k) {
                 int diff = imgMatrix1[i][j][k] - imgMatrix2[i][j][k];
-				denominator += diff *diff;
-				numerator += imgMatrix1[i][j][k] *imgMatrix1[i][j][k];
-             }
+                denominator += diff * diff;
+                numerator += imgMatrix1[i][j][k] * imgMatrix1[i][j][k];
+            }
         }
     }
-	 
 
-	return 10 * std::log10(numerator/denominator);
-
+    return 10 * std::log10(numerator / denominator);
 }
-

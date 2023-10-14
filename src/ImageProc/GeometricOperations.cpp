@@ -107,7 +107,5 @@ namespace geometric {
         return newImgMatrix;
     }
 
-
-
 } // namespace geometric
 } // namespace ImageProc
