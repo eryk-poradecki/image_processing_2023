@@ -25,7 +25,7 @@ TEST(GeometricOperations, HorizontalFlipTest)
 
     geometric::horizontalFlip(img);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img.getImgVec()));
+    EXPECT_TRUE(expectedVec == img.getImgVec());
 }
 
 TEST(GeometricOperations, VerticalFlipTest)
@@ -45,7 +45,7 @@ TEST(GeometricOperations, VerticalFlipTest)
 
     geometric::verticalFlip(img);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img.getImgVec()));
+    EXPECT_TRUE(expectedVec == img.getImgVec());
 }
 
 TEST(GeometricOperations, DiagonalFlipTest)
@@ -65,7 +65,7 @@ TEST(GeometricOperations, DiagonalFlipTest)
 
     geometric::diagonalFlip(img);
 
-    EXPECT_TRUE(areVectorsEqual(expectedVec, img.getImgVec()));
+    EXPECT_TRUE(expectedVec == img.getImgVec());
 }
 
 TEST(GeometricOperations, ShrinkTest)

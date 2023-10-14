@@ -13,29 +13,43 @@ on:
       - 'tests/**'
     branches:
       - main
-
 jobs:
-  build:
-    runs-on: ${{ matrix.os }}
+  test:
     strategy:
       matrix:
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    defaults:
-      run:
-        shell: bash -l {0}
+        os: [macos-12, ubuntu-22.04, windows-2022]
+
+    runs-on: ${{ matrix.os }}
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
+
+    - name: Install static analyzers
+      if: matrix.os == 'ubuntu-22.04'
+      run: >-
+        sudo apt-get install clang-tidy-14 cppcheck -y -q
+
+        sudo update-alternatives --install
+        /usr/bin/clang-tidy clang-tidy
+        /usr/bin/clang-tidy-14 140
+
+    - name: Setup MultiToolTask
+      if: matrix.os == 'windows-2022'
+      run: |
+        Add-Content "$env:GITHUB_ENV" 'UseMultiToolTask=true'
+        Add-Content "$env:GITHUB_ENV" 'EnforceProcessCountAcrossBuilds=true'
 
     - name: Configure
-      run: |
-        cmake -S. -Bbuild -DCMAKE_BUILD_TYPE=Debug
+      shell: pwsh
+      run: cmake "--preset=ci-$("${{ matrix.os }}".split("-")[0])"
 
     - name: Build
-      run: |
-        cmake --build build --config Debug
+      run: cmake --build build --config Release -j 2
+
+    - name: Install
+      run: cmake --install build --config Release --prefix prefix
 
     - name: Test
-      run: |
-        cd build
-        ctest -C Debug --output-on-failure --verbose
+      working-directory: build
+      run: ctest --output-on-failure --no-tests=error -C Release -j 2
+      
