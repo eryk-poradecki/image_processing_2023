@@ -107,4 +107,3 @@ TEST(GeometricOperations, EnlargeTest)
         }
     }
 }
-

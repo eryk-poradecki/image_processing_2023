@@ -14,4 +14,4 @@ private:
     std::vector<std::string> tokens;
 };
 
-}; // namespace cli
+} // namespace cli

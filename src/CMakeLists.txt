@@ -17,6 +17,8 @@ set(SOURCE_FILES
     ImageProc/Exceptions.cpp
     ImageProc/ImgAnalysis.cpp
     ImageProc/ImgAnalysis.h
+	cli.hpp
+	files.hpp
     )
 
 add_library(ImageProc ${SOURCE_FILES})
@@ -25,10 +27,11 @@ add_library(CLI
     CLI/InputParser.cpp
     CLI/InputParser.hpp)
 
+include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs)
+
 target_include_directories(ImageProc
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}  # Include the source directory
 )
-target_include_directories(ImageProcApp PRIVATE ${CMAKE_SOURCE_DIR}/libs)
 
 target_link_libraries(ImageProcApp ImageProc CLI)
