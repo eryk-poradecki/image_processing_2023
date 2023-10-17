@@ -3,6 +3,7 @@
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/GeometricOperations.h"
+#include "ImageProc/NoiseRemoval.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
 #include "files.hpp"
@@ -73,6 +74,17 @@ inline void cliMain(int argc, char** argv)
             convertToCimgAndCopyBack(cimgEnlargedImage, enlargedImageVec);
 
             cimgEnlargedImage.save("enlarged_image.bmp");
+        }
+        if (input.cmdOptionExists("--adaptive")) {
+            int minFilterSize = std::stoi(input.getCmdOption("--min"));
+            int maxFilterSize = std::stoi(input.getCmdOption("--max"));
+            imgVec filteredImageVec = noise::adaptiveMedianFilter(img, minFilterSize, maxFilterSize);
+
+            CImg<unsigned char> cimgFilteredImage(filteredImageVec.size(), filteredImageVec[0].size(), 1, filteredImageVec[0][0].size(), 0);
+
+            convertToCimgAndCopyBack(cimgFilteredImage, filteredImageVec);
+
+            cimgFilteredImage.save("filtered_image.bmp");
         }
         image.save("output.bmp");
     }
