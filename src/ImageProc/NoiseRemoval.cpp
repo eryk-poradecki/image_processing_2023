@@ -8,14 +8,18 @@ namespace ImageProc {
 
 namespace noise {
 
-    int computeMedian(std::vector<unsigned char> values)
-    {
+    std::array<unsigned char, 3> getFirstMedianLast(std::vector<unsigned char>& values) {
         size_t n = values.size();
         std::sort(values.begin(), values.end());
+        unsigned char first = values.front();
+        unsigned char last = values.back();
+        unsigned char median;
         if (n % 2 == 0) {
-            return (values[n / 2 - 1] + values[n / 2]) / 2;
+            median = (values[n / 2 - 1] + values[n / 2]) / 2;
+        } else {
+            median = values[n / 2];
         }
-        return values[n / 2];
+        return {first, median, last};
     }
 
     imgVec adaptiveMedianFilter(Image& image, int minFilterSize, int maxFilterSize)
@@ -36,12 +40,9 @@ namespace noise {
                     int endX = std::min(width - 1, x + currentWindow / 2);
                     int endY = std::min(height - 1, y + currentWindow / 2);
 
-                    std::vector<unsigned char> windowValuesR;
-                    std::vector<unsigned char> windowValuesG;
-                    std::vector<unsigned char> windowValuesB;
-                    windowValuesR.reserve(currentWindow + 1);
-                    windowValuesG.reserve(currentWindow + 1);
-                    windowValuesB.reserve(currentWindow + 1);
+                    std::vector<unsigned char> windowValuesR(currentWindow + 1);
+                    std::vector<unsigned char> windowValuesG(currentWindow + 1);
+                    std::vector<unsigned char> windowValuesB(currentWindow + 1);
 
                     for (int i = startX; i <= endX; ++i) {
                         for (int j = startY; j <= endY; ++j) {
@@ -51,20 +52,20 @@ namespace noise {
                         }
                     }
 
-                    auto minMaxR = std::minmax_element(windowValuesR.begin(), windowValuesR.end());
-                    unsigned char zminR = *minMaxR.first;
-                    unsigned char zmaxR = *minMaxR.second;
-                    int zmedR = computeMedian(windowValuesR);
+                    auto resultR = getFirstMedianLast(windowValuesR);
+                    unsigned char zminR = resultR[0];
+                    int zmedR = resultR[1];
+                    unsigned char zmaxR = resultR[2];
 
-                    auto minMaxG = std::minmax_element(windowValuesG.begin(), windowValuesG.end());
-                    unsigned char zminG = *minMaxG.first;
-                    unsigned char zmaxG = *minMaxG.second;
-                    int zmedG = computeMedian(windowValuesG);
+                    auto resultG = getFirstMedianLast(windowValuesG);
+                    unsigned char zminG = resultG[0];
+                    int zmedG = resultG[1];
+                    unsigned char zmaxG = resultG[2];
 
-                    auto minMaxB = std::minmax_element(windowValuesB.begin(), windowValuesB.end());
-                    unsigned char zminB = *minMaxB.first;
-                    unsigned char zmaxB = *minMaxB.second;
-                    int zmedB = computeMedian(windowValuesB);
+                    auto resultB = getFirstMedianLast(windowValuesB);
+                    unsigned char zminB = resultB[0];
+                    int zmedB = resultB[1];
+                    unsigned char zmaxB = resultB[2];
 
                     int zxyR = originalVec[y][x][0];
                     int zxyG = originalVec[y][x][1];
