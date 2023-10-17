@@ -29,9 +29,13 @@ add_library(CLI
 
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs)
 
+find_package(Matplot++ REQUIRED)
+
 target_include_directories(ImageProc
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}  # Include the source directory
 )
 
-target_link_libraries(ImageProcApp ImageProc CLI)
+
+target_link_libraries(ImageProcApp PUBLIC ImageProc CLI 
+	 Matplot++::matplot)
