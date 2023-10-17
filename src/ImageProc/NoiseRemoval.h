@@ -1,5 +1,5 @@
 #pragma once
-
+#include <array>
 #include "Types.h"
 
 namespace ImageProc {

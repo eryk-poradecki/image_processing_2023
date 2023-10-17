@@ -9,16 +9,6 @@ using namespace ImageProc;
 
 float analysis::calculateMSE(const Image& img1, const Image& img2)
 {
-    // TODO(@rostekus)
-    // linker error
-
-    // if (!helpers::cmpImgSpectrum(img1, img2)) {
-    //     throw ImgSpectrumValueException();
-    // }
-
-    // if (!helpers::cmpImgDim(img1, img2)) {
-    //     throw DimImgValueException();
-    // }
 
     imgVec imgMatrix1 = img1.getImgVec();
     imgVec imgMatrix2 = img2.getImgVec();
@@ -60,17 +50,6 @@ float analysis::calculatePSNR(const Image& img1, const Image& img2)
 int analysis::calculatePMSE(const Image& img1, const Image& img2)
 {
 
-    // TODO(@rostekus)
-    // linker error
-
-    // if (!helpers::cmpImgSpectrum(img1, img2)) {
-    //     throw ImgSpectrumValueException();
-    // }
-
-    // if (!helpers::cmpImgDim(img1, img2)) {
-    //     throw DimImgValueException();
-    // }
-
     float mse = analysis::calculateMSE(img1, img2);
 
     return (mse / (255 * 255));
@@ -98,7 +77,7 @@ int analysis::calculateMD(const Image& img1, const Image& img2)
     return peak;
 }
 
-float calculatSNR(const Image& img1, const Image& img2)
+float analysis::calculatSNR(const Image& img1, const Image& img2)
 {
 
     imgVec imgMatrix1 = img1.getImgVec();
