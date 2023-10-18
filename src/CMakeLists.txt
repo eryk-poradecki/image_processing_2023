@@ -17,6 +17,8 @@ set(SOURCE_FILES
     ImageProc/Exceptions.cpp
     ImageProc/ImgAnalysis.cpp
     ImageProc/ImgAnalysis.h
+	ImageProc/Histogram.cpp
+	ImageProc/Histogram.h
 	cli.hpp
 	files.hpp
     )
