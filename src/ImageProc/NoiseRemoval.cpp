@@ -9,7 +9,8 @@ namespace ImageProc {
 
 namespace noise {
 
-    std::array<unsigned char, 3> getFirstMedianLast(std::vector<unsigned char>& values) {
+    std::array<unsigned char, 3> getFirstMedianLast(std::vector<unsigned char>& values)
+    {
         size_t n = values.size();
         std::sort(values.begin(), values.end());
         unsigned char first = values.front();
@@ -20,7 +21,7 @@ namespace noise {
         } else {
             median = values[n / 2];
         }
-        return {first, median, last};
+        return { first, median, last };
     }
 
     imgVec adaptiveMedianFilter(Image& image, int minFilterSize, int maxFilterSize)
