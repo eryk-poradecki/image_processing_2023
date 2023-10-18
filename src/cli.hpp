@@ -3,12 +3,17 @@
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/GeometricOperations.h"
-#include "ImageProc/NoiseRemoval.h"
+#include "ImageProc/Histogram.h"
 #include "ImageProc/ImgAnalysis.h"
+#include "ImageProc/NoiseRemoval.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
 #include "files.hpp"
 #include <iostream>
+#include <string>
+
+const std::string OUTPUT_FILENAME("output.bmp");
+const std::string HISTOGRAM_FILENAME("hist.jpg");
 
 inline void cliMain(int argc, char** argv)
 {
@@ -80,34 +85,37 @@ inline void cliMain(int argc, char** argv)
             int minFilterSize = std::stoi(input.getCmdOption("--min"));
             int maxFilterSize = std::stoi(input.getCmdOption("--max"));
             imgVec filteredImageVec = noise::adaptiveMedianFilter(img, minFilterSize, maxFilterSize);
-        	Image outImg = Image(filteredImageVec);
-			if(input.cmdOptionExists("--mse")){
-			
-				std::cout << "MSE:" << analysis::calculateMSE(img, outImg) << "\n";
-			}
-			
-			if(input.cmdOptionExists("--pmse")){
-			
-				std::cout << "PMSE:" << analysis::calculatePMSE(img, outImg) << "\n";
-			}
-			if(input.cmdOptionExists("--psnr")){
-			
-				std::cout << "PSNR:" << analysis::calculatePSNR(img, outImg) << "\n";
-			}
-			if(input.cmdOptionExists("--md")){
-			
-				std::cout << "MD:" << analysis::calculateMD(img, outImg) << "\n";
-			}
-			if(input.cmdOptionExists("--snr")){
-			
-				std::cout << "SNR:" << analysis::calculatSNR(img, outImg) << "\n";
-			}
+            Image outImg = Image(filteredImageVec);
+            if (input.cmdOptionExists("--mse")) {
+
+                std::cout << "MSE:" << analysis::calculateMSE(img, outImg) << "\n";
+            }
+
+            if (input.cmdOptionExists("--pmse")) {
+
+                std::cout << "PMSE:" << analysis::calculatePMSE(img, outImg) << "\n";
+            }
+            if (input.cmdOptionExists("--psnr")) {
+
+                std::cout << "PSNR:" << analysis::calculatePSNR(img, outImg) << "\n";
+            }
+            if (input.cmdOptionExists("--md")) {
+
+                std::cout << "MD:" << analysis::calculateMD(img, outImg) << "\n";
+            }
+            if (input.cmdOptionExists("--snr")) {
+
+                std::cout << "SNR:" << analysis::calculatSNR(img, outImg) << "\n";
+            }
             CImg<unsigned char> cimgFilteredImage(filteredImageVec.size(), filteredImageVec[0].size(), 1, filteredImageVec[0][0].size(), 0);
 
             convertToCimgAndCopyBack(cimgFilteredImage, filteredImageVec);
 
             cimgFilteredImage.save("filtered_image.bmp");
         }
-        image.save("output.bmp");
+        if (input.cmdOptionExists("--hist")) {
+            histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
+        }
+        image.save(OUTPUT_FILENAME.c_str());
     }
 }
