@@ -1,14 +1,14 @@
 #pragma once
-#include <array>
 #include "Types.h"
+#include <array>
 
 namespace ImageProc {
 
-    namespace noise {
+namespace noise {
 
-        std::array<unsigned char, 3> getFirstMedianLast(std::vector<unsigned char>& values);
+    std::array<unsigned char, 3> getFirstMedianLast(std::vector<unsigned char>& values);
 
-        imgVec adaptiveMedianFilter(Image& image, int minFilterSize, int maxFilterSize);
+    imgVec adaptiveMedianFilter(Image& image, int minFilterSize, int maxFilterSize);
 
-    } // namespace noise
+} // namespace noise
 } // namespace ImageProc
