@@ -25,11 +25,11 @@ clean:
 ifeq ($(UNAME), Darwin)
 # macOS specific formatting
 format:
-	find . -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.cc" -o -name "*.cxx" \) -exec clang-format -style=file -i {} \;
+	find . -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.cc" -o -name "*.cxx" -o -name "*.h"\) -exec clang-format -style=file -i {} \;
 else
 # Other platforms use the original command
 format:
-	find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\)' -exec clang-format -style=file -i {} \;
+	find . -regex '.*\.\(cpp\|hpp\|cc\|cxx\|h\)' -exec clang-format -style=file -i {} \;
 endif
 
 .PHONY: all configure compile clean format test
