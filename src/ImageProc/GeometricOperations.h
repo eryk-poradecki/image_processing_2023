@@ -4,7 +4,7 @@
 
 namespace ImageProc {
 
-    namespace geometric {
+namespace geometric {
 
     void verticalFlip(Image& image);
 
@@ -15,6 +15,6 @@ namespace ImageProc {
     imgVec shrinkImage(const Image& image, int shrinkFactor);
 
     imgVec enlargeImage(const Image& image, int enlargeFactor);
-    
+
 } // namespace geometric
 } // namespace ImageProc
