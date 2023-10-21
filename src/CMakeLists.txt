@@ -24,6 +24,7 @@ set(SOURCE_FILES
     )
 
 add_library(ImageProc ${SOURCE_FILES})
+target_link_libraries(ImageProc PUBLIC Matplot++::matplot)
 
 add_library(CLI
     CLI/InputParser.cpp
@@ -39,5 +40,4 @@ target_include_directories(ImageProc
 )
 
 
-target_link_libraries(ImageProcApp PUBLIC ImageProc CLI 
-	 Matplot++::matplot)
+target_link_libraries(ImageProcApp PUBLIC ImageProc CLI )
