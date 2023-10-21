@@ -1,7 +1,7 @@
 #include "Histogram.h"
 #include "ImageProc/Types.h"
 #include <array>
-#include <matplot/freestanding/axes_functions.h>
+#include <iostream>
 #include <matplot/matplot.h>
 #include <string_view>
 #include <vector>
@@ -14,15 +14,18 @@ void createAndSaveHist(const ImageProc::Image& img, const std::string_view filen
     int col = img.getWidth();
     int row = img.getHeight();
     auto splitRGBVec = histogram::splitRGBImgToSaperateLayerRGB(img);
-    for (int i = 0; i < numOfHist; i++) {
-        /* matplot::subplot(1, numOfHist, i); */
-        /* matplot::hist(splitRGBVec[i], nBins); */
-        /* auto x = matplot::linspace(0, 255); */
-        /* matplot::xticks({ 0, 128, 255 }); */
-        /* auto ax = matplot::gca(); */
-        /* ax->x_axis().label_font_size(12); */
+    for (int i = 0; i < numOfHist; ++i) {
+        matplot::subplot(1, numOfHist, i);
+        matplot::hist(splitRGBVec[i], nBins);
+        auto x = matplot::linspace(0, 256);
+        matplot::xticks({ 0, 128, 255 });
+		matplot::ylim({0, +3000});
+		// TODO 
+		// Dont know how to set y lim automatically
+		auto ax = matplot::gca();
+        ax->x_axis().label_font_size(12);
     }
-    /* matplot::save(filename.data()); */
+    matplot::save(filename.data());
 }
 
 std::vector<std::vector<unsigned char>> splitRGBImgToSaperateLayerRGB(const ImageProc::Image& img)

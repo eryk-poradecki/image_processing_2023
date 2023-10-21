@@ -113,7 +113,7 @@ inline void cliMain(int argc, char** argv)
 
             cimgFilteredImage.save("filtered_image.bmp");
         }
-        if (input.cmdOptionExists("--hist")) {
+        if (input.cmdOptionExists("--histogram")) {
             histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
         }
         image.save(OUTPUT_FILENAME.c_str());
