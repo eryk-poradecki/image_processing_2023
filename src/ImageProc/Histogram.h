@@ -38,7 +38,6 @@ public:
             /* auto& bins = histograms[numOfChan].getArr(); */
             for (auto& pixel : splitVec[numOfChan]) {
                 int bin = static_cast<int>(pixel * factor);
-                std::cout << "bin  : " << bin << "\n";
                 ++histograms[numOfChan][bin];
             }
         }

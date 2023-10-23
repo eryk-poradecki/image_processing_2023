@@ -19,10 +19,10 @@ void createAndSaveHist(const ImageProc::Image& img, const std::string_view filen
         matplot::hist(splitRGBVec[i], nBins);
         auto x = matplot::linspace(0, 256);
         matplot::xticks({ 0, 128, 255 });
-		matplot::ylim({0, +3000});
-		// TODO 
-		// Dont know how to set y lim automatically
-		auto ax = matplot::gca();
+        matplot::ylim({ 0, +3000 });
+        // TODO
+        // Dont know how to set y lim automatically
+        auto ax = matplot::gca();
         ax->x_axis().label_font_size(12);
     }
     matplot::save(filename.data());
