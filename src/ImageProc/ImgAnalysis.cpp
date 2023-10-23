@@ -83,10 +83,6 @@ float analysis::calculatSNR(const Image& img1, const Image& img2)
     imgVec imgMatrix1 = img1.getImgVec();
     imgVec imgMatrix2 = img2.getImgVec();
 
-    if (img1 != img2) {
-        throw DimImgValueException();
-    }
-
     int numRows = imgMatrix2.size();
     int numCols = imgMatrix2[0].size();
     int numPixels = imgMatrix2[0][0].size();
