@@ -2,13 +2,11 @@
 
 #include "Types.h"
 
-namespace ImageProc {
-namespace elementary {
-    void adjustBrightness(Image& image, int brightness);
+namespace ImageProc::elementary {
+void adjustBrightness(Image& image, int brightness);
 
-    void adjustContrast(Image& image, int factor);
+void adjustContrast(Image& image, int factor);
 
-    void createNegative(Image& image);
+void createNegative(Image& image);
 
 } // namespace elementary
-} // namespace ImageProc

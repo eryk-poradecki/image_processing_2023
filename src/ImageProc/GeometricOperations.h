@@ -2,19 +2,16 @@
 
 #include "Types.h"
 
-namespace ImageProc {
+namespace ImageProc::geometric {
 
-namespace geometric {
+void verticalFlip(Image& image);
 
-    void verticalFlip(Image& image);
+void horizontalFlip(Image& image);
 
-    void horizontalFlip(Image& image);
+void diagonalFlip(Image& image);
 
-    void diagonalFlip(Image& image);
+imgVec shrinkImage(const Image& image, int shrinkFactor);
 
-    imgVec shrinkImage(const Image& image, int shrinkFactor);
-
-    imgVec enlargeImage(const Image& image, int enlargeFactor);
+imgVec enlargeImage(const Image& image, int enlargeFactor);
 
 } // namespace geometric
-} // namespace ImageProc

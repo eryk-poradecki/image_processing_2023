@@ -10,7 +10,7 @@
 
 using namespace ImageProc;
 
-int __calculate_max(imgVec& threeDVector);
+int __calculate_max(const imgVec& threeDVector);
 
 float analysis::calculateMSE(const Image& img1, const Image& img2)
 {
@@ -106,7 +106,7 @@ float analysis::calculatSNR(const Image& img1, const Image& img2)
     return 10 * std::log10(numerator / denominator);
 }
 
-int __calculate_max(imgVec& threeDVector)
+int __calculate_max(const imgVec& threeDVector)
 {
 
     int max_value = threeDVector[0][0][0];
