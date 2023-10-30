@@ -14,7 +14,6 @@ void horizontalFlip(Image& image)
 void verticalFlip(Image& image)
 {
     imgVec& imgMatrix = image.getImgVec();
-    // TODO eryk here use row
     for (auto& row : imgMatrix) {
         std::reverse(row.begin(), row.end());
     }
@@ -23,9 +22,8 @@ void verticalFlip(Image& image)
 void diagonalFlip(Image& image)
 {
     imgVec& imgMatrix = image.getImgVec();
-    // TODO eryk here use column?
-    for (auto& column : imgMatrix) {
-        std::reverse(column.begin(), column.end());
+    for (auto& row : imgMatrix) {
+        std::reverse(row.begin(), row.end());
     }
 
     std::reverse(imgMatrix.begin(), imgMatrix.end());
@@ -33,26 +31,20 @@ void diagonalFlip(Image& image)
 
 imgVec shrinkImage(const Image& image, int shrinkFactor)
 {
-    // Get the original image dimensions
     int originalWidth = image.getWidth();
     int originalHeight = image.getHeight();
     int originalSpectrum = image.getSpectrum();
 
-    // Calculate the new dimensions
     int newWidth = originalWidth / shrinkFactor;
     int newHeight = originalHeight / shrinkFactor;
 
-    // Create a new image with the reduced dimensions
     imgVec newImgMatrix(newHeight, std::vector<std::vector<unsigned char>>(newWidth, std::vector<unsigned char>(originalSpectrum, 0)));
     auto inputImgVec = image.getImgVec();
-    // Iterate over the new image pixels
     for (int y = 0; y < newHeight; ++y) {
         for (int x = 0; x < newWidth; ++x) {
-            // Calculate the corresponding region in the original image
             int startX = x * shrinkFactor;
             int startY = y * shrinkFactor;
 
-            // Accumulate pixel values in the region
             std::vector<unsigned int> sumPixel(originalSpectrum, 0);
             for (int i = 0; i < shrinkFactor; ++i) {
                 for (int j = 0; j < shrinkFactor; ++j) {
@@ -62,46 +54,37 @@ imgVec shrinkImage(const Image& image, int shrinkFactor)
                 }
             }
 
-            // Compute the average value for the new pixel
             for (int c = 0; c < originalSpectrum; ++c) {
                 newImgMatrix[y][x][c] = static_cast<unsigned char>(sumPixel[c] / (shrinkFactor * shrinkFactor));
             }
         }
     }
 
-    // Create and return the new Image object
     return newImgMatrix;
 }
 
 imgVec enlargeImage(const Image& image, int enlargeFactor)
 {
-    // Get the original image dimensions
     int originalWidth = image.getWidth();
     int originalHeight = image.getHeight();
     int originalSpectrum = image.getSpectrum();
 
-    // Calculate the new dimensions
     int newWidth = originalWidth * enlargeFactor;
     int newHeight = originalHeight * enlargeFactor;
 
-    // Create a new image with the enlarged dimensions
     imgVec newImgMatrix(newHeight, std::vector<std::vector<unsigned char>>(newWidth, std::vector<unsigned char>(originalSpectrum, 0)));
     auto inputImgVec = image.getImgVec();
-    // Iterate over the new image pixels
     for (int y = 0; y < newHeight; ++y) {
         for (int x = 0; x < newWidth; ++x) {
-            // Calculate the corresponding region in the original image
             int originalX = x / enlargeFactor;
             int originalY = y / enlargeFactor;
 
-            // Copy the pixel values from the original image to the enlarged image
             for (int c = 0; c < originalSpectrum; ++c) {
                 newImgMatrix[y][x][c] = inputImgVec[originalY][originalX][c];
             }
         }
     }
 
-    // Return the new image data
     return newImgMatrix;
 }
 
