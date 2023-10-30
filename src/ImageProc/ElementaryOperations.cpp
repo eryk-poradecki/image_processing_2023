@@ -10,24 +10,28 @@ void adjustBrightness(Image& image, int brightness)
 
     for (auto& column : imgMatrix) {
         for (auto& row : column) {
-            for (auto& pixel : row) {
-                int newPixel = pixel + brightness;
-                pixel = std::min(255, std::max(0, newPixel));
+            for (auto& channelPixel : row) {
+                int newChannelPixel = channelPixel + brightness;
+                channelPixel = std::min(255, std::max(0, newChannelPixel));
             }
         }
     }
 }
 
+// https://www.dfstudios.co.uk/articles/programming/image-programming-algorithms/image-processing-algorithms-part-5-contrast-adjustment/
 void adjustContrast(Image& image, int factor)
 {
     auto& imgMatrix = image.getImgVec();
-    // Todo @eryk  check formula
-    float contrastFactor = (255 * (factor + 255.0)) / (255 * (255 - factor));
-    for (auto& column : imgMatrix) {
-        for (auto& row : column) {
-            for (auto& pixel : row) {
-                int newPixel = static_cast<int>(contrastFactor * (pixel - 128) + 128);
-                pixel = std::min(255, std::max(0, newPixel));
+
+    float contrastFactor = (259.0 * (factor + 255.0)) / (255.0 * (259.0 - factor));
+
+    for (auto& row : imgMatrix) {
+        for (auto& column : row) {
+            for (auto& channelPixel : column) { // color channel
+                int oldChannelPixel = channelPixel;
+                int newChannelPixel = static_cast<int>(contrastFactor * (oldChannelPixel - 128) + 128);
+                newChannelPixel = std::max(0, std::min(255, newChannelPixel));
+                channelPixel = static_cast<unsigned char>(newChannelPixel);
             }
         }
     }
@@ -39,8 +43,8 @@ void createNegative(Image& image)
 
     for (auto& column : imgMatrix) {
         for (auto& row : column) {
-            for (auto& pixel : row) {
-                pixel = 255 - pixel;
+            for (auto& channelPixel : row) {
+                channelPixel = 255 - channelPixel;
             }
         }
     }
