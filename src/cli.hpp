@@ -9,6 +9,7 @@
 #include "ImageProc/Types.h"
 #include "config.hpp"
 #include "files.hpp"
+#include <filesystem>
 #include <iostream>
 #include <string>
 
@@ -23,106 +24,147 @@ inline int cliMain(int argc, char** argv)
         std::cout << config::programUsageInfo << std::endl;
     }
     const std::string& filename = input.getCmdOption("-f");
-    if (!filename.empty()) {
-        CImg<unsigned char> image(filename.c_str());
-        int width = image.width();
-        int height = image.height();
-        int spectrum = image.spectrum();
-        imgVec imageArray = convertCimgtoImageVector(image);
-
-        Image img = Image(imageArray);
-        if (input.cmdOptionExists("--brightness")) {
-            int factor = std::stof(input.getCmdOption("--brightness"));
-            elementary::adjustBrightness(img, factor);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--contrast")) {
-            float factor = std::stof(input.getCmdOption("--contrast"));
-            elementary::adjustContrast(img, factor);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--negative")) {
-            elementary::createNegative(img);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--vflip")) {
-            geometric::verticalFlip(img);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--hflip")) {
-            geometric::horizontalFlip(img);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--hflip")) {
-            geometric::horizontalFlip(img);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--dflip")) {
-            geometric::diagonalFlip(img);
-            convertToCimgAndCopyBack(image, img.getImgVec());
-        }
-        if (input.cmdOptionExists("--shrink")) {
-            int shrinkFactor = std::stoi(input.getCmdOption("--shrink"));
-            imgVec shrunkImageVec = geometric::shrinkImage(img, shrinkFactor);
-
-            CImg<unsigned char> cimgShrunkImage(shrunkImageVec.size(), shrunkImageVec[0].size(), 1, shrunkImageVec[0][0].size(), 0);
-
-            convertToCimgAndCopyBack(cimgShrunkImage, shrunkImageVec);
-
-            cimgShrunkImage.save("shrunken_image.bmp");
-        }
-        if (input.cmdOptionExists("--enlarge")) {
-            int enlargeFactor = std::stoi(input.getCmdOption("--enlarge"));
-            imgVec enlargedImageVec = geometric::enlargeImage(img, enlargeFactor);
-
-            CImg<unsigned char> cimgEnlargedImage(enlargedImageVec.size(), enlargedImageVec[0].size(), 1, enlargedImageVec[0][0].size(), 0);
-
-            convertToCimgAndCopyBack(cimgEnlargedImage, enlargedImageVec);
-
-            cimgEnlargedImage.save("enlarged_image.bmp");
-        }
-        if (input.cmdOptionExists("--adaptive")) {
-            int wmin = std::stoi(input.getCmdOption("--wmin"));
-            int wmax = std::stoi(input.getCmdOption("--wmax"));
-            int hmin = std::stoi(input.getCmdOption("--hmin"));
-            int hmax = std::stoi(input.getCmdOption("--hmax"));
-            if (hmin >= hmax || wmin >= wmax) {
-                std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
-                return -1;
-            }
-            imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
-            Image outImg = Image(filteredImageVec);
-            if (input.cmdOptionExists("--mse")) {
-
-                std::cout << "MSE:" << analysis::calculateMSE(img, outImg) << "\n";
-            }
-
-            if (input.cmdOptionExists("--pmse")) {
-
-                std::cout << "PMSE:" << analysis::calculatePMSE(img, outImg) << "\n";
-            }
-            if (input.cmdOptionExists("--psnr")) {
-
-                std::cout << "PSNR:" << analysis::calculatePSNR(img, outImg) << "\n";
-            }
-            if (input.cmdOptionExists("--md")) {
-
-                std::cout << "MD:" << analysis::calculateMD(img, outImg) << "\n";
-            }
-            if (input.cmdOptionExists("--snr")) {
-
-                std::cout << "SNR:" << analysis::calculatSNR(img, outImg) << "\n";
-            }
-            CImg<unsigned char> cimgFilteredImage(filteredImageVec.size(), filteredImageVec[0].size(), 1, filteredImageVec[0][0].size(), 0);
-
-            convertToCimgAndCopyBack(cimgFilteredImage, filteredImageVec);
-
-            cimgFilteredImage.save("filtered_image.bmp");
-        }
-        if (input.cmdOptionExists("--histogram")) {
-            histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
-        }
-        image.save(OUTPUT_FILENAME.c_str());
-        return 0;
+    if (filename.empty()) {
+        std::cout << "Please provide filename\n";
+        return -1;
     }
+    if (!std::filesystem::exists(filename)) {
+        std::cout << "Filename does not exist\n";
+        return -1;
+    }
+    if (filename.size() < 4 || filename.substr(filename.size() - 4) != ".bmp") {
+        std::cout << "The file has a BMP extension." << std::endl;
+        return -1;
+    }
+
+    CImg<unsigned char> image(filename.c_str());
+    int width = image.width();
+    int height = image.height();
+    int spectrum = image.spectrum();
+    imgVec imageArray = convertCimgtoImageVector(image);
+
+    Image img = Image(imageArray);
+    if (input.cmdOptionExists("--brightness")) {
+        int factor;
+        try {
+            factor = std::stof(input.getCmdOption("--brightness"));
+        } catch (...) {
+            std::cout << "uncorrent brightness factor\n";
+            return 1;
+        }
+        elementary::adjustBrightness(img, factor);
+        convertToCimgAndCopyBack(image, img.getImgVec());
+    }
+    if (input.cmdOptionExists("--contrast")) {
+        int factor {};
+        try {
+            factor = std::stoi(input.getCmdOption("--contrast"));
+        } catch (...) {
+            std::cout << "uncorrent contrast factor\n";
+            return 1;
+        }
+        elementary::adjustContrast(img, factor);
+        convertToCimgAndCopyBack(image, img.getImgVec());
+    }
+    if (input.cmdOptionExists("--negative")) {
+        elementary::createNegative(img);
+        convertToCimgAndCopyBack(image, img.getImgVec());
+    }
+    if (input.cmdOptionExists("--vflip")) {
+        geometric::verticalFlip(img);
+        convertToCimgAndCopyBack(image, img.getImgVec());
+    }
+    if (input.cmdOptionExists("--hflip")) {
+        geometric::horizontalFlip(img);
+        convertToCimgAndCopyBack(image, img.getImgVec());
+    }
+    if (input.cmdOptionExists("--hflip")) {
+        geometric::horizontalFlip(img);
+        convertToCimgAndCopyBack(image, img.getImgVec());
+    }
+    if (input.cmdOptionExists("--dflip")) {
+        geometric::diagonalFlip(img);
+        convertToCimgAndCopyBack(image, img.getImgVec());
+    }
+    if (input.cmdOptionExists("--shrink")) {
+        int shrinkFactor {};
+        try {
+            shrinkFactor = std::stoi(input.getCmdOption("--shrink"));
+        } catch (...) {
+            std::cout << "uncorrent shrink factor\n";
+            return 1;
+        }
+        imgVec shrunkImageVec = geometric::shrinkImage(img, shrinkFactor);
+
+        CImg<unsigned char> cimgShrunkImage(shrunkImageVec.size(), shrunkImageVec[0].size(), 1, shrunkImageVec[0][0].size(), 0);
+
+        convertToCimgAndCopyBack(cimgShrunkImage, shrunkImageVec);
+
+        cimgShrunkImage.save("shrunken_image.bmp");
+    }
+    if (input.cmdOptionExists("--enlarge")) {
+        int enlargeFactor {};
+        try {
+            enlargeFactor = std::stoi(input.getCmdOption("--enlarge"));
+        } catch (...) {
+            std::cout << "uncorrent enlarge factor\n";
+            return 1;
+        }
+        imgVec enlargedImageVec = geometric::enlargeImage(img, enlargeFactor);
+
+        CImg<unsigned char> cimgEnlargedImage(enlargedImageVec.size(), enlargedImageVec[0].size(), 1, enlargedImageVec[0][0].size(), 0);
+
+        convertToCimgAndCopyBack(cimgEnlargedImage, enlargedImageVec);
+
+        cimgEnlargedImage.save("enlarged_image.bmp");
+    }
+    if (input.cmdOptionExists("--adaptive")) {
+        int wmax, hmax, wmin, hmin;
+        try {
+            wmin = std::stoi(input.getCmdOption("--wmin"));
+            wmax = std::stoi(input.getCmdOption("--wmax"));
+            hmin = std::stoi(input.getCmdOption("--hmin"));
+            hmax = std::stoi(input.getCmdOption("--hmax"));
+        } catch (...) {
+            std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
+            return -1;
+        }
+        if (hmin >= hmax || wmin >= wmax) {
+            std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
+            return -1;
+        }
+        imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
+        Image outImg = Image(filteredImageVec);
+        if (input.cmdOptionExists("--mse")) {
+
+            std::cout << "MSE:" << analysis::calculateMSE(img, outImg) << "\n";
+        }
+
+        if (input.cmdOptionExists("--pmse")) {
+
+            std::cout << "PMSE:" << analysis::calculatePMSE(img, outImg) << "\n";
+        }
+        if (input.cmdOptionExists("--psnr")) {
+
+            std::cout << "PSNR:" << analysis::calculatePSNR(img, outImg) << "\n";
+        }
+        if (input.cmdOptionExists("--md")) {
+
+            std::cout << "MD:" << analysis::calculateMD(img, outImg) << "\n";
+        }
+        if (input.cmdOptionExists("--snr")) {
+
+            std::cout << "SNR:" << analysis::calculatSNR(img, outImg) << "\n";
+        }
+        CImg<unsigned char> cimgFilteredImage(filteredImageVec.size(), filteredImageVec[0].size(), 1, filteredImageVec[0][0].size(), 0);
+
+        convertToCimgAndCopyBack(cimgFilteredImage, filteredImageVec);
+
+        cimgFilteredImage.save("filtered_image.bmp");
+    }
+    // if (input.cmdOptionExists("--histogram")) {
+    //     histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
+    // }
+    image.save(OUTPUT_FILENAME.c_str());
+    return 0;
 }
