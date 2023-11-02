@@ -15,7 +15,7 @@
 const std::string OUTPUT_FILENAME("output.bmp");
 const std::string HISTOGRAM_FILENAME("hist.jpg");
 
-inline void cliMain(int argc, char** argv)
+inline int cliMain(int argc, char** argv)
 {
 
     cli::InputParser input(argc, argv);
@@ -82,9 +82,15 @@ inline void cliMain(int argc, char** argv)
             cimgEnlargedImage.save("enlarged_image.bmp");
         }
         if (input.cmdOptionExists("--adaptive")) {
-            int minFilterSize = std::stoi(input.getCmdOption("--min"));
-            int maxFilterSize = std::stoi(input.getCmdOption("--max"));
-            imgVec filteredImageVec = noise::adaptiveMedianFilter(img, minFilterSize, maxFilterSize);
+            int wmin = std::stoi(input.getCmdOption("--wmin"));
+            int wmax = std::stoi(input.getCmdOption("--wmax"));
+            int hmin = std::stoi(input.getCmdOption("--hmin"));
+            int hmax = std::stoi(input.getCmdOption("--hmax"));
+            if (hmin >= hmax || wmin >= wmax){
+                std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
+                return -1;
+            }
+            imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax,hmin,hmax);
             Image outImg = Image(filteredImageVec);
             if (input.cmdOptionExists("--mse")) {
 
@@ -117,5 +123,6 @@ inline void cliMain(int argc, char** argv)
             histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
         }
         image.save(OUTPUT_FILENAME.c_str());
+        return 0;
     }
 }

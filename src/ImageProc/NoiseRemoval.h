@@ -6,9 +6,9 @@ namespace ImageProc {
 
     namespace noise {
 
-        std::array<unsigned char, 3> getFirstMedianLast(std::vector<unsigned char>& values);
+    std::tuple<unsigned char, unsigned char, unsigned char> getFirstMedianLast(std::vector<unsigned char>& values, int size);
 
-        imgVec adaptiveMedianFilter(Image& image, int minFilterSize, int maxFilterSize);
+    imgVec adaptiveMedianFilter(Image& image, int minW, int minH, int maxW, int maxH);
 
     } // namespace noise
 } // namespace ImageProc
