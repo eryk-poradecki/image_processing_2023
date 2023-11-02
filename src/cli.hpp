@@ -86,11 +86,11 @@ inline int cliMain(int argc, char** argv)
             int wmax = std::stoi(input.getCmdOption("--wmax"));
             int hmin = std::stoi(input.getCmdOption("--hmin"));
             int hmax = std::stoi(input.getCmdOption("--hmax"));
-            if (hmin >= hmax || wmin >= wmax){
+            if (hmin >= hmax || wmin >= wmax) {
                 std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
                 return -1;
             }
-            imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax,hmin,hmax);
+            imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
             Image outImg = Image(filteredImageVec);
             if (input.cmdOptionExists("--mse")) {
 

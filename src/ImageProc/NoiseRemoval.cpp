@@ -21,7 +21,7 @@ namespace noise {
         } else {
             median = values[n / 2];
         }
-    return std::make_tuple(first, median, last);
+        return std::make_tuple(first, median, last);
     }
 
     imgVec adaptiveMedianFilter(Image& image, int minW, int minH, int maxW, int maxH)
@@ -37,7 +37,7 @@ namespace noise {
             for (int y = 0; y < height; ++y) {
                 int currentWindowW = minW;
                 int currentWindowH = minH;
-                while (currentWindowW<= maxW || currentWindowH <= maxH) {
+                while (currentWindowW <= maxW || currentWindowH <= maxH) {
                     int startX = std::max(0, x - currentWindowW / 2);
                     int startY = std::max(0, y - currentWindowH / 2);
                     int endX = std::min(width - 1, x + currentWindowW / 2);
@@ -93,18 +93,16 @@ namespace noise {
                     }
                     currentWindowW++;
                     currentWindowH++;
-                    
+
                     if (currentWindowW > maxW && currentWindowH > maxH) {
                         outputImgVec[y][x][0] = zxyR;
                         outputImgVec[y][x][1] = zxyG;
                         outputImgVec[y][x][2] = zxyB;
                         break;
                     }
-                    
+
                     currentWindowH = std::max(currentWindowH, maxH);
                     currentWindowW = std::max(currentWindowW, maxW);
-
-
                 }
             }
         }

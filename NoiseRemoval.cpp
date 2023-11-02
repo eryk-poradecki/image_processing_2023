@@ -9,19 +9,19 @@ namespace ImageProc {
 
 namespace noise {
 
-std::tuple<unsigned char, unsigned char, unsigned char> getFirstMedianLast(std::vector<unsigned char>& values, int size)
-{
-    std::sort(values.begin(), values.begin()+size);
-    unsigned char first = values[0];
-    unsigned char last = values[size];
-    unsigned char median;
-    if (size % 2 == 0) {
-        median = (values[size / 2 - 1] + values[size / 2]) / 2;
-    } else {
-        median = values[size / 2];
+    std::tuple<unsigned char, unsigned char, unsigned char> getFirstMedianLast(std::vector<unsigned char>& values, int size)
+    {
+        std::sort(values.begin(), values.begin() + size);
+        unsigned char first = values[0];
+        unsigned char last = values[size];
+        unsigned char median;
+        if (size % 2 == 0) {
+            median = (values[size / 2 - 1] + values[size / 2]) / 2;
+        } else {
+            median = values[size / 2];
+        }
+        return std::make_tuple(first, median, last);
     }
-    return std::make_tuple(first, median, last);
-}
 
     imgVec adaptiveMedianFilter(Image& image, int minFilterSize, int maxFilterSize)
     {
