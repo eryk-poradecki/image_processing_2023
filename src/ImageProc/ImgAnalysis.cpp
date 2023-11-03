@@ -9,7 +9,8 @@ using namespace ImageProc;
 
 int calculate_3DVecMax(imgVec& threeDVector, int chan);
 
-std::tuple<float, float, float> analysis::calculateMSE(const Image& img1, const Image& img2) {
+std::tuple<float, float, float> analysis::calculateMSE(const Image& img1, const Image& img2)
+{
     imgVec imgMatrix1 = img1.getImgVec();
     imgVec imgMatrix2 = img2.getImgVec();
 
@@ -51,7 +52,7 @@ std::tuple<float, float, float> analysis::calculateMSE(const Image& img1, const 
 
 std::tuple<float, float, float> analysis::calculatePSNR(const Image& img1, const Image& img2)
 {
-  
+
     imgVec imgMatrix1 = img1.getImgVec();
 
     int numRows = imgMatrix1.size();
@@ -60,36 +61,33 @@ std::tuple<float, float, float> analysis::calculatePSNR(const Image& img1, const
 
     auto [mseR, mseG, mseB] = analysis::calculateMSE(img1, img2);
 
-    long denominatorR =  mseR * numCols * numRows;
+    long denominatorR = mseR * numCols * numRows;
 
     long maxR, maxG, maxB;
 
     long numeratorR, numeratorG, numeratorB;
     maxR = calculate_3DVecMax(imgMatrix1, 0);
-    numeratorR = maxR* maxR * numCols * numRows;
+    numeratorR = maxR * maxR * numCols * numRows;
 
-    if(numPixels ==1){
+    if (numPixels == 1) {
 
         float psnrR = 10 * std::log10(numeratorR / denominatorR);
-        return std::make_tuple(psnrR, 0,0);
-    }
-    else{
-        long denominatorG =  mseG * numCols * numRows;
-        long denominatorB =  mseB * numCols * numRows;
+        return std::make_tuple(psnrR, 0, 0);
+    } else {
+        long denominatorG = mseG * numCols * numRows;
+        long denominatorB = mseB * numCols * numRows;
 
-        maxG = calculate_3DVecMax(imgMatrix1,1);
-        maxB = calculate_3DVecMax(imgMatrix1,2);
+        maxG = calculate_3DVecMax(imgMatrix1, 1);
+        maxB = calculate_3DVecMax(imgMatrix1, 2);
 
-        numeratorG = maxG* maxG*  numCols * numRows;
-        numeratorB = maxB* maxB*  numCols * numRows;
-            
+        numeratorG = maxG * maxG * numCols * numRows;
+        numeratorB = maxB * maxB * numCols * numRows;
+
         float psnrR = 10 * std::log10(numeratorR / denominatorR);
         float psnrG = 10 * std::log10(numeratorG / denominatorG);
         float psnrB = 10 * std::log10(numeratorB / denominatorB);
         return std::make_tuple(psnrR, psnrG, psnrB);
-
     }
-
 }
 
 std::tuple<float, float, float> analysis::calculatePMSE(const Image& img1, const Image& img2)
@@ -101,29 +99,27 @@ std::tuple<float, float, float> analysis::calculatePMSE(const Image& img1, const
     int maxR, maxG, maxB;
     int denominatorR, denominatorB, denominatorG;
 
-    maxR = calculate_3DVecMax(imgMatrix1,0);
-    denominatorR = maxR* maxR;
+    maxR = calculate_3DVecMax(imgMatrix1, 0);
+    denominatorR = maxR * maxR;
 
-    if(numPixels ==1){
+    if (numPixels == 1) {
         maxG = 0;
         maxB = 0;
         denominatorB = 0;
         denominatorG = 0;
 
-        float pmseR = mseR /(denominatorR);
-        return std::make_tuple(pmseR, 0,0);
-    }
-    else{
-        maxG = calculate_3DVecMax(imgMatrix1,1);
-        maxB = calculate_3DVecMax(imgMatrix1,2);
+        float pmseR = mseR / (denominatorR);
+        return std::make_tuple(pmseR, 0, 0);
+    } else {
+        maxG = calculate_3DVecMax(imgMatrix1, 1);
+        maxB = calculate_3DVecMax(imgMatrix1, 2);
 
+        denominatorG = maxG * maxG;
+        denominatorB = maxB * maxB;
 
-        denominatorG= maxG* maxG;
-        denominatorB = maxB* maxB;
-            
-        float pmseG = mseG /(denominatorG);
-        float pmseR = mseR /(denominatorR);
-        float pmseB = mseB /(denominatorB);
+        float pmseG = mseG / (denominatorG);
+        float pmseR = mseR / (denominatorR);
+        float pmseB = mseB / (denominatorB);
         return std::make_tuple(pmseR, pmseG, pmseB);
     }
 }
@@ -131,45 +127,43 @@ std::tuple<float, float, float> analysis::calculatePMSE(const Image& img1, const
 std::tuple<int, int, int> analysis::calculateMD(const Image& img1, const Image& img2)
 {
 
+    imgVec imgMatrix1 = img1.getImgVec();
+    imgVec imgMatrix2 = img2.getImgVec();
 
-     imgVec imgMatrix1 = img1.getImgVec();
-     imgVec imgMatrix2 = img2.getImgVec();
+    int peakR = 0;
+    int peakG = 0;
+    int peakB = 0;
 
-     int peakR = 0;
-     int peakG = 0;
-     int peakB = 0;
+    int numRows = imgMatrix2.size();
+    int numCols = imgMatrix2[0].size();
+    int numPixels = imgMatrix2[0][0].size();
 
-     int numRows = imgMatrix2.size();
-     int numCols = imgMatrix2[0].size();
-     int numPixels = imgMatrix2[0][0].size();
+    int diff = 0;
+    for (int i = 0; i < numRows; ++i) {
+        for (int j = 0; j < numCols; ++j) {
 
-     int diff = 0;
-         for (int i = 0; i < numRows; ++i) {
-            for (int j = 0; j < numCols; ++j) {
+            if (numPixels == 1) {
+                diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
+                peakR = std::max(peakR, std::abs(diff));
 
-                if(numPixels ==1) {
-                    diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
-                    peakR = std::max(peakR, std::abs(diff));
+            } else if (numPixels == 3) {
+                diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
+                peakR = std::max(peakR, std::abs(diff));
 
-                }else if (numPixels==3){
-                    diff = imgMatrix1[i][j][0]- imgMatrix2[i][j][0];
-                    peakR = std::max(peakR, std::abs(diff));
+                diff = imgMatrix1[i][j][1] - imgMatrix2[i][j][1];
+                peakG = std::max(peakG, std::abs(diff));
 
-                    diff = imgMatrix1[i][j][1]- imgMatrix2[i][j][1];
-                    peakG = std::max(peakG, std::abs(diff));
-
-                    diff = imgMatrix1[i][j][2]- imgMatrix2[i][j][2];
-                    peakB = std::max(peakB, std::abs(diff));
-                }
-
+                diff = imgMatrix1[i][j][2] - imgMatrix2[i][j][2];
+                peakB = std::max(peakB, std::abs(diff));
             }
         }
+    }
 
-        return std::make_tuple(peakR, peakG, peakB);
+    return std::make_tuple(peakR, peakG, peakB);
 }
 
-
-std::tuple<float, float, float> analysis::calculateSNR(const Image& img1, const Image& img2){
+std::tuple<float, float, float> analysis::calculateSNR(const Image& img1, const Image& img2)
+{
     imgVec imgMatrix1 = img1.getImgVec();
     imgVec imgMatrix2 = img2.getImgVec();
 
@@ -181,30 +175,29 @@ std::tuple<float, float, float> analysis::calculateSNR(const Image& img1, const 
 
     long denominatorR = 1, denominatorG = 1, denominatorB = 1;
     long numeratorR = 0, numeratorG = 0, numeratorB = 0;
-    int diff =0;
+    int diff = 0;
     for (int i = 0; i < numRows; ++i) {
         for (int j = 0; j < numCols; ++j) {
 
-                if (numPixels == 1) {
-                    diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
-                    denominatorR += diff * diff;
-                    numeratorR += imgMatrix1[i][j][0] * imgMatrix1[i][j][0];
-                } else if (numPixels == 3) {
-                        diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
-                        denominatorR += diff * diff;
-                        numeratorR += imgMatrix1[i][j][0] * imgMatrix1[i][j][0];
+            if (numPixels == 1) {
+                diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
+                denominatorR += diff * diff;
+                numeratorR += imgMatrix1[i][j][0] * imgMatrix1[i][j][0];
+            } else if (numPixels == 3) {
+                diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
+                denominatorR += diff * diff;
+                numeratorR += imgMatrix1[i][j][0] * imgMatrix1[i][j][0];
 
-                        diff = imgMatrix1[i][j][1] - imgMatrix2[i][j][1];
-                        denominatorG += diff * diff;
-                        numeratorG += imgMatrix1[i][j][1] * imgMatrix1[i][j][1];
+                diff = imgMatrix1[i][j][1] - imgMatrix2[i][j][1];
+                denominatorG += diff * diff;
+                numeratorG += imgMatrix1[i][j][1] * imgMatrix1[i][j][1];
 
-                        diff = imgMatrix1[i][j][2] - imgMatrix2[i][j][2];
-                        denominatorB += diff * diff;
-                        numeratorB += imgMatrix1[i][j][2] * imgMatrix1[i][j][2];
-                    }
-                }
-
+                diff = imgMatrix1[i][j][2] - imgMatrix2[i][j][2];
+                denominatorB += diff * diff;
+                numeratorB += imgMatrix1[i][j][2] * imgMatrix1[i][j][2];
+            }
         }
+    }
 
     snrR = 10 * std::log10(static_cast<float>(numeratorR) / static_cast<float>(denominatorR));
     snrG = 10 * std::log10(static_cast<float>(numeratorG) / static_cast<float>(denominatorG));
@@ -225,9 +218,9 @@ int analysis::calculate_3DVecMax(imgVec& threeDVector, int chan)
     for (const auto& layer : threeDVector) {
         for (const auto& row : layer) {
             int value = row[chan];
-                if (value > max_value) {
-                    max_value = value;
-                }
+            if (value > max_value) {
+                max_value = value;
+            }
         }
     }
     return max_value;

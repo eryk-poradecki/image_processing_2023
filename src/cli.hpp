@@ -18,8 +18,8 @@
 const std::string OUTPUT_FILENAME("output.bmp");
 const std::string HISTOGRAM_FILENAME("hist.jpg");
 
-template<typename T>
-void displayTuple(std::tuple<T, T , T> res, int chan);
+template <typename T>
+void displayTuple(std::tuple<T, T, T> res, int chan);
 
 inline int cliMain(int argc, char** argv)
 {
@@ -143,23 +143,21 @@ inline int cliMain(int argc, char** argv)
         Image outImg = Image(filteredImageVec);
         if (input.cmdOptionExists("--mse")) {
             std::cout << "MSE:\n";
-            displayTuple(  analysis::calculateMSE(img, outImg), spectrum);
+            displayTuple(analysis::calculateMSE(img, outImg), spectrum);
         }
-        
+
         if (input.cmdOptionExists("--pmse")) {
             std::cout << "PMSE:\n";
-            displayTuple(  analysis::calculatePMSE(img, outImg), spectrum);
-
+            displayTuple(analysis::calculatePMSE(img, outImg), spectrum);
         }
         if (input.cmdOptionExists("--psnr")) {
             std::cout << "PSNR:\n";
-            displayTuple(  analysis::calculatePSNR(img, outImg), spectrum);
-
+            displayTuple(analysis::calculatePSNR(img, outImg), spectrum);
         }
         if (input.cmdOptionExists("--md")) {
-        
+
             std::cout << "MD:\n";
-            displayTuple(  analysis::calculateMD(img, outImg), spectrum);
+            displayTuple(analysis::calculateMD(img, outImg), spectrum);
         }
 
         if (input.cmdOptionExists("--snr")) {
@@ -179,17 +177,16 @@ inline int cliMain(int argc, char** argv)
     return 0;
 }
 
-
-template<typename T>
-void displayTuple(std::tuple<T, T , T> res, int chan){
-    auto [r,g,b] = res;
-    if(chan ==1){
+template <typename T>
+void displayTuple(std::tuple<T, T, T> res, int chan)
+{
+    auto [r, g, b] = res;
+    if (chan == 1) {
         std::cout << r << "\n";
-		return;
+        return;
     }
 
-        std::cout << r << "\n";
-        std::cout << g << "\n";
-        std::cout << b << "\n";
-	
+    std::cout << r << "\n";
+    std::cout << g << "\n";
+    std::cout << b << "\n";
 }
