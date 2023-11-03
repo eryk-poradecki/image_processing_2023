@@ -9,20 +9,20 @@ Image::Image(imgVec& img)
     mWidth = img[0].size();
     mSpectrum = img[0][0].size();
 }
-imgVec& Image::getImgVec() const
+imgVec& Image::getImgVec() const noexcept
 {
     return mImgVec;
 }
 
-int Image::getHeight() const
+int Image::getHeight() const noexcept
 {
     return mHeight;
 }
-int Image::getWidth() const
+int Image::getWidth() const noexcept
 {
     return mWidth;
 }
-int Image::getSpectrum() const
+int Image::getSpectrum() const noexcept
 {
     return mSpectrum;
 }
