@@ -51,8 +51,7 @@ TEST(CalculatePSNRTest, ValidInput)
 
     Image img2 = Image(expectedVec);
 
-    float expected = 10 * std::log10(255 * 255);
-
+    float expected = 10 * std::log10(1);
     ASSERT_NO_THROW({
         float actual = calculatePSNR(img1, img2);
         float tolerance = 1e-6;

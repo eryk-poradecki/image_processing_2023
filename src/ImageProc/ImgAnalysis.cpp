@@ -7,6 +7,8 @@
 
 using namespace ImageProc;
 
+int calculate_3DVecMax(imgVec& threeDVector);
+
 float analysis::calculateMSE(const Image& img1, const Image& img2)
 {
 
@@ -43,7 +45,10 @@ float analysis::calculatePSNR(const Image& img1, const Image& img2)
     int numPixels = imgMatrix1[0][0].size();
 
     float mse = analysis::calculateMSE(img1, img2) * numPixels * numCols * numRows;
-    int numerator = R * R;
+
+    int max = calculate_3DVecMax(imgMatrix1);
+
+    int numerator = max * max;
     return 10 * std::log10(numerator / mse);
 }
 
@@ -51,8 +56,8 @@ int analysis::calculatePMSE(const Image& img1, const Image& img2)
 {
 
     float mse = analysis::calculateMSE(img1, img2);
-
-    return (mse / (255 * 255));
+    int max = calculate_3DVecMax(img1.getImgVec());
+    return (mse / (max * max));
 }
 
 int analysis::calculateMD(const Image& img1, const Image& img2)
@@ -101,4 +106,20 @@ float analysis::calculatSNR(const Image& img1, const Image& img2)
     }
 
     return 10 * std::log10(numerator / denominator);
+}
+
+int calculate_3DVecMax(imgVec& threeDVector)
+{
+
+    int max_value = threeDVector[0][0][0];
+    for (const auto& layer : threeDVector) {
+        for (const auto& row : layer) {
+            for (const int& value : row) {
+                if (value > max_value) {
+                    max_value = value;
+                }
+            }
+        }
+    }
+    return max_value;
 }
