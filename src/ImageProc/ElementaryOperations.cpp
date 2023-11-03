@@ -8,9 +8,9 @@ void adjustBrightness(Image& image, int brightness)
 {
     imgVec& imgMatrix = image.getImgVec();
 
-    for (auto& column : imgMatrix) {
-        for (auto& row : column) {
-            for (auto& channelPixel : row) {
+    for (auto& row : imgMatrix) {
+        for (auto& column : row) {
+            for (auto& channelPixel : column) {
                 int newChannelPixel = channelPixel + brightness;
                 channelPixel = std::min(255, std::max(0, newChannelPixel));
             }
