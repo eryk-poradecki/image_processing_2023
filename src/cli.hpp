@@ -78,10 +78,6 @@ inline int cliMain(int argc, char** argv)
         geometric::horizontalFlip(img);
         convertToCimgAndCopyBack(image, img.getImgVec());
     }
-    if (input.cmdOptionExists("--hflip")) {
-        geometric::horizontalFlip(img);
-        convertToCimgAndCopyBack(image, img.getImgVec());
-    }
     if (input.cmdOptionExists("--dflip")) {
         geometric::diagonalFlip(img);
         convertToCimgAndCopyBack(image, img.getImgVec());
