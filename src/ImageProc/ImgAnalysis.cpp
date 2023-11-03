@@ -1,15 +1,13 @@
 #include "ImgAnalysis.h"
 #include "Exceptions.h"
-#include "Helpers.h"
 #include "Types.h"
 #include <cmath>
 #include <cstdlib>
+#include <tuple>
 
 using namespace ImageProc;
 
 int calculate_3DVecMax(imgVec& threeDVector, int chan);
-
-#include <tuple>
 
 std::tuple<float, float, float> analysis::calculateMSE(const Image& img1, const Image& img2) {
     imgVec imgMatrix1 = img1.getImgVec();
@@ -67,8 +65,8 @@ std::tuple<float, float, float> analysis::calculatePSNR(const Image& img1, const
     long maxR, maxG, maxB;
 
     long numeratorR, numeratorG, numeratorB;
-    maxR = calculate_3DVecMax(imgMatrix1, 0)*  numCols * numRows;
-    numeratorR = maxR* maxR;
+    maxR = calculate_3DVecMax(imgMatrix1, 0);
+    numeratorR = maxR* maxR * numCols * numRows;
 
     if(numPixels ==1){
 
@@ -79,13 +77,11 @@ std::tuple<float, float, float> analysis::calculatePSNR(const Image& img1, const
         long denominatorG =  mseG * numCols * numRows;
         long denominatorB =  mseB * numCols * numRows;
 
-        maxR = calculate_3DVecMax(imgMatrix1,0)*  numCols * numRows;
-        maxG = calculate_3DVecMax(imgMatrix1,1)*  numCols * numRows;
-        maxB = calculate_3DVecMax(imgMatrix1,2)*  numCols * numRows;
+        maxG = calculate_3DVecMax(imgMatrix1,1);
+        maxB = calculate_3DVecMax(imgMatrix1,2);
 
-        numeratorR = maxR* maxR;
-        numeratorG = maxG* maxG;
-        numeratorB = maxB* maxB;
+        numeratorG = maxG* maxG*  numCols * numRows;
+        numeratorB = maxB* maxB*  numCols * numRows;
             
         float psnrR = 10 * std::log10(numeratorR / denominatorR);
         float psnrG = 10 * std::log10(numeratorG / denominatorG);
@@ -103,30 +99,31 @@ std::tuple<float, float, float> analysis::calculatePMSE(const Image& img1, const
     imgVec imgMatrix1 = img1.getImgVec();
     int numPixels = imgMatrix1[0][0].size();
     int maxR, maxG, maxB;
-    int numeratorR, numeratorG, numeratorB;
+    int denominatorR, denominatorB, denominatorG;
+
+    maxR = calculate_3DVecMax(imgMatrix1,0);
+    denominatorR = maxR* maxR;
+
     if(numPixels ==1){
-        maxR = calculate_3DVecMax(imgMatrix1,0);
         maxG = 0;
         maxB = 0;
-        numeratorR = maxR* maxR;
-        numeratorG = 0;
-        numeratorB = 0;
+        denominatorB = 0;
+        denominatorG = 0;
 
-        float pmseR = mseR /(maxR*maxR);
+        float pmseR = mseR /(denominatorR);
         return std::make_tuple(pmseR, 0,0);
     }
     else{
-        maxR = calculate_3DVecMax(imgMatrix1,0);
         maxG = calculate_3DVecMax(imgMatrix1,1);
         maxB = calculate_3DVecMax(imgMatrix1,2);
 
-        numeratorR = maxR* maxR;
-        numeratorG = maxG* maxG;
-        numeratorB = maxB* maxB;
+
+        denominatorG= maxG* maxG;
+        denominatorB = maxB* maxB;
             
-        float pmseG = mseG /(maxG*maxG);
-        float pmseR = mseR /(maxR*maxR);
-        float pmseB = mseB /(maxB*maxB);
+        float pmseG = mseG /(denominatorG);
+        float pmseR = mseR /(denominatorR);
+        float pmseB = mseB /(denominatorB);
         return std::make_tuple(pmseR, pmseG, pmseB);
     }
 }
@@ -193,10 +190,15 @@ std::tuple<float, float, float> analysis::calculateSNR(const Image& img1, const 
                     denominatorR += diff * diff;
                     numeratorR += imgMatrix1[i][j][0] * imgMatrix1[i][j][0];
                 } else if (numPixels == 3) {
+                        diff = imgMatrix1[i][j][0] - imgMatrix2[i][j][0];
                         denominatorR += diff * diff;
                         numeratorR += imgMatrix1[i][j][0] * imgMatrix1[i][j][0];
+
+                        diff = imgMatrix1[i][j][1] - imgMatrix2[i][j][1];
                         denominatorG += diff * diff;
                         numeratorG += imgMatrix1[i][j][1] * imgMatrix1[i][j][1];
+
+                        diff = imgMatrix1[i][j][2] - imgMatrix2[i][j][2];
                         denominatorB += diff * diff;
                         numeratorB += imgMatrix1[i][j][2] * imgMatrix1[i][j][2];
                     }
