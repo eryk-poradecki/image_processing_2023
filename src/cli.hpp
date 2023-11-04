@@ -119,7 +119,12 @@ inline int cliMain(int argc, char** argv)
 
         cimgEnlargedImage.save("enlarged_image.bmp");
     }
-    if (input.cmdOptionExists("--adaptive")) {
+    bool adaptiveFilter = input.cmdOptionExists("--adaptive");
+    bool minFilter = input.cmdOptionExists("--min");
+    bool maxFilter = input.cmdOptionExists("--max");
+    imgVec filteredImageVec;
+    Image outImg;
+    if (adaptiveFilter) {
         int wmax, hmax, wmin, hmin;
         try {
             wmin = std::stoi(input.getCmdOption("--wmin"));
@@ -135,8 +140,24 @@ inline int cliMain(int argc, char** argv)
             std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
             return -1;
         }
-        imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
-        Image outImg = Image(filteredImageVec);
+        filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
+        Image filtered(filteredImageVec);
+        outImg = std::move(Image(filteredImageVec));
+    }
+    if (maxFilter || minFilter) {
+        int h, w;
+        try {
+            w = std::stoi(input.getCmdOption("--w"));
+            h = std::stoi(input.getCmdOption("--h"));
+
+        } catch (...) {
+            std::cout << "uncorrent h, w values\n";
+            return -1;
+        }
+        filteredImageVec = noise::minMaxFilter(img, w, h, minFilter);
+        outImg = std::move(Image(filteredImageVec));
+    }
+    if (adaptiveFilter || maxFilter || minFilter) {
         if (input.cmdOptionExists("--mse")) {
             std::cout << "MSE:\n";
             displayTuple(analysis::calculateMSE(img, outImg), spectrum);
