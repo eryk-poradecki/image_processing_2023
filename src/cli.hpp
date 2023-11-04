@@ -9,12 +9,17 @@
 #include "ImageProc/Types.h"
 #include "config.hpp"
 #include "files.hpp"
+#include <CImg.h>
 #include <filesystem>
 #include <iostream>
 #include <string>
+#include <string_view>
 
 const std::string OUTPUT_FILENAME("output.bmp");
 const std::string HISTOGRAM_FILENAME("hist.jpg");
+
+template <typename T>
+void displayTuple(std::tuple<T, T, T> res, int chan);
 
 inline int cliMain(int argc, char** argv)
 {
@@ -121,6 +126,7 @@ inline int cliMain(int argc, char** argv)
             wmax = std::stoi(input.getCmdOption("--wmax"));
             hmin = std::stoi(input.getCmdOption("--hmin"));
             hmax = std::stoi(input.getCmdOption("--hmax"));
+
         } catch (...) {
             std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
             return -1;
@@ -132,25 +138,27 @@ inline int cliMain(int argc, char** argv)
         imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
         Image outImg = Image(filteredImageVec);
         if (input.cmdOptionExists("--mse")) {
-
-            std::cout << "MSE:" << analysis::calculateMSE(img, outImg) << "\n";
+            std::cout << "MSE:\n";
+            displayTuple(analysis::calculateMSE(img, outImg), spectrum);
         }
 
         if (input.cmdOptionExists("--pmse")) {
-
-            std::cout << "PMSE:" << analysis::calculatePMSE(img, outImg) << "\n";
+            std::cout << "PMSE:\n";
+            displayTuple(analysis::calculatePMSE(img, outImg), spectrum);
         }
         if (input.cmdOptionExists("--psnr")) {
-
-            std::cout << "PSNR:" << analysis::calculatePSNR(img, outImg) << "\n";
+            std::cout << "PSNR:\n";
+            displayTuple(analysis::calculatePSNR(img, outImg), spectrum);
         }
         if (input.cmdOptionExists("--md")) {
 
-            std::cout << "MD:" << analysis::calculateMD(img, outImg) << "\n";
+            std::cout << "MD:\n";
+            displayTuple(analysis::calculateMD(img, outImg), spectrum);
         }
-        if (input.cmdOptionExists("--snr")) {
 
-            std::cout << "SNR:" << analysis::calculatSNR(img, outImg) << "\n";
+        if (input.cmdOptionExists("--snr")) {
+            std::cout << "SNR:\n";
+            displayTuple(analysis::calculateSNR(img, outImg), spectrum);
         }
         CImg<unsigned char> cimgFilteredImage(filteredImageVec.size(), filteredImageVec[0].size(), 1, filteredImageVec[0][0].size(), 0);
 
@@ -163,4 +171,18 @@ inline int cliMain(int argc, char** argv)
     // }
     image.save(OUTPUT_FILENAME.c_str());
     return 0;
+}
+
+template <typename T>
+void displayTuple(std::tuple<T, T, T> res, int chan)
+{
+    auto [r, g, b] = res;
+    if (chan == 1) {
+        std::cout << r << "\n";
+        return;
+    }
+
+    std::cout << r << "\n";
+    std::cout << g << "\n";
+    std::cout << b << "\n";
 }

@@ -10,10 +10,10 @@ using imgVec = std::vector<std::vector<std::vector<unsigned char>>>;
 class Image {
 public:
     Image(imgVec& img);
-   [[nodiscard]] imgVec& getImgVec() const noexcept;
-   [[nodiscard]] int getHeight() const noexcept;
-   [[nodiscard]] int getWidth() const noexcept;
-   [[nodiscard]] int getSpectrum() const noexcept;
+    [[nodiscard]] imgVec& getImgVec() const noexcept;
+    [[nodiscard]] int getHeight() const noexcept;
+    [[nodiscard]] int getWidth() const noexcept;
+    [[nodiscard]] int getSpectrum() const noexcept;
 
     bool operator!=(const Image& other) const;
     bool operator==(const Image& other) const;
