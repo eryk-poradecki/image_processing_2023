@@ -109,5 +109,57 @@ namespace noise {
 
         return outputImgVec;
     }
+    imgVec minMaxFilter(Image& image, int w, int h, bool minFilter)
+    {
+
+        int width = image.getWidth();
+        int height = image.getHeight();
+        int spectrum = image.getSpectrum();
+        imgVec& originalVec = image.getImgVec();
+
+        imgVec outputImgVec(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum)));
+
+        for (int x = 0; x < width; ++x) {
+            for (int y = 0; y < height; ++y) {
+
+                int startX = std::max(0, x - w / 2);
+                int startY = std::max(0, y - h / 2);
+                int endX = std::min(width - 1, x + w / 2);
+                int endY = std::min(height - 1, y + h / 2);
+
+                std::vector<unsigned char> windowValuesR;
+                std::vector<unsigned char> windowValuesG;
+                std::vector<unsigned char> windowValuesB;
+
+                for (int i = startX; i <= endX; ++i) {
+                    for (int j = startY; j <= endY; ++j) {
+                        windowValuesR.push_back(originalVec[j][i][0]);
+                        windowValuesG.push_back(originalVec[j][i][1]);
+                        windowValuesB.push_back(originalVec[j][i][2]);
+                    }
+                }
+                // min Filter, otherwise max Filter
+                //
+                unsigned char newR {};
+                unsigned char newG {};
+                unsigned char newB {};
+
+                if (minFilter) {
+                    newR = *std::min_element(windowValuesR.begin(), windowValuesR.end());
+                    newG = *std::min_element(windowValuesG.begin(), windowValuesG.end());
+                    newB = *std::min_element(windowValuesB.begin(), windowValuesB.end());
+                } else {
+
+                    newR = *std::max_element(windowValuesR.begin(), windowValuesR.end());
+                    newG = *std::max_element(windowValuesG.begin(), windowValuesG.end());
+                    newB = *std::max_element(windowValuesB.begin(), windowValuesB.end());
+                }
+                outputImgVec[y][x][0] = newR;
+                outputImgVec[y][x][1] = newG;
+                outputImgVec[y][x][2] = newG;
+            }
+        }
+        return outputImgVec;
+    }
 }
 }

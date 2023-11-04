@@ -92,7 +92,7 @@ inline int cliMain(int argc, char** argv)
         try {
             shrinkFactor = std::stoi(input.getCmdOption("--shrink"));
         } catch (...) {
-            std::cout << "uncorrent shrink factor\n";
+            std::cout << "incorrent shrink factor\n";
             return 1;
         }
         imgVec shrunkImageVec = geometric::shrinkImage(img, shrinkFactor);
@@ -108,7 +108,7 @@ inline int cliMain(int argc, char** argv)
         try {
             enlargeFactor = std::stoi(input.getCmdOption("--enlarge"));
         } catch (...) {
-            std::cout << "uncorrent enlarge factor\n";
+            std::cout << "incorrent enlarge factor\n";
             return 1;
         }
         imgVec enlargedImageVec = geometric::enlargeImage(img, enlargeFactor);
@@ -119,7 +119,12 @@ inline int cliMain(int argc, char** argv)
 
         cimgEnlargedImage.save("enlarged_image.bmp");
     }
-    if (input.cmdOptionExists("--adaptive")) {
+    bool adaptiveFilter = input.cmdOptionExists("--adaptive");
+    bool minFilter = input.cmdOptionExists("--min");
+    bool maxFilter = input.cmdOptionExists("--max");
+    imgVec filteredImageVec;
+    Image outImg;
+    if (adaptiveFilter) {
         int wmax, hmax, wmin, hmin;
         try {
             wmin = std::stoi(input.getCmdOption("--wmin"));
@@ -128,15 +133,31 @@ inline int cliMain(int argc, char** argv)
             hmax = std::stoi(input.getCmdOption("--hmax"));
 
         } catch (...) {
-            std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
+            std::cout << "incorrent hmin, hmax, wmin, mwax values\n";
             return -1;
         }
         if (hmin >= hmax || wmin >= wmax) {
-            std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
+            std::cout << "incorrent hmin, hmax, wmin, mwax values\n";
             return -1;
         }
-        imgVec filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
-        Image outImg = Image(filteredImageVec);
+        filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
+        Image filtered(filteredImageVec);
+        outImg = std::move(Image(filteredImageVec));
+    }
+    if (maxFilter || minFilter) {
+        int h, w;
+        try {
+            w = std::stoi(input.getCmdOption("--w"));
+            h = std::stoi(input.getCmdOption("--h"));
+
+        } catch (...) {
+            std::cout << "incorrent h, w values\n";
+            return -1;
+        }
+        filteredImageVec = noise::minMaxFilter(img, w, h, minFilter);
+        outImg = std::move(Image(filteredImageVec));
+    }
+    if (adaptiveFilter || maxFilter || minFilter) {
         if (input.cmdOptionExists("--mse")) {
             std::cout << "MSE:\n";
             displayTuple(analysis::calculateMSE(img, outImg), spectrum);
@@ -164,7 +185,6 @@ inline int cliMain(int argc, char** argv)
 
         convertToCimgAndCopyBack(cimgFilteredImage, filteredImageVec);
 
-        cimgFilteredImage.save("filtered_image.bmp");
     }
     // if (input.cmdOptionExists("--histogram")) {
     //     histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
