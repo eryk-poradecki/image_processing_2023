@@ -92,7 +92,7 @@ inline int cliMain(int argc, char** argv)
         try {
             shrinkFactor = std::stoi(input.getCmdOption("--shrink"));
         } catch (...) {
-            std::cout << "uncorrent shrink factor\n";
+            std::cout << "incorrent shrink factor\n";
             return 1;
         }
         imgVec shrunkImageVec = geometric::shrinkImage(img, shrinkFactor);
@@ -108,7 +108,7 @@ inline int cliMain(int argc, char** argv)
         try {
             enlargeFactor = std::stoi(input.getCmdOption("--enlarge"));
         } catch (...) {
-            std::cout << "uncorrent enlarge factor\n";
+            std::cout << "incorrent enlarge factor\n";
             return 1;
         }
         imgVec enlargedImageVec = geometric::enlargeImage(img, enlargeFactor);
@@ -133,11 +133,11 @@ inline int cliMain(int argc, char** argv)
             hmax = std::stoi(input.getCmdOption("--hmax"));
 
         } catch (...) {
-            std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
+            std::cout << "incorrent hmin, hmax, wmin, mwax values\n";
             return -1;
         }
         if (hmin >= hmax || wmin >= wmax) {
-            std::cout << "uncorrent hmin, hmax, wmin, mwax values\n";
+            std::cout << "incorrent hmin, hmax, wmin, mwax values\n";
             return -1;
         }
         filteredImageVec = noise::adaptiveMedianFilter(img, wmin, wmax, hmin, hmax);
@@ -151,7 +151,7 @@ inline int cliMain(int argc, char** argv)
             h = std::stoi(input.getCmdOption("--h"));
 
         } catch (...) {
-            std::cout << "uncorrent h, w values\n";
+            std::cout << "incorrent h, w values\n";
             return -1;
         }
         filteredImageVec = noise::minMaxFilter(img, w, h, minFilter);
@@ -185,7 +185,6 @@ inline int cliMain(int argc, char** argv)
 
         convertToCimgAndCopyBack(cimgFilteredImage, filteredImageVec);
 
-        cimgFilteredImage.save("filtered_image.bmp");
     }
     // if (input.cmdOptionExists("--histogram")) {
     //     histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
