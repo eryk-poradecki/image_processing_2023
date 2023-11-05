@@ -17,7 +17,6 @@ helpers.hpp
 geometric_operations_test.cpp
 analysis_operation_test.cpp
 noise_removal_test.cpp
-histogram_test.cpp
 )
 
 target_link_libraries(runUnitTests gtest gtest_main ImageProc)

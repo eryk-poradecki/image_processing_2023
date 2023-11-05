@@ -3,7 +3,6 @@
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/GeometricOperations.h"
-#include "ImageProc/Histogram.h"
 #include "ImageProc/ImgAnalysis.h"
 #include "ImageProc/NoiseRemoval.h"
 #include "ImageProc/Types.h"
@@ -16,7 +15,6 @@
 #include <string_view>
 
 const std::string OUTPUT_FILENAME("output.bmp");
-const std::string HISTOGRAM_FILENAME("hist.jpg");
 
 template <typename T>
 void displayTuple(std::tuple<T, T, T> res, int chan);
@@ -187,9 +185,6 @@ inline int cliMain(int argc, char** argv)
 
         cimgFilteredImage.save("filtered_image.bmp");
     }
-    // if (input.cmdOptionExists("--histogram")) {
-    //     histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
-    // }
     image.save(OUTPUT_FILENAME.c_str());
     return 0;
 }

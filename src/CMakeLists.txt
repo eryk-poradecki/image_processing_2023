@@ -17,14 +17,11 @@ set(SOURCE_FILES
     ImageProc/Exceptions.cpp
     ImageProc/ImgAnalysis.cpp
     ImageProc/ImgAnalysis.h
-	ImageProc/Histogram.cpp
-	ImageProc/Histogram.h
 	cli.hpp
 	files.hpp
     )
 
 add_library(ImageProc ${SOURCE_FILES})
-target_link_libraries(ImageProc PUBLIC Matplot++::matplot)
 
 add_library(CLI
     CLI/InputParser.cpp
@@ -32,7 +29,6 @@ add_library(CLI
 
 include_directories(SYSTEM ${CMAKE_SOURCE_DIR}/libs)
 
-find_package(Matplot++ REQUIRED)
 
 target_include_directories(ImageProc
     PUBLIC
