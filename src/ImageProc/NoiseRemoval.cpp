@@ -156,7 +156,7 @@ namespace noise {
                 }
                 outputImgVec[y][x][0] = newR;
                 outputImgVec[y][x][1] = newG;
-                outputImgVec[y][x][2] = newG;
+                outputImgVec[y][x][2] = newB;
             }
         }
         return outputImgVec;
