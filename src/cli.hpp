@@ -185,6 +185,7 @@ inline int cliMain(int argc, char** argv)
 
         convertToCimgAndCopyBack(cimgFilteredImage, filteredImageVec);
 
+        cimgFilteredImage.save("filtered_image.bmp");
     }
     // if (input.cmdOptionExists("--histogram")) {
     //     histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
