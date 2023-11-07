@@ -19,12 +19,28 @@ void createAndSaveHist(const ImageProc::Image& img, const std::string_view filen
         matplot::hist(splitRGBVec[i], nBins);
         auto x = matplot::linspace(0, 256);
         matplot::xticks({ 0, 128, 255 });
-        matplot::ylim({ 0, +3000 });
-        // TODO
-        // Dont know how to set y lim automatically
         auto ax = matplot::gca();
         ax->x_axis().label_font_size(12);
     }
+    matplot::save(filename.data());
+}
+
+void createAndSaveHistForColorChannel(const ImageProc::Image& img, const std::string_view filename, int channel, size_t nBins)
+{
+    int col = img.getWidth();
+    int row = img.getHeight();
+    auto splitRGBVec = histogram::splitRGBImgToSaperateLayerRGB(img);
+
+    if (channel < 0 || channel >= splitRGBVec.size()) {
+        std::cout << "Invalid channel number" << std::endl;
+        return;
+    }
+
+    matplot::hist(splitRGBVec[channel], nBins);
+    auto x = matplot::linspace(0, 256);
+    matplot::xticks({ 0, 128, 255 });
+    auto ax = matplot::gca();
+    ax->x_axis().label_font_size(12);
     matplot::save(filename.data());
 }
 

@@ -187,9 +187,15 @@ inline int cliMain(int argc, char** argv)
 
         cimgFilteredImage.save("filtered_image.bmp");
     }
-    // if (input.cmdOptionExists("--histogram")) {
-    //     histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
-    // }
+    if (input.cmdOptionExists("--histogram")) {
+        if (input.cmdOptionExists("--channel")) {
+            int channel = std::stoi(input.getCmdOption("--channel"));
+            histogram::createAndSaveHistForColorChannel(img, HISTOGRAM_FILENAME, channel);
+        }
+        else {
+            histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
+        }
+    }
     image.save(OUTPUT_FILENAME.c_str());
     return 0;
 }

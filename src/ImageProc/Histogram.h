@@ -70,4 +70,5 @@ private:
 
 void createAndSaveHist(const ImageProc::Image& img, const std::string_view filename, size_t nBins = NUM_BINS);
 
+void createAndSaveHistForColorChannel(const ImageProc::Image& img, const std::string_view filename, int channel = 0, size_t nBins = NUM_BINS);
 }
