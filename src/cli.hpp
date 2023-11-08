@@ -4,6 +4,7 @@
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/GeometricOperations.h"
 #include "ImageProc/Histogram.h"
+#include "ImageProc/ImgCharacteristics.h"
 #include "ImageProc/ImgAnalysis.h"
 #include "ImageProc/NoiseRemoval.h"
 #include "ImageProc/Types.h"
@@ -194,6 +195,9 @@ inline int cliMain(int argc, char** argv)
         }
         else {
             histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
+        }
+        if (input.cmdOptionExists("--cmean")) {
+            displayTuple(characteristics::calculateMean(img), spectrum);
         }
     }
     image.save(OUTPUT_FILENAME.c_str());
