@@ -19,6 +19,8 @@ set(SOURCE_FILES
     ImageProc/ImgAnalysis.h
 	ImageProc/Histogram.cpp
 	ImageProc/Histogram.h
+	ImageProc/ImgCharacteristics.h
+    ImageProc/ImgCharacteristics.cpp
 	cli.hpp
 	files.hpp
     )
