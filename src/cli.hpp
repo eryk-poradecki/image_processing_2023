@@ -198,6 +198,15 @@ inline int cliMain(int argc, char** argv)
         if (input.cmdOptionExists("--cmean")) {
             displayTuple(characteristics::calculateMean(img), spectrum);
         }
+        if (input.cmdOptionExists("--cvariance")) {
+            displayTuple(characteristics::calculateVariance(img), spectrum);
+        }
+        if (input.cmdOptionExists("--cstdev")) {
+            displayTuple(characteristics::calculateStandardDeviation(img), spectrum);
+        }
+        if (input.cmdOptionExists("--cvarcoi")) {
+            displayTuple(characteristics::calculateVariationCoefficientI(img), spectrum);
+        }
     }
     image.save(OUTPUT_FILENAME.c_str());
     return 0;
