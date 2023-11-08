@@ -10,13 +10,13 @@ using namespace histogram;
 
     std::tuple<float, float, float> characteristics::calculateMean(const Image& image)
     {
-        Histogram<256, 3> histogram;
+        Histogram<NUM_BINS, 3> histogram;
         auto histData = histogram.createHistogramFromImg(image);
 
         float sumR = 0.0, sumG = 0.0, sumB = 0.0;
         float totalPixels = image.getWidth() * image.getHeight();
 
-        for (size_t i = 0; i < 256; ++i) {
+        for (size_t i = 0; i < NUM_BINS; ++i) {
             sumR += i * histData[0][i];
             sumG += i * histData[1][i];
             sumB += i * histData[2][i];
