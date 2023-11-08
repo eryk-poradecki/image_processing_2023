@@ -12,9 +12,9 @@ TEST(CalculateMeanTest, ValidInput)
 {
     imgVec inputVec(3, std::vector<std::vector<unsigned char>>(3, std::vector<unsigned char>(3)));
 
-    inputVec[0] = { {255, 0, 0}, {0, 255, 0}, {0, 0, 255} };
-    inputVec[1] = { {100, 50, 200}, {200, 150, 100}, {50, 100, 150} };
-    inputVec[2] = { {150, 150, 150}, {150, 150, 150}, {150, 150, 150} };
+    inputVec[0] = { { 255, 0, 0 }, { 0, 255, 0 }, { 0, 0, 255 } };
+    inputVec[1] = { { 100, 50, 200 }, { 200, 150, 100 }, { 50, 100, 150 } };
+    inputVec[2] = { { 150, 150, 150 }, { 150, 150, 150 }, { 150, 150, 150 } };
 
     Image testImage = Image(inputVec);
 

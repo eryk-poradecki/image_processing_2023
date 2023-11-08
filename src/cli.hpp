@@ -4,8 +4,8 @@
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/GeometricOperations.h"
 #include "ImageProc/Histogram.h"
-#include "ImageProc/ImgCharacteristics.h"
 #include "ImageProc/ImgAnalysis.h"
+#include "ImageProc/ImgCharacteristics.h"
 #include "ImageProc/NoiseRemoval.h"
 #include "ImageProc/Types.h"
 #include "config.hpp"
@@ -192,8 +192,7 @@ inline int cliMain(int argc, char** argv)
         if (input.cmdOptionExists("--channel")) {
             int channel = std::stoi(input.getCmdOption("--channel"));
             histogram::createAndSaveHistForColorChannel(img, HISTOGRAM_FILENAME, channel);
-        }
-        else {
+        } else {
             histogram::createAndSaveHist(img, HISTOGRAM_FILENAME);
         }
         if (input.cmdOptionExists("--cmean")) {

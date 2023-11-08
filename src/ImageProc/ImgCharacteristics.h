@@ -1,10 +1,10 @@
 #pragma once
-#include "ImageProc/Types.h"
 #include "ImageProc/Histogram.h"
+#include "ImageProc/Types.h"
 
 namespace ImageProc::characteristics {
 
-    using namespace histogram;
+using namespace histogram;
 
-    std::tuple<float, float, float> calculateMean(const Image& image);
+std::tuple<float, float, float> calculateMean(const Image& image);
 }
