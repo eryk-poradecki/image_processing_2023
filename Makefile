@@ -25,7 +25,7 @@ clean:
 ifeq ($(UNAME), Darwin)
 # macOS specific formatting
 format:
-	find . -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.cc" -o -name "*.cxx" -o -name "*.h"\) -exec clang-format -style=file -i {} \;
+	find . -type f \( -name "*.cpp" -o -name "*.hpp" -o -name "*.cc" -o -name "*.cxx" -o -name "*.h" \) -exec clang-format -style=file -i {} \;
 else
 # Other platforms use the original command
 format:
@@ -33,4 +33,3 @@ format:
 endif
 
 .PHONY: all configure compile clean format test
-
