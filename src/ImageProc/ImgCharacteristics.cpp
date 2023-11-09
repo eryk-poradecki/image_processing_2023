@@ -73,3 +73,28 @@ std::tuple<float, float, float> characteristics::calculateVariationCoefficientI(
 
     return std::make_tuple(variationCoeffR, variationCoeffG, variationCoeffB);
 }
+std::tuple<float, float, float> characteristics::calculateInformationSourceEntropy(const Image& image)
+{
+
+    Histogram<NUM_BINS, 3> histogram;
+    auto histData = histogram.createHistogramFromImg(image);
+
+    float sumR = 0.0, sumG = 0.0, sumB = 0.0;
+    float totalPixels = image.getWidth() * image.getHeight();
+
+    for (size_t i = 0; i < NUM_BINS; ++i) {
+        if (histData[0][i] != 0)
+            sumR += histData[0][i] * std::log2(histData[0][i] / totalPixels);
+        if (histData[1][i] != 0)
+            sumG += histData[1][i] * std::log2(histData[1][i] / totalPixels);
+        if (histData[2][i] != 0)
+            sumB += histData[2][i] * std::log2(histData[2][i] / totalPixels);
+    }
+
+    float factor = -1 / totalPixels;
+    float informationSourceEntropyR = sumR * factor;
+    float informationSourceEntropyG = sumG * factor;
+    float informationSourceEntropyB = sumB * factor;
+
+    return std::make_tuple(informationSourceEntropyR, informationSourceEntropyG, informationSourceEntropyB);
+}
