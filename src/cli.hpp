@@ -207,6 +207,9 @@ inline int cliMain(int argc, char** argv)
         if (input.cmdOptionExists("--cvarcoi")) {
             displayTuple(characteristics::calculateVariationCoefficientI(img), spectrum);
         }
+        if (input.cmdOptionExists("--centropy")) {
+            displayTuple(characteristics::calculateInformationSourceEntropy(img), spectrum);
+        }
     }
     image.save(OUTPUT_FILENAME.c_str());
     return 0;

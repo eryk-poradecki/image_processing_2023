@@ -122,3 +122,25 @@ TEST(CalculateVariationCoefficientTest, ValidInput)
     ASSERT_FLOAT_EQ(varCoeffG, expectedVarCoeffG);
     ASSERT_FLOAT_EQ(varCoeffB, expectedVarCoeffB);
 }
+
+TEST(CalculateInformationSourceEntropyTest, ValidInput)
+{
+    imgVec inputVec(3, std::vector<std::vector<unsigned char>>(3, std::vector<unsigned char>(3)));
+
+    inputVec[0] = { { 255, 0, 0 }, { 0, 255, 0 }, { 0, 0, 255 } };
+    inputVec[1] = { { 100, 50, 200 }, { 200, 150, 100 }, { 50, 100, 150 } };
+    inputVec[2] = { { 150, 150, 150 }, { 150, 150, 150 }, { 150, 150, 150 } };
+
+    Image testImage = Image(inputVec);
+
+    auto [infoSrcEntropyR, infoSrcEntropyG, infoSrcEntropyB] = calculateInformationSourceEntropy(testImage);
+
+    float expectedInfoSrcEntropyR = 2.419382095;
+    float expectedInfoSrcEntropyG = 2.058814048;
+    float expectedInfoSrVarCoeffB = 2.058814048;
+
+    float tolerance = 1e-6;
+    ASSERT_NEAR(infoSrcEntropyR, expectedInfoSrcEntropyR, tolerance);
+    ASSERT_NEAR(infoSrcEntropyG, expectedInfoSrcEntropyG, tolerance);
+    ASSERT_NEAR(infoSrcEntropyB, expectedInfoSrVarCoeffB, tolerance);
+}
