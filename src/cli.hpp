@@ -207,6 +207,15 @@ inline int cliMain(int argc, char** argv)
         if (input.cmdOptionExists("--cvarcoi")) {
             displayTuple(characteristics::calculateVariationCoefficientI(img), spectrum);
         }
+        if (input.cmdOptionExists("--casyco")) {
+            displayTuple(characteristics::calculateAsymmetryCoefficient(img), spectrum);
+        }
+        if (input.cmdOptionExists("--cflaco")) {
+            displayTuple(characteristics::calculateFlatteningCoefficient(img), spectrum);
+        }
+        if (input.cmdOptionExists("--cvarcoii")) {
+            displayTuple(characteristics::calculateVariationCoefficientII(img), spectrum);
+        }
         if (input.cmdOptionExists("--centropy")) {
             displayTuple(characteristics::calculateInformationSourceEntropy(img), spectrum);
         }

@@ -73,6 +73,79 @@ std::tuple<float, float, float> characteristics::calculateVariationCoefficientI(
 
     return std::make_tuple(variationCoeffR, variationCoeffG, variationCoeffB);
 }
+
+std::tuple<float, float, float> characteristics::calculateAsymmetryCoefficient(const Image& image)
+{
+    Histogram<NUM_BINS, 3> histogram;
+    auto histData = histogram.createHistogramFromImg(image);
+
+    float sumR = 0.0, sumG = 0.0, sumB = 0.0;
+    float totalPixels = image.getWidth() * image.getHeight();
+
+    auto [meanR, meanG, meanB] = calculateMean(image);
+
+    for (size_t i = 0; i < NUM_BINS; ++i) {
+        sumR += pow(i - meanR, 3) * histData[0][i];
+        sumG += pow(i - meanG, 3) * histData[1][i];
+        sumB += pow(i - meanB, 3) * histData[2][i];
+    }
+
+    auto [stdDevR, stdDevG, stdDevB] = calculateStandardDeviation(image);
+
+    float asymmetryR = sumR / (totalPixels * pow(stdDevR, 3));
+    float asymmetryG = sumG / (totalPixels * pow(stdDevG, 3));
+    float asymmetryB = sumB / (totalPixels * pow(stdDevB, 3));
+
+    return std::make_tuple(asymmetryR, asymmetryG, asymmetryB);
+}
+
+std::tuple<float, float, float> characteristics::calculateFlatteningCoefficient(const Image& image)
+{
+    Histogram<NUM_BINS, 3> histogram;
+    auto histData = histogram.createHistogramFromImg(image);
+
+    float sumR = 0.0, sumG = 0.0, sumB = 0.0;
+    float totalPixels = image.getWidth() * image.getHeight();
+
+    auto [meanR, meanG, meanB] = calculateMean(image);
+
+    for (size_t i = 0; i < NUM_BINS; ++i) {
+        sumR += pow(i - meanR, 4) * histData[0][i] - 3;
+        sumG += pow(i - meanG, 4) * histData[1][i] - 3;
+        sumB += pow(i - meanB, 4) * histData[2][i] - 3;
+    }
+
+    auto [stdDevR, stdDevG, stdDevB] = calculateStandardDeviation(image);
+
+    float asymmetryR = sumR / (totalPixels * pow(stdDevR, 4));
+    float asymmetryG = sumG / (totalPixels * pow(stdDevG, 4));
+    float asymmetryB = sumB / (totalPixels * pow(stdDevB, 4));
+
+    return std::make_tuple(asymmetryR, asymmetryG, asymmetryB);
+}
+
+std::tuple<float, float, float> characteristics::calculateVariationCoefficientII(const Image& image)
+{
+    Histogram<NUM_BINS, 3> histogram;
+    auto histData = histogram.createHistogramFromImg(image);
+
+    float totalPixels = image.getWidth() * image.getHeight();
+
+    float sumH2R = 0.0, sumH2G = 0.0, sumH2B = 0.0;
+
+    for (size_t i = 0; i < NUM_BINS; ++i) {
+        sumH2R += histData[0][i] * histData[0][i];
+        sumH2G += histData[1][i] * histData[1][i];
+        sumH2B += histData[2][i] * histData[2][i];
+    }
+
+    float variationCoeffIIR = (1.0 / totalPixels) * (1.0 / totalPixels) * sumH2R;
+    float variationCoeffIIG = (1.0 / totalPixels) * (1.0 / totalPixels) * sumH2G;
+    float variationCoeffIIB = (1.0 / totalPixels) * (1.0 / totalPixels) * sumH2B;
+
+    return std::make_tuple(variationCoeffIIR, variationCoeffIIG, variationCoeffIIB);
+}
+
 std::tuple<float, float, float> characteristics::calculateInformationSourceEntropy(const Image& image)
 {
 

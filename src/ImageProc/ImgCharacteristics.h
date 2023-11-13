@@ -10,5 +10,8 @@ std::tuple<float, float, float> calculateMean(const Image& image);
 std::tuple<float, float, float> calculateVariance(const Image& image);
 std::tuple<float, float, float> calculateStandardDeviation(const Image& image);
 std::tuple<float, float, float> calculateVariationCoefficientI(const Image& image);
+std::tuple<float, float, float> calculateAsymmetryCoefficient(const Image& image);
+std::tuple<float, float, float> calculateFlatteningCoefficient(const Image& image);
+std::tuple<float, float, float> calculateVariationCoefficientII(const Image& image);
 std::tuple<float, float, float> calculateInformationSourceEntropy(const Image& image);
 }
