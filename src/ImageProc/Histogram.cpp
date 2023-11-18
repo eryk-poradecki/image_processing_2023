@@ -68,7 +68,7 @@ std::vector<std::vector<unsigned char>> splitRGBImgToSaperateLayerRGB(const Imag
     return splitRGBVec;
 }
 
-ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image, const float alpha = 1)
+ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image, const float alpha)
 {
 
     int width = image.getWidth();
@@ -88,7 +88,7 @@ ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image,
         for (int j = 0; j < height; ++j) {
             for (int k = 0; k < width; ++k) {
                 float factor = std::log(1 - (1 / numberOfPixels) * sumFirstNHist(histData[i], inputImgVec[j][k][i]));
-                outputImgVec[j][k][i] = minBrighness - (1 / alpha) * histData[i][image.getImgVec()[j][k][i]];
+                outputImgVec[j][k][i] = minBrighness - (1 / alpha) * histData[i][inputImgVec[j][k][i]];
             }
         }
     }
