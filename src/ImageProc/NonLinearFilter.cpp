@@ -1,5 +1,5 @@
-#include "ImageProc/Types.h"
 #include "NonLinearFilter.h"
+#include "ImageProc/Types.h"
 
 using namespace ImageProc;
 using namespace filter;
@@ -13,12 +13,9 @@ imgVec filter::robertsOperatorII(const Image& image)
 
     imgVec outputVec(width - 1, std::vector<std::vector<unsigned char>>(height - 1, std::vector<unsigned char>(spectrum, 0)));
 
-    for (int c = 0; c < spectrum; ++c)
-    {
-        for (int y = 0; y < height - 1; ++y)
-        {
-            for (int x = 0; x < width - 1; ++x)
-            {
+    for (int c = 0; c < spectrum; ++c) {
+        for (int y = 0; y < height - 1; ++y) {
+            for (int x = 0; x < width - 1; ++x) {
                 int pixelValue = 0;
 
                 int p1 = static_cast<int>(inputVec[x][y][c]);

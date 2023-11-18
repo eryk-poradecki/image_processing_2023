@@ -4,5 +4,5 @@
 
 namespace ImageProc::filter {
 
-    imgVec robertsOperatorII(const Image& image);
+imgVec robertsOperatorII(const Image& image);
 }
