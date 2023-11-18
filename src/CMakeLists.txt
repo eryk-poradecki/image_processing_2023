@@ -21,6 +21,8 @@ set(SOURCE_FILES
 	ImageProc/Histogram.h
 	ImageProc/ImgCharacteristics.h
     ImageProc/ImgCharacteristics.cpp
+    ImageProc/NonLinearFilter.h
+    ImageProc/NonLinearFilter.cpp
 	cli.hpp
 	files.hpp
     )
