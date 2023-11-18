@@ -4,6 +4,7 @@
 #include "ImageProc/ElementaryOperations.h"
 #include "ImageProc/GeometricOperations.h"
 #include "ImageProc/Histogram.h"
+#include "ImageProc/NonLinearFilter.h"
 #include "ImageProc/ImgAnalysis.h"
 #include "ImageProc/ImgCharacteristics.h"
 #include "ImageProc/NoiseRemoval.h"
@@ -219,6 +220,13 @@ inline int cliMain(int argc, char** argv)
         if (input.cmdOptionExists("--centropy")) {
             displayTuple(characteristics::calculateInformationSourceEntropy(img), spectrum);
         }
+    }
+    if (input.cmdOptionExists("--orobertsii")) {
+        imgVec robertsIIImageVec = filter::robertsOperatorII(img);
+        Image robertsIIImage(robertsIIImageVec);
+        CImg<unsigned char> cimgRobertsIIImage(robertsIIImageVec.size(), robertsIIImageVec[0].size(), 1, robertsIIImageVec[0][0].size(), 0);
+        convertToCimgAndCopyBack(cimgRobertsIIImage, robertsIIImageVec);
+        cimgRobertsIIImage.save("roberts_ii_image.bmp");
     }
     image.save(OUTPUT_FILENAME.c_str());
     return 0;
