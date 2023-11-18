@@ -1,5 +1,6 @@
 #include "NonLinearFilter.h"
 #include "ImageProc/Types.h"
+#include <cmath>
 
 using namespace ImageProc;
 using namespace filter;
