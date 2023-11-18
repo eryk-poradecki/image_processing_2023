@@ -7,6 +7,12 @@
 #include <string_view>
 #include <vector>
 
+template <int nBins, int chan>
+size_t firstNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist);
+
+template <int nBins, int chan>
+size_t sumFirstNHist(ImageProc::histogram::Histogram<nBins, chan>& hist, size_t n);
+
 namespace ImageProc::histogram {
 
 void createAndSaveHist(const ImageProc::Image& img, const std::string_view filename, size_t nBins)
@@ -62,16 +68,15 @@ std::vector<std::vector<unsigned char>> splitRGBImgToSaperateLayerRGB(const Imag
     return splitRGBVec;
 }
 
-ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& img, const float alpha = 1)
+ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image, const float alpha = 1)
 {
 
     int width = image.getWidth();
     int height = image.getHeight();
     int spectrum = image.getSpectrum();
 
-    auto inputImgVec = image.getImgVec()
-                           size_t numberOfPixels
-        = width * height;
+    auto inputImgVec = image.getImgVec();
+    size_t numberOfPixels = width * height;
 
     imgVec outputImgVec(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum)));
 
@@ -87,11 +92,12 @@ ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& img, c
             }
         }
     }
-    return outputImgVec
+    return outputImgVec;
 }
 
+} // namespace ImageProc::histogram
 template <int nBins, int chan>
-size_t sumFirstNHist(Histogram<nBins, chan>& hist, size_t n)
+size_t sumFirstNHist(ImageProc::histogram::Histogram<nBins, chan>& hist, size_t n)
 {
     size_t sum = 0;
     for (size_t i = 0; i < n; ++i) {
@@ -100,10 +106,8 @@ size_t sumFirstNHist(Histogram<nBins, chan>& hist, size_t n)
     return sum;
 }
 
-} // namespace ImageProc::histogram
-
 template <int nBins, int chan>
-size_t firstNonZeroIndex(Histogram<nBins, chan>& hist)
+size_t firstNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist)
 {
     size_t i = 0;
     for (; i < hist.size(); ++i) {
