@@ -2,6 +2,7 @@
 
 #include "CLI/InputParser.hpp"
 #include "ImageProc/ElementaryOperations.h"
+#include "ImageProc/ExtractionDetails.h"
 #include "ImageProc/GeometricOperations.h"
 #include "ImageProc/Histogram.h"
 #include "ImageProc/ImgAnalysis.h"
@@ -220,6 +221,13 @@ inline int cliMain(int argc, char** argv)
         if (input.cmdOptionExists("--centropy")) {
             displayTuple(characteristics::calculateInformationSourceEntropy(img), spectrum);
         }
+    }
+    if (input.cmdOptionExists("--slaplace")) {
+        int kernelNum = std::stoi(input.getCmdOption("--kernel"));
+        imgVec slaplace = extractdetails::extractionDetailsIII(img, kernelNum);
+        CImg<unsigned char> cimgslaplaceImage(slaplace.size(), slaplace[0].size(), 1, slaplace[0][0].size(), 0);
+        convertToCimgAndCopyBack(cimgslaplaceImage, slaplace);
+        cimgslaplaceImage.save("slaplace_image.bmp");
     }
     if (input.cmdOptionExists("--orobertsii")) {
         imgVec robertsIIImageVec = filter::robertsOperatorII(img);

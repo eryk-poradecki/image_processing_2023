@@ -23,6 +23,8 @@ set(SOURCE_FILES
     ImageProc/ImgCharacteristics.cpp
     ImageProc/NonLinearFilter.h
     ImageProc/NonLinearFilter.cpp
+    ImageProc/ExtractionDetails.cpp
+    ImageProc/ExtractionDetails.h
 	cli.hpp
 	files.hpp
     )
