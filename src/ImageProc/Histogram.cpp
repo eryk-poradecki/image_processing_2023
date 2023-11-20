@@ -74,7 +74,6 @@ std::vector<std::vector<unsigned char>> splitRGBImgToSaperateLayerRGB(const Imag
 
 ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image, const float alpha)
 {
-
     int width = image.getWidth();
     int height = image.getHeight();
     int spectrum = image.getSpectrum();
@@ -91,14 +90,16 @@ ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image,
         size_t minBrighness = firstNonZeroIndex(histData[i]);
         for (int j = 0; j < height; ++j) {
             for (int k = 0; k < width; ++k) {
-                float factor = std::log(1 - (1 / numberOfPixels) * sumFirstNHist(histData[i], inputImgVec[j][k][i]));
-                int newPixelValue = minBrighness - (1 / alpha) * histData[i][inputImgVec[j][k][i]];
+                float sumHist = sumFirstNHist(histData[i], inputImgVec[j][k][i]);
+                float factor = std::log(1 - (1.0 / numberOfPixels) * sumHist);
+                int newPixelValue = minBrighness - (1.0 / alpha) * factor;
                 outputImgVec[j][k][i] = clipInt(newPixelValue, 0, 255);
             }
         }
     }
     return outputImgVec;
 }
+
 
 } // namespace ImageProc::histogram
 template <int nBins, int chan>
