@@ -7,6 +7,10 @@
 #include <string_view>
 #include <vector>
 
+int clipInt(int value, int minValue, int maxValue)
+{
+    return std::max(minValue, std::min(value, maxValue));
+}
 template <int nBins, int chan>
 size_t firstNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist);
 
@@ -88,7 +92,8 @@ ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image,
         for (int j = 0; j < height; ++j) {
             for (int k = 0; k < width; ++k) {
                 float factor = std::log(1 - (1 / numberOfPixels) * sumFirstNHist(histData[i], inputImgVec[j][k][i]));
-                outputImgVec[j][k][i] = minBrighness - (1 / alpha) * histData[i][inputImgVec[j][k][i]];
+                int newPixelValue = minBrighness - (1 / alpha) * histData[i][inputImgVec[j][k][i]];
+                outputImgVec[j][k][i] = clipInt(newPixelValue, 0, 255);
             }
         }
     }
