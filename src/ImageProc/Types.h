@@ -16,6 +16,7 @@ public:
     [[nodiscard]] int getHeight() const noexcept;
     [[nodiscard]] int getWidth() const noexcept;
     [[nodiscard]] int getSpectrum() const noexcept;
+    void setImgVec(imgVec vec);
 
 private:
     int mWidth, mHeight;

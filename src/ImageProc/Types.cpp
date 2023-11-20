@@ -27,6 +27,11 @@ int Image::getSpectrum() const noexcept
     return mSpectrum;
 }
 
+void Image::setImgVec(imgVec vec)
+{
+    this->mImgVec = vec;
+}
+
 Image::Image()
     : mWidth(0)
     , mHeight(0)
