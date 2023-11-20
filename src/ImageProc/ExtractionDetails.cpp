@@ -1,6 +1,10 @@
 #include "ExtractionDetails.h"
 #include <array>
 namespace ImageProc::extractdetails {
+
+int clipInt(int value, int minValue, int maxValue) {
+    return std::max(minValue, std::min(value, maxValue));
+}
 std::vector<std::vector<int>> laplacianMask1 = {
     { 0, -1, 0 },
     { -1, 4, -1 },
@@ -79,7 +83,7 @@ ImageProc::imgVec convolution(ImageProc::Image& img, const std::vector<std::vect
                             tmp += image[y][x][chan] * kernel[k][l];
                     }
                 }
-                outputImgVec[i][j][chan] = static_cast<unsigned char>(tmp);
+                outputImgVec[i][j][chan] = static_cast<unsigned char>(clipInt(tmp, 0,  255));
             }
         }
     }
@@ -107,7 +111,7 @@ ImageProc::imgVec convolveHorizontal(ImageProc::Image& img, const std::vector<fl
                     if (x >= 0 && x < width)
                         tmp += image[i][x][chan] * kernel[k];
                 }
-                outputImgVec[i][j][chan] = static_cast<unsigned char>(tmp);
+                outputImgVec[i][j][chan] = static_cast<unsigned char>(clipInt(tmp, 0,  255));
             }
         }
     }
@@ -135,7 +139,7 @@ ImageProc::imgVec convolveVertical(ImageProc::Image& img, const std::vector<floa
                     if (y >= 0 && y < height)
                         tmp += image[y][j][chan] * kernel[k];
                 }
-                outputImgVec[i][j][chan] = static_cast<unsigned char>(tmp);
+                outputImgVec[i][j][chan] = static_cast<unsigned char>(clipInt(tmp, 0,  255));
             }
         }
     }
