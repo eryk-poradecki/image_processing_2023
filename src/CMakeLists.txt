@@ -30,7 +30,15 @@ set(SOURCE_FILES
     )
 
 add_library(ImageProc ${SOURCE_FILES})
-target_link_libraries(ImageProc PUBLIC Matplot++::matplot)
+find_package(Matplot++ REQUIRED)
+if(Matplot++_FOUND )                                                     
+  message("using system installed matplot")
+  target_link_libraries(ImageProc PUBLIC Matplot++::matplot)
+else()
+  message("building matplotlib")  
+  add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/libs/matplotplusplus)
+  target_link_libraries(ImageProc PUBLIC matplot)
+ENDIF()
 
 add_library(CLI
     CLI/InputParser.cpp
