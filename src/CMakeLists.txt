@@ -25,6 +25,8 @@ set(SOURCE_FILES
     ImageProc/NonLinearFilter.cpp
     ImageProc/ExtractionDetails.cpp
     ImageProc/ExtractionDetails.h
+    ImageProc/MorphologicalOperations.h
+    ImageProc/MorphologicalOperations.cpp
 	cli.hpp
 	files.hpp
     )
