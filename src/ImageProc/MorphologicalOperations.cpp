@@ -53,7 +53,8 @@ imgVec dilation(Image& img)
     return resultImg;
 }
 
-imgVec erosion(Image& img) {
+imgVec erosion(Image& img)
+{
     int height = img.getHeight();
     int width = img.getWidth();
     int spectrum = img.getSpectrum();
@@ -63,9 +64,9 @@ imgVec erosion(Image& img) {
 
     // Hardcoded kernel for erosion
     std::vector<std::vector<int>> kernel = {
-        {1, 1, 1},
-        {1, 1, 1},
-        {1, 1, 1}
+        { 1, 1, 1 },
+        { 1, 1, 1 },
+        { 1, 1, 1 }
     };
 
     int kernelSize = kernel.size();

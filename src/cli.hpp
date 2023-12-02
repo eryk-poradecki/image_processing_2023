@@ -228,10 +228,10 @@ inline int cliMain(int argc, char** argv)
         CImg<unsigned char> dilationImage(dilationVec.size(), dilationVec[0].size(), 1, dilationVec[0][0].size(), 0);
         convertToCimgAndCopyBack(dilationImage, dilationVec);
         dilationImage.save("dilation_image.bmp");
-    } 
+    }
     if (input.cmdOptionExists("--erosion")) {
         imgVec erosionVec = morph::erosion(img);
-        CImg<unsigned char> erosionImage(erosionVec.size(), erosionVec[0].size(), 1,erosionVec[0][0].size(), 0);
+        CImg<unsigned char> erosionImage(erosionVec.size(), erosionVec[0].size(), 1, erosionVec[0][0].size(), 0);
         convertToCimgAndCopyBack(erosionImage, erosionVec);
         erosionImage.save("erosion_image.bmp");
     }
