@@ -148,10 +148,6 @@ ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2)
 
 ImageProc::imgVec operationM1(ImageProc::Image& img)
 {
-    int height = img.getHeight();
-    int width = img.getWidth();
-    int spectrum = img.getSpectrum();
-
     // (A dilation B) / A
     imgVec dilatedImg = dilation(img);
     imgVec resultImg1 = elementwiseDivision(dilatedImg, img.getImgVec());
