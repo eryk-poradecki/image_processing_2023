@@ -235,6 +235,12 @@ inline int cliMain(int argc, char** argv)
         convertToCimgAndCopyBack(erosionImage, erosionVec);
         erosionImage.save("erosion_image.bmp");
     }
+    if (input.cmdOptionExists("--operationM1")) {
+        imgVec operationVec = morph::operationM1(img);
+        CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
+        convertToCimgAndCopyBack(operationImage, operationVec);
+        operationImage.save("operationM1_image.bmp");
+    }
     if (input.cmdOptionExists("--slaplace")) {
         imgVec slaplace;
         if (input.cmdOptionExists("--opt")) {
