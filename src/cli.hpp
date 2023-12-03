@@ -13,6 +13,7 @@
 #include "config.hpp"
 #include "files.hpp"
 #include <CImg.h>
+#include <ImageProc/MorphologicalOperations.h>
 #include <filesystem>
 #include <iostream>
 #include <string>
@@ -221,6 +222,18 @@ inline int cliMain(int argc, char** argv)
         if (input.cmdOptionExists("--centropy")) {
             displayTuple(characteristics::calculateInformationSourceEntropy(img), spectrum);
         }
+    }
+    if (input.cmdOptionExists("--dilation")) {
+        imgVec dilationVec = morph::dilation(img);
+        CImg<unsigned char> dilationImage(dilationVec.size(), dilationVec[0].size(), 1, dilationVec[0][0].size(), 0);
+        convertToCimgAndCopyBack(dilationImage, dilationVec);
+        dilationImage.save("dilation_image.bmp");
+    }
+    if (input.cmdOptionExists("--erosion")) {
+        imgVec erosionVec = morph::erosion(img);
+        CImg<unsigned char> erosionImage(erosionVec.size(), erosionVec[0].size(), 1, erosionVec[0][0].size(), 0);
+        convertToCimgAndCopyBack(erosionImage, erosionVec);
+        erosionImage.save("erosion_image.bmp");
     }
     if (input.cmdOptionExists("--slaplace")) {
         imgVec slaplace;

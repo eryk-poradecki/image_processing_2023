@@ -100,7 +100,6 @@ ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image,
     return outputImgVec;
 }
 
-
 } // namespace ImageProc::histogram
 template <int nBins, int chan>
 size_t sumFirstNHist(ImageProc::histogram::Histogram<nBins, chan>& hist, size_t n)
