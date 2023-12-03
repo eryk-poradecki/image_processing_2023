@@ -155,25 +155,19 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
     // (A dilation B) / A
     imgVec dilatedImg = dilation(img);
     imgVec resultImg1 = elementwiseDivision(dilatedImg, img.getImgVec());
+    Image resultImage1(resultImg1);
 
     // A / (A erosion B)
-    imgVec erodedImg = erosion(img);
-    imgVec resultImg2 = elementwiseDivision(resultImg1, erodedImg);  // Use resultImg1 here
+    imgVec erodedImg = erosion(resultImage1);
+    imgVec resultImg2 = elementwiseDivision(resultImg1, erodedImg);
+    Image resultImage2(resultImg2);
 
     // (A dilation B) / (A erosion B)
+    dilatedImg = dilation(resultImage2);
+    erodedImg = erosion(resultImage2);
     imgVec resultImg3 = elementwiseDivision(dilatedImg, erodedImg);
 
-    imgVec combinedResult = resultImg2;  // Use resultImg2 as the starting point
-
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
-            for (int k = 0; k < spectrum; k++) {
-                combinedResult[i][j][k] += resultImg3[i][j][k];
-            }
-        }
-    }
-
-    return combinedResult;
+    return resultImg3;
 }
 
 }
