@@ -1,4 +1,5 @@
 #include <ImageProc/MorphologicalOperations.h>
+#include <queue>
 
 namespace ImageProc::morph {
 
@@ -164,6 +165,47 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
     imgVec resultImg3 = elementwiseDivision(dilatedImg, erodedImg);
 
     return resultImg3;
+}
+
+imgVec regionGrowing(ImageProc::Image& image)
+{
+    imgVec& inputImgVec = image.getImgVec();
+    int height = image.getHeight();
+    int width = image.getWidth();
+    int spectrum = image.getSpectrum();
+
+    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 0)));
+
+    int seedX = 100;
+    int seedY = 50;
+
+    // region is linked to the seed region if the difference in intensity is less than a threshold
+    int threshold = 10;
+
+    std::queue<std::pair<int, int>> q;
+    q.push({seedX, seedY});
+
+    while (!q.empty()) {
+        int x = q.front().first;
+        int y = q.front().second;
+        q.pop();
+
+        for (int dx = -1; dx <= 1; ++dx) {
+            for (int dy = -1; dy <= 1; ++dy) {
+                int nx = x + dx;
+                int ny = y + dy;
+
+                if (nx >= 0 && nx < height && ny >= 0 && ny < width) {
+                    if (abs(inputImgVec[nx][ny][0] - inputImgVec[seedX][seedY][0]) < threshold) {
+                        resultImg[nx][ny][0] = inputImgVec[seedX][seedY][0];
+                        q.push({nx, ny});
+                    }
+                }
+            }
+        }
+    }
+
+    return resultImg;
 }
 
 }
