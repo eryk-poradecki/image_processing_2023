@@ -235,6 +235,12 @@ inline int cliMain(int argc, char** argv)
         convertToCimgAndCopyBack(erosionImage, erosionVec);
         erosionImage.save("erosion_image.bmp");
     }
+    if (input.cmdOptionExists("--hmt")) {
+        imgVec hmtVec = morph::hitOrMissTransformation(img);
+        CImg<unsigned char> hmtImage(hmtVec.size(), hmtVec[0].size(), 1, hmtVec[0][0].size(), 0);
+        convertToCimgAndCopyBack(hmtImage, hmtVec);
+        hmtImage.save("hmt_image.bmp");
+    }
     if (input.cmdOptionExists("--operationM1")) {
         imgVec operationVec = morph::operationM1(img);
         CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
@@ -278,47 +284,47 @@ inline int cliMain(int argc, char** argv)
         cimgRobertsIIImage.save("hexponent_image_from_grayscale.bmp");
     }
     if (input.cmdOptionExists("--regionGrow")) {
-            if (!input.cmdOptionExists("--seedPoints")) {
-                std::cout << "Please provide seed points using --seedPoints option.\n";
+        if (!input.cmdOptionExists("--seedPoints")) {
+            std::cout << "Please provide seed points using --seedPoints option.\n";
+            return -1;
+        }
+
+        std::string seedPointsStr = input.getCmdOption("--seedPoints");
+        std::vector<std::pair<int, int>> seedPoints;
+
+        size_t pos = 0;
+        while ((pos = seedPointsStr.find(';')) != std::string::npos) {
+            std::string pointStr = seedPointsStr.substr(0, pos);
+            size_t commaPos = pointStr.find(',');
+            if (commaPos == std::string::npos) {
+                std::cout << "Invalid seed point format.\n";
                 return -1;
             }
-
-            std::string seedPointsStr = input.getCmdOption("--seedPoints");
-            std::vector<std::pair<int, int>> seedPoints;
-
-            size_t pos = 0;
-            while ((pos = seedPointsStr.find(';')) != std::string::npos) {
-                std::string pointStr = seedPointsStr.substr(0, pos);
-                size_t commaPos = pointStr.find(',');
-                if (commaPos == std::string::npos) {
-                    std::cout << "Invalid seed point format.\n";
-                    return -1;
-                }
-                int x = std::stoi(pointStr.substr(0, commaPos));
-                int y = std::stoi(pointStr.substr(commaPos + 1));
-                seedPoints.push_back({x, y});
-                seedPointsStr.erase(0, pos + 1);
-            }
-
-            if (!seedPointsStr.empty()) {
-                size_t commaPos = seedPointsStr.find(',');
-                if (commaPos == std::string::npos) {
-                    std::cout << "Invalid seed point format.\n";
-                    return -1;
-                }
-                int x = std::stoi(seedPointsStr.substr(0, commaPos));
-                int y = std::stoi(seedPointsStr.substr(commaPos + 1));
-                seedPoints.push_back({x, y});
-            }
-
-            std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img.getImgVec());
-
-            for (size_t i = 0; i < regions.size(); ++i) {
-                CImg<unsigned char> cimgRegion(regions[i].size(), regions[i][0].size(), 1, regions[i][0][0].size(), 0);
-                convertToCimgAndCopyBack(cimgRegion, regions[i]);
-                cimgRegion.save(("region_" + std::to_string(i) + ".bmp").c_str());
-            }
+            int x = std::stoi(pointStr.substr(0, commaPos));
+            int y = std::stoi(pointStr.substr(commaPos + 1));
+            seedPoints.push_back({ x, y });
+            seedPointsStr.erase(0, pos + 1);
         }
+
+        if (!seedPointsStr.empty()) {
+            size_t commaPos = seedPointsStr.find(',');
+            if (commaPos == std::string::npos) {
+                std::cout << "Invalid seed point format.\n";
+                return -1;
+            }
+            int x = std::stoi(seedPointsStr.substr(0, commaPos));
+            int y = std::stoi(seedPointsStr.substr(commaPos + 1));
+            seedPoints.push_back({ x, y });
+        }
+
+        std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img.getImgVec());
+
+        for (size_t i = 0; i < regions.size(); ++i) {
+            CImg<unsigned char> cimgRegion(regions[i].size(), regions[i][0].size(), 1, regions[i][0][0].size(), 0);
+            convertToCimgAndCopyBack(cimgRegion, regions[i]);
+            cimgRegion.save(("region_" + std::to_string(i) + ".bmp").c_str());
+        }
+    }
     image.save(OUTPUT_FILENAME.c_str());
     return 0;
 }
