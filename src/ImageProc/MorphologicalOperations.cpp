@@ -1,5 +1,6 @@
 #include <ImageProc/MorphologicalOperations.h>
 #include <queue>
+#include <unordered_set>
 
 namespace ImageProc::morph {
 
@@ -167,45 +168,47 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
     return resultImg3;
 }
 
-imgVec regionGrowing(ImageProc::Image& image)
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
 {
-    imgVec& inputImgVec = image.getImgVec();
-    int height = image.getHeight();
-    int width = image.getWidth();
-    int spectrum = image.getSpectrum();
+    std::vector<ImageProc::imgVec> regions;
+    for (size_t i = 0; i < seedPointList.size(); ++i) {
+        regions.push_back(ImageProc::imgVec(arrayImage.size(), std::vector<std::vector<unsigned char>>(arrayImage[0].size(), std::vector<unsigned char>(arrayImage[0][0].size(), 0))));
+    }
 
-    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 0)));
+    for (size_t i = 0; i < seedPointList.size(); ++i) {
+        std::vector<std::vector<std::vector<bool>>> visited(arrayImage.size(), std::vector<std::vector<bool>>(arrayImage[0].size(), std::vector<bool>(arrayImage[0][0].size(), false)));
+        std::vector<std::pair<int, int>> stack = {seedPointList[i]};
 
-    int seedX = 100;
-    int seedY = 50;
+        while (!stack.empty()) {
+            std::pair<int, int> currentPoint = stack.back();
+            stack.pop_back();
 
-    // region is linked to the seed region if the difference in intensity is less than a threshold
-    int threshold = 10;
+            if (!visited[currentPoint.first][currentPoint.second][0]) {
+                if (arrayImage[currentPoint.first][currentPoint.second][0] == arrayImage[seedPointList[i].first][seedPointList[i].second][0]) {
+                    regions[i][currentPoint.first][currentPoint.second][0] = 255;
 
-    std::queue<std::pair<int, int>> q;
-    q.push({seedX, seedY});
-
-    while (!q.empty()) {
-        int x = q.front().first;
-        int y = q.front().second;
-        q.pop();
-
-        for (int dx = -1; dx <= 1; ++dx) {
-            for (int dy = -1; dy <= 1; ++dy) {
-                int nx = x + dx;
-                int ny = y + dy;
-
-                if (nx >= 0 && nx < height && ny >= 0 && ny < width) {
-                    if (abs(inputImgVec[nx][ny][0] - inputImgVec[seedX][seedY][0]) < threshold) {
-                        resultImg[nx][ny][0] = inputImgVec[seedX][seedY][0];
-                        q.push({nx, ny});
+                    if (currentPoint.second + 1 < arrayImage[0].size()) {
+                        stack.push_back({currentPoint.first, currentPoint.second + 1});
+                    }
+                    if (currentPoint.second > 0) {
+                        stack.push_back({currentPoint.first, currentPoint.second - 1});
+                    }
+                    if (currentPoint.first + 1 < arrayImage.size()) {
+                        stack.push_back({currentPoint.first + 1, currentPoint.second});
+                    }
+                    if (currentPoint.first > 0) {
+                        stack.push_back({currentPoint.first - 1, currentPoint.second});
                     }
                 }
+
+                visited[currentPoint.first][currentPoint.second][0] = true;
             }
         }
     }
 
-    return resultImg;
-}
+    // remove duplicate regions
+    regions.erase(std::unique(regions.begin(), regions.end()), regions.end());
 
+    return regions;
+}
 }

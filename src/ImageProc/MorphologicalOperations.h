@@ -16,5 +16,5 @@ ImageProc::imgVec operationM1(ImageProc::Image& img);
 
 bool shouldMergeRegions(const unsigned char seedValue, const unsigned char neighborValue);
 
-imgVec regionGrowing(ImageProc::Image& image);
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage);
 }
