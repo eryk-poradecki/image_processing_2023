@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <matplot/matplot.h>
+#include <numeric>
 #include <string_view>
 #include <vector>
 
