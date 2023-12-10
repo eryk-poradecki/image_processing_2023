@@ -28,7 +28,6 @@ public:
     Histogram()
         : bins {} {};
 
-
     std::pair<int, int> computeIntensityRange(const std::array<int, nBins>& bins, double percentage = 0.1)
     {
         int totalPixels = std::accumulate(bins.begin(), bins.end(), 0);

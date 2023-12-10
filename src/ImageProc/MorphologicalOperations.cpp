@@ -1,5 +1,5 @@
-#include <ImageProc/MorphologicalOperations.h>
 #include <ImageProc/Histogram.h>
+#include <ImageProc/MorphologicalOperations.h>
 #include <algorithm>
 #include <array>
 #include <iostream>
