@@ -1,3 +1,4 @@
+#include <ImageProc/Histogram.h>
 #include <ImageProc/MorphologicalOperations.h>
 #include <algorithm>
 #include <array>
@@ -172,7 +173,7 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
 }
 
 std::array<unsigned char, 3> generateRandomColor();
-  
+
 imgVec hitOrMissTransformation(Image& img)
 {
     int height = img.getHeight();
@@ -241,10 +242,20 @@ imgVec hitOrMissTransformation(Image& img)
     return resultImg;
 }
 
-//add joining regions at the end, count neighbours, if more than visited, join 2 larger regions
-std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::Image& img)
 {
+    auto arrayImage = img.getImgVec();
     std::vector<ImageProc::imgVec> regions;
+    histogram::Histogram<histogram::NUM_BINS, 3> histogram;
+    auto histograms = histogram.createHistogramFromImg(img);
+
+    int intensityThreshold = std::numeric_limits<int>::max();
+
+    for (int channel = 0; channel < img.getSpectrum(); ++channel) {
+        auto intensityRange = histogram.computeIntensityRange(histograms[channel].getArr());
+        int channelThreshold = std::min(intensityRange.first, intensityRange.second);
+        intensityThreshold = std::min(intensityThreshold, channelThreshold);
+    }
 
     auto seedPointListCopy(seedPointList);
 
@@ -272,7 +283,7 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
             if (currentRow < 0 || currentRow >= arrayImage.size() || currentCol < 0 || currentCol >= arrayImage[0].size() || visited[currentRow][currentCol][0])
                 continue;
 
-            if (arrayImage[currentRow][currentCol][0] == arrayImage[seedPoint.first][seedPoint.second][0]) {
+            if (std::abs(arrayImage[currentRow][currentCol][0] - arrayImage[seedPoint.first][seedPoint.second][0]) <= intensityThreshold) {
                 region[currentRow][currentCol][0] = r;
                 region[currentRow][currentCol][1] = g;
                 region[currentRow][currentCol][2] = r;

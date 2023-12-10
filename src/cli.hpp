@@ -275,14 +275,6 @@ inline int cliMain(int argc, char** argv)
         convertToCimgAndCopyBack(cimgRobertsIIImage, hexponentImageVec);
         cimgRobertsIIImage.save("hexponent_image.bmp");
     }
-    if (input.cmdOptionExists("--hexponentgray")) {
-
-        float alpha = std::stof(input.getCmdOption("--alpha"));
-        imgVec hexponentImageVec = histogram::finalProbabilityDensityFunctionGrayscale(img, alpha);
-        CImg<unsigned char> cimgRobertsIIImage(hexponentImageVec.size(), hexponentImageVec[0].size(), 1, hexponentImageVec[0][0].size(), 0);
-        convertToCimgAndCopyBack(cimgRobertsIIImage, hexponentImageVec);
-        cimgRobertsIIImage.save("hexponent_image_from_grayscale.bmp");
-    }
     if (input.cmdOptionExists("--regionGrow")) {
         if (!input.cmdOptionExists("--seedPoints")) {
             std::cout << "Please provide seed points using --seedPoints option.\n";
@@ -317,7 +309,7 @@ inline int cliMain(int argc, char** argv)
             seedPoints.push_back({ x, y });
         }
 
-        std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img.getImgVec());
+        std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img);
 
         for (size_t i = 0; i < regions.size(); ++i) {
             CImg<unsigned char> cimgRegion(regions[i].size(), regions[i][0].size(), 1, regions[i][0][0].size(), 0);

@@ -28,6 +28,32 @@ public:
     Histogram()
         : bins {} {};
 
+    std::pair<int, int> computeIntensityRange(const std::array<int, nBins>& bins, double percentage = 0.1)
+    {
+        int totalPixels = std::accumulate(bins.begin(), bins.end(), 0);
+
+        int lowThreshold = 0;
+        int accumulatedPixels = 0;
+        for (int i = 0; i < nBins; ++i) {
+            accumulatedPixels += bins[i];
+            if (static_cast<double>(accumulatedPixels) / totalPixels >= percentage) {
+                lowThreshold = i;
+                break;
+            }
+        }
+
+        int highThreshold = nBins - 1;
+        accumulatedPixels = 0;
+        for (int i = nBins - 1; i >= 0; --i) {
+            accumulatedPixels += bins[i];
+            if (static_cast<double>(accumulatedPixels) / totalPixels >= percentage) {
+                highThreshold = i;
+                break;
+            }
+        }
+        return { lowThreshold, highThreshold };
+    }
+
     [[nodiscard]] std::array<Histogram<nBins, chan>, chan> createHistogramFromImg(const ImageProc::Image& img)
     {
 
@@ -73,4 +99,6 @@ void createAndSaveHist(const ImageProc::Image& img, const std::string_view filen
 void createAndSaveHistForColorChannel(const ImageProc::Image& img, const std::string_view filename, int channel = 0, size_t nBins = NUM_BINS);
 
 ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& img, const float alpha = 1);
+
+ImageProc::imgVec finalProbabilityDensityFunctionGrayscale(const ImageProc::Image& img, const float alpha = 1);
 }
