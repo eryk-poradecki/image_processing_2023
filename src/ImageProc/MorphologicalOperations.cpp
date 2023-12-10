@@ -1,4 +1,9 @@
 #include <ImageProc/MorphologicalOperations.h>
+#include <algorithm>
+#include <array>
+#include <iostream>
+#include <random>
+#include <stack>
 
 namespace ImageProc::morph {
 
@@ -166,4 +171,155 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
     return resultImg3;
 }
 
+std::array<unsigned char, 3> generateRandomColor();
+  
+imgVec hitOrMissTransformation(Image& img)
+{
+    int height = img.getHeight();
+    int width = img.getWidth();
+    int spectrum = img.getSpectrum();
+
+    imgVec& inputImgVec = img.getImgVec();
+    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 0)));
+
+    std::vector<std::vector<int>> hitKernel = {
+        { 0, 1, 0 },
+        { 1, 0, 1 },
+        { 0, 1, 0 }
+    };
+
+    std::vector<std::vector<int>> missKernel = {
+        { 0, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 0, 0 }
+    };
+
+    int kernelSize = hitKernel.size();
+
+    int padding = kernelSize / 2;
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            for (int k = 0; k < spectrum; ++k) {
+                bool hit = true;
+
+                // hit condition
+                for (int m = -padding; m <= padding; ++m) {
+                    for (int n = -padding; n <= padding; ++n) {
+                        int row = i + m;
+                        int col = j + n;
+
+                        // padding value if not within bounds
+                        if (row >= 0 && row < height && col >= 0 && col < width) {
+                            if (hitKernel[m + padding][n + padding] == 1) {
+                                hit = hit && (inputImgVec[row][col][k] == 255);
+                            }
+                        }
+                    }
+                }
+
+                // miss condition
+                for (int m = -padding; m <= padding; ++m) {
+                    for (int n = -padding; n <= padding; ++n) {
+                        int row = i + m;
+                        int col = j + n;
+
+                        // padding value if not within bounds
+                        if (row >= 0 && row < height && col >= 0 && col < width) {
+                            if (missKernel[m + padding][n + padding] == 1) {
+                                hit = hit && (inputImgVec[row][col][k] == 0);
+                            }
+                        }
+                    }
+                }
+
+                resultImg[i][j][k] = (hit) ? 255 : 0;
+            }
+        }
+    }
+
+    return resultImg;
+}
+
+//add joining regions at the end, count neighbours, if more than visited, join 2 larger regions
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
+{
+    std::vector<ImageProc::imgVec> regions;
+
+    auto seedPointListCopy(seedPointList);
+
+    while (seedPointListCopy.size()) {
+
+        std::vector<std::vector<std::vector<bool>>> visited(arrayImage.size(), std::vector<std::vector<bool>>(arrayImage[0].size(), std::vector<bool>(arrayImage[0][0].size(), false)));
+        std::stack<std::pair<int, int>> stack;
+        auto seedPoint = seedPointListCopy.back();
+        seedPointListCopy.pop_back();
+        stack.push(seedPoint);
+        ImageProc::imgVec region(arrayImage.size(), std::vector<std::vector<unsigned char>>(arrayImage[0].size(), std::vector<unsigned char>(arrayImage[0][0].size(), 0)));
+        auto [r, g, b] = generateRandomColor();
+        while (!stack.empty()) {
+            std::pair<int, int> currentPoint = stack.top();
+            stack.pop();
+
+            int currentRow = currentPoint.first;
+            int currentCol = currentPoint.second;
+
+            auto it = std::find(seedPointListCopy.begin(), seedPointListCopy.end(), currentPoint);
+            // we dont want to process the same seed points twice, thats why if we find one, we delete it from list
+            if (it != seedPointListCopy.end()) {
+                seedPointListCopy.erase(it);
+            }
+            if (currentRow < 0 || currentRow >= arrayImage.size() || currentCol < 0 || currentCol >= arrayImage[0].size() || visited[currentRow][currentCol][0])
+                continue;
+
+            if (arrayImage[currentRow][currentCol][0] == arrayImage[seedPoint.first][seedPoint.second][0]) {
+                region[currentRow][currentCol][0] = r;
+                region[currentRow][currentCol][1] = g;
+                region[currentRow][currentCol][2] = r;
+
+                stack.push({ currentRow, currentCol + 1 });
+                stack.push({ currentRow, currentCol - 1 });
+                stack.push({ currentRow + 1, currentCol });
+                stack.push({ currentRow - 1, currentCol });
+            }
+
+            visited[currentRow][currentCol][0] = true;
+        }
+        regions.push_back(region);
+    }
+    imgVec result;
+
+    // sum all regions, they dont overlap so we won't get values bigger than 255
+    for (const auto& img : regions) {
+        if (result.empty()) {
+            result = img;
+        } else {
+            for (std::size_t i = 0; i < img.size(); ++i) {
+                for (std::size_t j = 0; j < img[i].size(); ++j) {
+                    for (std::size_t k = 0; k < img[i][j].size(); ++k) {
+                        result[i][j][k] += img[i][j][k];
+                    }
+                }
+            }
+        }
+    }
+    regions.push_back(result);
+    return regions;
+}
+std::array<unsigned char, 3> generateRandomColor()
+{
+    std::array<unsigned char, 3> color;
+
+    // Random number generator for each color component
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<unsigned int> distribution(0, 255);
+
+    // Generating random values for red, green, and blue components
+    color[0] = static_cast<unsigned char>(distribution(gen));
+    color[1] = static_cast<unsigned char>(distribution(gen));
+    color[2] = static_cast<unsigned char>(distribution(gen));
+
+    return color;
+}
 }

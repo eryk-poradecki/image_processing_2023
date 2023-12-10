@@ -13,4 +13,10 @@ ImageProc::imgVec closing(ImageProc::Image& img);
 ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2);
 
 ImageProc::imgVec operationM1(ImageProc::Image& img);
+
+bool shouldMergeRegions(const unsigned char seedValue, const unsigned char neighborValue);
+
+imgVec hitOrMissTransformation(Image& img);
+
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage);
 }
