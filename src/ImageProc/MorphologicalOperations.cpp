@@ -1,6 +1,6 @@
 #include <ImageProc/MorphologicalOperations.h>
-#include <stack>
 #include <algorithm>
+#include <stack>
 
 namespace ImageProc::morph {
 
@@ -168,7 +168,77 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
     return resultImg3;
 }
 
-std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage) {
+imgVec hitOrMissTransformation(Image& img)
+{
+    int height = img.getHeight();
+    int width = img.getWidth();
+    int spectrum = img.getSpectrum();
+
+    imgVec& inputImgVec = img.getImgVec();
+    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 0)));
+
+    std::vector<std::vector<int>> hitKernel = {
+        { 0, 1, 0 },
+        { 1, 0, 1 },
+        { 0, 1, 0 }
+    };
+
+    std::vector<std::vector<int>> missKernel = {
+        { 0, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 0, 0 }
+    };
+
+    int kernelSize = hitKernel.size();
+
+    int padding = kernelSize / 2;
+
+    for (int i = 0; i < height; ++i) {
+        for (int j = 0; j < width; ++j) {
+            for (int k = 0; k < spectrum; ++k) {
+                bool hit = true;
+
+                // hit condition
+                for (int m = -padding; m <= padding; ++m) {
+                    for (int n = -padding; n <= padding; ++n) {
+                        int row = i + m;
+                        int col = j + n;
+
+                        // padding value if not within bounds
+                        if (row >= 0 && row < height && col >= 0 && col < width) {
+                            if (hitKernel[m + padding][n + padding] == 1) {
+                                hit = hit && (inputImgVec[row][col][k] == 255);
+                            }
+                        }
+                    }
+                }
+
+                // miss condition
+                for (int m = -padding; m <= padding; ++m) {
+                    for (int n = -padding; n <= padding; ++n) {
+                        int row = i + m;
+                        int col = j + n;
+
+                        // padding value if not within bounds
+                        if (row >= 0 && row < height && col >= 0 && col < width) {
+                            if (missKernel[m + padding][n + padding] == 1) {
+                                hit = hit && (inputImgVec[row][col][k] == 0);
+                            }
+                        }
+                    }
+                }
+
+                resultImg[i][j][k] = (hit) ? 255 : 0;
+            }
+        }
+    }
+
+    return resultImg;
+}
+
+//add joining regions at the end, count neighbours, if more than visited, join 2 larger regions
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
+{
     std::vector<ImageProc::imgVec> regions;
     for (size_t i = 0; i < seedPointList.size(); ++i) {
         regions.push_back(ImageProc::imgVec(arrayImage.size(), std::vector<std::vector<unsigned char>>(arrayImage[0].size(), std::vector<unsigned char>(arrayImage[0][0].size(), 0))));
@@ -192,10 +262,10 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
             if (arrayImage[currentRow][currentCol][0] == arrayImage[seedPointList[i].first][seedPointList[i].second][0]) {
                 regions[i][currentRow][currentCol][0] = 255;
 
-                stack.push({currentRow, currentCol + 1});
-                stack.push({currentRow, currentCol - 1});
-                stack.push({currentRow + 1, currentCol});
-                stack.push({currentRow - 1, currentCol});
+                stack.push({ currentRow, currentCol + 1 });
+                stack.push({ currentRow, currentCol - 1 });
+                stack.push({ currentRow + 1, currentCol });
+                stack.push({ currentRow - 1, currentCol });
             }
 
             visited[currentRow][currentCol][0] = true;
