@@ -282,8 +282,18 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
             }
             if (currentRow < 0 || currentRow >= arrayImage.size() || currentCol < 0 || currentCol >= arrayImage[0].size() || visited[currentRow][currentCol][0])
                 continue;
+            if (img.getSpectrum() == 1) {
+                if (std::abs(arrayImage[currentRow][currentCol][0] - arrayImage[seedPoint.first][seedPoint.second][0]) <= intensityThreshold) {
+                    region[currentRow][currentCol][0] = r;
 
-            if (std::abs(arrayImage[currentRow][currentCol][0] - arrayImage[seedPoint.first][seedPoint.second][0]) <= intensityThreshold) {
+                    stack.push({ currentRow, currentCol + 1 });
+                    stack.push({ currentRow, currentCol - 1 });
+                    stack.push({ currentRow + 1, currentCol });
+                    stack.push({ currentRow - 1, currentCol });
+            }
+            } else if (std::abs(arrayImage[currentRow][currentCol][0] - arrayImage[seedPoint.first][seedPoint.second][0]) <= intensityThreshold &&
+            std::abs(arrayImage[currentRow][currentCol][1] - arrayImage[seedPoint.first][seedPoint.second][1]) <= intensityThreshold &&
+            std::abs(arrayImage[currentRow][currentCol][2] - arrayImage[seedPoint.first][seedPoint.second][2]) <= intensityThreshold) {
                 region[currentRow][currentCol][0] = r;
                 region[currentRow][currentCol][1] = g;
                 region[currentRow][currentCol][2] = r;
