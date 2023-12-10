@@ -1,5 +1,8 @@
 #include <ImageProc/MorphologicalOperations.h>
 #include <algorithm>
+#include <array>
+#include <iostream>
+#include <random>
 #include <stack>
 
 namespace ImageProc::morph {
@@ -168,6 +171,8 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
     return resultImg3;
 }
 
+std::array<unsigned char, 3> generateRandomColor();
+  
 imgVec hitOrMissTransformation(Image& img)
 {
     int height = img.getHeight();
@@ -240,15 +245,18 @@ imgVec hitOrMissTransformation(Image& img)
 std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
 {
     std::vector<ImageProc::imgVec> regions;
-    for (size_t i = 0; i < seedPointList.size(); ++i) {
-        regions.push_back(ImageProc::imgVec(arrayImage.size(), std::vector<std::vector<unsigned char>>(arrayImage[0].size(), std::vector<unsigned char>(arrayImage[0][0].size(), 0))));
-    }
 
-    for (size_t i = 0; i < seedPointList.size(); ++i) {
+    auto seedPointListCopy(seedPointList);
+
+    while (seedPointListCopy.size()) {
+
         std::vector<std::vector<std::vector<bool>>> visited(arrayImage.size(), std::vector<std::vector<bool>>(arrayImage[0].size(), std::vector<bool>(arrayImage[0][0].size(), false)));
         std::stack<std::pair<int, int>> stack;
-        stack.push(seedPointList[i]);
-
+        auto seedPoint = seedPointListCopy.back();
+        seedPointListCopy.pop_back();
+        stack.push(seedPoint);
+        ImageProc::imgVec region(arrayImage.size(), std::vector<std::vector<unsigned char>>(arrayImage[0].size(), std::vector<unsigned char>(arrayImage[0][0].size(), 0)));
+        auto [r, g, b] = generateRandomColor();
         while (!stack.empty()) {
             std::pair<int, int> currentPoint = stack.top();
             stack.pop();
@@ -256,11 +264,18 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
             int currentRow = currentPoint.first;
             int currentCol = currentPoint.second;
 
+            auto it = std::find(seedPointListCopy.begin(), seedPointListCopy.end(), currentPoint);
+            // we dont want to process the same seed points twice, thats why if we find one, we delete it from list
+            if (it != seedPointListCopy.end()) {
+                seedPointListCopy.erase(it);
+            }
             if (currentRow < 0 || currentRow >= arrayImage.size() || currentCol < 0 || currentCol >= arrayImage[0].size() || visited[currentRow][currentCol][0])
                 continue;
 
-            if (arrayImage[currentRow][currentCol][0] == arrayImage[seedPointList[i].first][seedPointList[i].second][0]) {
-                regions[i][currentRow][currentCol][0] = 255;
+            if (arrayImage[currentRow][currentCol][0] == arrayImage[seedPoint.first][seedPoint.second][0]) {
+                region[currentRow][currentCol][0] = r;
+                region[currentRow][currentCol][1] = g;
+                region[currentRow][currentCol][2] = r;
 
                 stack.push({ currentRow, currentCol + 1 });
                 stack.push({ currentRow, currentCol - 1 });
@@ -270,12 +285,41 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
 
             visited[currentRow][currentCol][0] = true;
         }
+        regions.push_back(region);
     }
+    imgVec result;
 
-    // Remove duplicate regions
-    regions.erase(std::unique(regions.begin(), regions.end()), regions.end());
-
+    // sum all regions, they dont overlap so we won't get values bigger than 255
+    for (const auto& img : regions) {
+        if (result.empty()) {
+            result = img;
+        } else {
+            for (std::size_t i = 0; i < img.size(); ++i) {
+                for (std::size_t j = 0; j < img[i].size(); ++j) {
+                    for (std::size_t k = 0; k < img[i][j].size(); ++k) {
+                        result[i][j][k] += img[i][j][k];
+                    }
+                }
+            }
+        }
+    }
+    regions.push_back(result);
     return regions;
 }
+std::array<unsigned char, 3> generateRandomColor()
+{
+    std::array<unsigned char, 3> color;
 
+    // Random number generator for each color component
+    std::random_device rd;
+    std::mt19937 gen(rd());
+    std::uniform_int_distribution<unsigned int> distribution(0, 255);
+
+    // Generating random values for red, green, and blue components
+    color[0] = static_cast<unsigned char>(distribution(gen));
+    color[1] = static_cast<unsigned char>(distribution(gen));
+    color[2] = static_cast<unsigned char>(distribution(gen));
+
+    return color;
+}
 }
