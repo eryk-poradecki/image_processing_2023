@@ -317,7 +317,7 @@ inline int cliMain(int argc, char** argv)
             seedPoints.push_back({ x, y });
         }
 
-        std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img.getImgVec());
+        std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img);
 
         for (size_t i = 0; i < regions.size(); ++i) {
             CImg<unsigned char> cimgRegion(regions[i].size(), regions[i][0].size(), 1, regions[i][0][0].size(), 0);
