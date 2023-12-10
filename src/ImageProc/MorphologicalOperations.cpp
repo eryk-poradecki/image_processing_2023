@@ -1,4 +1,5 @@
 #include <ImageProc/MorphologicalOperations.h>
+#include <ImageProc/Histogram.h>
 #include <algorithm>
 #include <array>
 #include <iostream>
@@ -172,7 +173,7 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
 }
 
 std::array<unsigned char, 3> generateRandomColor();
-  
+
 imgVec hitOrMissTransformation(Image& img)
 {
     int height = img.getHeight();
@@ -242,9 +243,20 @@ imgVec hitOrMissTransformation(Image& img)
 }
 
 //add joining regions at the end, count neighbours, if more than visited, join 2 larger regions
-std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::Image& img)
 {
+    auto arrayImage = img.getImgVec();
     std::vector<ImageProc::imgVec> regions;
+    histogram::Histogram<histogram::NUM_BINS, 3> histogram;
+    auto histograms = histogram.createHistogramFromImg(img);
+
+    int intensityThreshold = std::numeric_limits<int>::max(); // Initialize with a large value
+
+    for (int channel = 0; channel < img.getSpectrum(); ++channel) {
+        auto intensityRange = histogram.computeIntensityRange(histograms[channel].getArr());
+        int channelThreshold = std::min(intensityRange.first, intensityRange.second);
+        intensityThreshold = std::min(intensityThreshold, channelThreshold);
+    }
 
     auto seedPointListCopy(seedPointList);
 
