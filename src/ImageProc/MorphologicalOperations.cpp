@@ -1,6 +1,6 @@
 #include <ImageProc/MorphologicalOperations.h>
-#include <queue>
-#include <unordered_set>
+#include <stack>
+#include <algorithm>
 
 namespace ImageProc::morph {
 
@@ -168,8 +168,7 @@ ImageProc::imgVec operationM1(ImageProc::Image& img)
     return resultImg3;
 }
 
-std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
-{
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage) {
     std::vector<ImageProc::imgVec> regions;
     for (size_t i = 0; i < seedPointList.size(); ++i) {
         regions.push_back(ImageProc::imgVec(arrayImage.size(), std::vector<std::vector<unsigned char>>(arrayImage[0].size(), std::vector<unsigned char>(arrayImage[0][0].size(), 0))));
@@ -177,38 +176,36 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
 
     for (size_t i = 0; i < seedPointList.size(); ++i) {
         std::vector<std::vector<std::vector<bool>>> visited(arrayImage.size(), std::vector<std::vector<bool>>(arrayImage[0].size(), std::vector<bool>(arrayImage[0][0].size(), false)));
-        std::vector<std::pair<int, int>> stack = {seedPointList[i]};
+        std::stack<std::pair<int, int>> stack;
+        stack.push(seedPointList[i]);
 
         while (!stack.empty()) {
-            std::pair<int, int> currentPoint = stack.back();
-            stack.pop_back();
+            std::pair<int, int> currentPoint = stack.top();
+            stack.pop();
 
-            if (!visited[currentPoint.first][currentPoint.second][0]) {
-                if (arrayImage[currentPoint.first][currentPoint.second][0] == arrayImage[seedPointList[i].first][seedPointList[i].second][0]) {
-                    regions[i][currentPoint.first][currentPoint.second][0] = 255;
+            int currentRow = currentPoint.first;
+            int currentCol = currentPoint.second;
 
-                    if (currentPoint.second + 1 < arrayImage[0].size()) {
-                        stack.push_back({currentPoint.first, currentPoint.second + 1});
-                    }
-                    if (currentPoint.second > 0) {
-                        stack.push_back({currentPoint.first, currentPoint.second - 1});
-                    }
-                    if (currentPoint.first + 1 < arrayImage.size()) {
-                        stack.push_back({currentPoint.first + 1, currentPoint.second});
-                    }
-                    if (currentPoint.first > 0) {
-                        stack.push_back({currentPoint.first - 1, currentPoint.second});
-                    }
-                }
+            if (currentRow < 0 || currentRow >= arrayImage.size() || currentCol < 0 || currentCol >= arrayImage[0].size() || visited[currentRow][currentCol][0])
+                continue;
 
-                visited[currentPoint.first][currentPoint.second][0] = true;
+            if (arrayImage[currentRow][currentCol][0] == arrayImage[seedPointList[i].first][seedPointList[i].second][0]) {
+                regions[i][currentRow][currentCol][0] = 255;
+
+                stack.push({currentRow, currentCol + 1});
+                stack.push({currentRow, currentCol - 1});
+                stack.push({currentRow + 1, currentCol});
+                stack.push({currentRow - 1, currentCol});
             }
+
+            visited[currentRow][currentCol][0] = true;
         }
     }
 
-    // remove duplicate regions
+    // Remove duplicate regions
     regions.erase(std::unique(regions.begin(), regions.end()), regions.end());
 
     return regions;
 }
+
 }
