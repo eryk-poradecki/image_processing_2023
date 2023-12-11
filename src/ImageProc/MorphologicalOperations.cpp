@@ -3,11 +3,8 @@
 #include <ImageProc/MorphologicalOperations.h>
 #include <algorithm>
 #include <array>
-#include <cstddef>
-#include <iostream>
 #include <random>
 #include <stack>
-#include <utility>
 
 namespace ImageProc::morph {
 imgVec mergeRegion(imgVec img, std::array<unsigned char, 3> rgb, std::pair<int, int> point);
