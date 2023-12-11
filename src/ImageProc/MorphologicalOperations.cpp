@@ -1,12 +1,13 @@
+#include "ImageProc/Types.h"
 #include <ImageProc/Histogram.h>
 #include <ImageProc/MorphologicalOperations.h>
 #include <algorithm>
 #include <array>
-#include <iostream>
 #include <random>
 #include <stack>
 
 namespace ImageProc::morph {
+imgVec mergeRegion(imgVec img, std::array<unsigned char, 3> rgb, std::pair<int, int> point);
 
 int clipPixel(int value, int minValue, int maxValue)
 {
@@ -261,7 +262,8 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
 
     while (seedPointListCopy.size()) {
 
-        std::vector<std::vector<std::vector<bool>>> visited(arrayImage.size(), std::vector<std::vector<bool>>(arrayImage[0].size(), std::vector<bool>(arrayImage[0][0].size(), false)));
+        std::vector<std::vector<std::vector<bool>>> visited(arrayImage.size(), std::vector<std::vector<bool>>(arrayImage[0].size(), std::vector<bool>(1, false)));
+
         std::stack<std::pair<int, int>> stack;
         auto seedPoint = seedPointListCopy.back();
         seedPointListCopy.pop_back();
@@ -275,11 +277,6 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
             int currentRow = currentPoint.first;
             int currentCol = currentPoint.second;
 
-            auto it = std::find(seedPointListCopy.begin(), seedPointListCopy.end(), currentPoint);
-            // we dont want to process the same seed points twice, thats why if we find one, we delete it from list
-            if (it != seedPointListCopy.end()) {
-                seedPointListCopy.erase(it);
-            }
             if (currentRow < 0 || currentRow >= arrayImage.size() || currentCol < 0 || currentCol >= arrayImage[0].size() || visited[currentRow][currentCol][0])
                 continue;
             if (img.getSpectrum() == 1) {
@@ -306,19 +303,33 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
 
             visited[currentRow][currentCol][0] = true;
         }
+
         regions.push_back(region);
     }
     imgVec result;
 
-    // sum all regions, they dont overlap so we won't get values bigger than 255
     for (const auto& img : regions) {
         if (result.empty()) {
             result = img;
+            continue;
         } else {
             for (std::size_t i = 0; i < img.size(); ++i) {
                 for (std::size_t j = 0; j < img[i].size(); ++j) {
-                    for (std::size_t k = 0; k < img[i][j].size(); ++k) {
-                        result[i][j][k] += img[i][j][k];
+                    unsigned char r = img[i][j][0];
+                    unsigned char g = img[i][j][1];
+                    unsigned char b = img[i][j][2];
+                    if (r + g + b) {
+                        if (result[i][j][0] != r && result[i][j][1] != g && result[i][j][2] != b) {
+                            if (result[i][j][0] + result[i][j][1] + result[i][j][2]) {
+                                std::array<unsigned char, 3> rgb { r, g, b };
+                                result = mergeRegion(result, rgb, std::make_pair(i, j));
+
+                            } else {
+                                result[i][j][0] = r;
+                                result[i][j][1] = g;
+                                result[i][j][2] = b;
+                            }
+                        }
                     }
                 }
             }
@@ -327,6 +338,68 @@ std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, in
     regions.push_back(result);
     return regions;
 }
+
+/* imgVec mergeRegion(imgVec img, const std::array<unsigned char, 3> rgb, const std::pair<int, int> point) */
+/* { */
+/*     // Get the color at the specified point */
+/*     unsigned char targetR = img[point.first][point.second][0]; */
+/*     unsigned char targetG = img[point.first][point.second][1]; */
+/*     unsigned char targetB = img[point.first][point.second][2]; */
+/*     std::cout << targetR << " " << targetG << "  " << targetB; */
+/*     // Iterate through the image and change pixels that match the target color */
+/*     for (size_t i = 0; i < img.size(); ++i) { */
+/*         for (size_t j = 0; j < img[i].size(); ++j) { */
+/*             if (img[i][j][0] == targetR && img[i][j][1] == targetG && img[i][j][2] == targetB) { */
+/*                 // Change the pixel color to the specified RGB value */
+/*                 img[i][j][0] = rgb[0]; */
+/*                 img[i][j][1] = rgb[1]; */
+/*                 img[i][j][2] = rgb[2]; */
+/*             } */
+/*         } */
+/*     } */
+/*     return img; */
+/* } */
+/**/
+imgVec mergeRegion(imgVec img, std::array<unsigned char, 3> rgb, std::pair<int, int> point)
+{
+    std::stack<std::pair<int, int>> stack;
+    stack.push(point);
+
+    unsigned char toChangeColorR = img[point.first][point.second][0];
+    unsigned char toChangeColorG = img[point.first][point.second][1];
+    unsigned char toChangeColorB = img[point.first][point.second][2];
+
+    unsigned char targetColorR = rgb[0];
+    unsigned char targetColorG = rgb[1];
+    unsigned char targetColorB = rgb[2];
+
+    std::vector<std::vector<std::vector<bool>>> visited(img.size(), std::vector<std::vector<bool>>(img[0].size(), std::vector<bool>(1, false)));
+    while (!stack.empty()) {
+        std::pair<int, int> currentPoint = stack.top();
+        stack.pop();
+
+        int currentRow = currentPoint.first;
+        int currentCol = currentPoint.second;
+
+        if (currentRow < 0 || currentRow >= img.size() || currentCol < 0 || currentCol >= img[0].size() || visited[currentRow][currentCol][0])
+            continue;
+
+        if (img[currentRow][currentCol][0] == toChangeColorR && img[currentRow][currentCol][1] == toChangeColorG && img[currentRow][currentCol][2] == toChangeColorB) {
+            img[currentRow][currentCol][0] = targetColorR;
+            img[currentRow][currentCol][1] = targetColorG;
+            img[currentRow][currentCol][2] = targetColorB;
+
+            stack.push({ currentRow, currentCol + 1 });
+            stack.push({ currentRow, currentCol - 1 });
+            stack.push({ currentRow + 1, currentCol });
+            stack.push({ currentRow - 1, currentCol });
+        }
+
+        visited[currentRow][currentCol][0] = true;
+    }
+    return img;
+}
+
 std::array<unsigned char, 3> generateRandomColor()
 {
     std::array<unsigned char, 3> color;
