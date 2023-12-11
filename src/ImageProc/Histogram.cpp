@@ -18,6 +18,9 @@ size_t firstNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist);
 template <int nBins, int chan>
 size_t sumFirstNHist(ImageProc::histogram::Histogram<nBins, chan>& hist, size_t n);
 
+template <int nBins, int chan>
+size_t lastNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist);
+
 namespace ImageProc::histogram {
 
 void createAndSaveHist(const ImageProc::Image& img, const std::string_view filename, size_t nBins)
@@ -88,7 +91,9 @@ ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image,
     auto histData = histogram.createHistogramFromImg(image);
 
     for (int i = 0; i < spectrum; ++i) {
-        size_t minBrighness = firstNonZeroIndex(histData[i]);
+    size_t minBrighness = firstNonZeroIndex(histData[i]);
+    size_t maxBrightness = lastNonZeroIndex(histData[i]);
+    float alpha = 1.0 / (maxBrightness - minBrighness);
         for (int j = 0; j < height; ++j) {
             for (int k = 0; k < width; ++k) {
                 float sumHist = sumFirstNHist(histData[i], inputImgVec[j][k][i]);
@@ -117,6 +122,18 @@ size_t firstNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist)
 {
     size_t i = 0;
     for (; i < hist.size(); ++i) {
+        if (hist[i] != 0) {
+            break;
+        }
+    }
+    return i;
+}
+
+template <int nBins, int chan>
+size_t lastNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist)
+{
+    size_t i = 255;
+    for (; i > hist.size(); --i) {
         if (hist[i] != 0) {
             break;
         }
