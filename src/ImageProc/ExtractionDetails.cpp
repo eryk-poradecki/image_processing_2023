@@ -1,13 +1,8 @@
 #include "ExtractionDetails.h"
-#include <array>
-#include <iostream>
 namespace ImageProc::extractdetails {
 
 int clipInt(int value, int minValue, int maxValue)
 {
-    if (value < 0){
-        std::cout<<value<<std::endl;
-    }
     return std::max(minValue, std::min(value, maxValue));
 }
 std::vector<std::vector<int>> laplacianMask1 = {
