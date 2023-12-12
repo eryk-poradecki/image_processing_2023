@@ -269,8 +269,21 @@ inline int cliMain(int argc, char** argv)
     }
     if (input.cmdOptionExists("--hexponent")) {
 
-        float alpha = std::stof(input.getCmdOption("--alpha"));
-        imgVec hexponentImageVec = histogram::finalProbabilityDensityFunction(img, alpha);
+        int gmin = std::stof(input.getCmdOption("--gmin"));
+        int gmax = std::stof(input.getCmdOption("--gmax"));
+
+        if (gmin < 0 || gmin > gmax) {
+            std::cout << "not correct values for gmin\n";
+            return -1;
+        }
+
+        if (gmax > 255 || gmax < gmin) {
+            std::cout << "not correct values for gmax\n";
+            return -1;
+        }
+        std::cout << gmax << " " << gmin << std::endl;
+
+        imgVec hexponentImageVec = histogram::finalProbabilityDensityFunction(img, gmin, gmax);
         CImg<unsigned char> cimgRobertsIIImage(hexponentImageVec.size(), hexponentImageVec[0].size(), 1, hexponentImageVec[0][0].size(), 0);
         convertToCimgAndCopyBack(cimgRobertsIIImage, hexponentImageVec);
         cimgRobertsIIImage.save("hexponent_image.bmp");

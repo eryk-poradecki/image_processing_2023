@@ -98,7 +98,7 @@ void createAndSaveHist(const ImageProc::Image& img, const std::string_view filen
 
 void createAndSaveHistForColorChannel(const ImageProc::Image& img, const std::string_view filename, int channel = 0, size_t nBins = NUM_BINS);
 
-ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& img, const float alpha = 1);
+ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& img, const int gmin, const int gmax);
 
 ImageProc::imgVec finalProbabilityDensityFunctionGrayscale(const ImageProc::Image& img, const float alpha = 1);
 }
