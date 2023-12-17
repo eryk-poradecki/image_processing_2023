@@ -1,4 +1,5 @@
 #include "ExtractionDetails.h"
+#include <cmath>
 namespace ImageProc::extractdetails {
 
 int clipInt(int value, int minValue, int maxValue)
