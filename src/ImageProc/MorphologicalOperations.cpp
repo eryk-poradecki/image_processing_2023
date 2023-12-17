@@ -3,6 +3,7 @@
 #include <ImageProc/MorphologicalOperations.h>
 #include <algorithm>
 #include <array>
+#include <iostream>
 #include <random>
 #include <stack>
 
@@ -72,48 +73,40 @@ imgVec closing(Image& img, const std::vector<std::vector<unsigned char>>& kernel
     return closedImg;
 }
 
-ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2)
+ImageProc::imgVec setSubtraction1bit(const imgVec& img1, const imgVec& img2)
 {
     int height = img1.size();
     int width = img1[0].size();
-    int spectrum = img1[0][0].size();
 
-    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 0)));
+    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(1, 0)));
 
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
-            for (int k = 0; k < spectrum; ++k) {
-
-                if (img2[i][j][k] != 0) {
-                    resultImg[i][j][k] = static_cast<unsigned char>(img1[i][j][k] / img2[i][j][k]);
-                } else {
-                    resultImg[i][j][k] = 255;
-                }
-            }
+                resultImg[i][j][0] = static_cast<unsigned char>(img1[i][j][0] - img2[i][j][0]);
         }
     }
     return resultImg;
 }
 
-// ImageProc::imgVec operationM1(ImageProc::Image& img)
-//{
-//     // (A dilation B) / A
-//     imgVec dilatedImg = dilation(img);
-//     imgVec resultImg1 = elementwiseDivision(dilatedImg, img.getImgVec());
-//     Image resultImage1(resultImg1);
-//
-//     // A / (A erosion B)
-//     imgVec erodedImg = erosion(resultImage1);
-//     imgVec resultImg2 = elementwiseDivision(resultImg1, erodedImg);
-//     Image resultImage2(resultImg2);
-//
-//     // (A dilation B) / (A erosion B)
-//     dilatedImg = dilation(resultImage2);
-//     erodedImg = erosion(resultImage2);
-//     imgVec resultImg3 = elementwiseDivision(dilatedImg, erodedImg);
-//
-//     return resultImg3;
-// }
+ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vector<unsigned char>>& kernel)
+{
+    // (A dilation B) - A
+    imgVec dilatedImg = morph(img, kernel, "dilation");
+    imgVec resultImg1 = setSubtraction1bit(dilatedImg, img.getImgVec());
+    Image resultImage1(resultImg1);
+
+    // A - (A erosion B)
+    imgVec erodedImg = morph(resultImage1, kernel, "erosion");
+    imgVec resultImg2 = setSubtraction1bit(img.getImgVec(), erodedImg);
+    Image resultImage2(resultImg2);
+
+    // (A dilation B) - (A erosion B)
+    dilatedImg = morph(resultImage2, kernel, "dilation");
+    erodedImg = morph(resultImage2, kernel, "erosion");
+    imgVec resultImg3 = setSubtraction1bit(dilatedImg, erodedImg);
+
+    return resultImg3;
+}
 
 std::array<unsigned char, 3> generateRandomColor();
 
