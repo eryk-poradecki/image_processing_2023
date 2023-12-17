@@ -9,118 +9,60 @@ int clipPixel(int value, int minValue, int maxValue)
     return std::max(minValue, std::min(value, maxValue));
 }
 
-imgVec dilation(Image& img)
+// this fucn works only for 1 bit image
+imgVec morph(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, const std::string& type)
 {
-    int height = img.getHeight();
-    int width = img.getWidth();
-    int spectrum = img.getSpectrum();
+    int sz = (kernel.size() - 1) / 2;
 
-    imgVec& inputImgVec = img.getImgVec();
-    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 0)));
+    auto img = inImage.getImgVec();
+    // we can use copy for output cuz we go through all pixels
 
-    // Hardcoded kernel for dilation
-    std::vector<std::vector<int>> kernel = {
-        { 1, 1, 1 },
-        { 1, 1, 1 },
-        { 1, 1, 1 }
-    };
+    auto outImage(img);
+    for (int x = 0; x < img.size(); ++x) {
+        for (int y = 0; y < img[0].size(); ++y) {
+            unsigned char val;
 
-    int kernelSize = kernel.size();
+            if (x - sz < 0 || x + sz >= img.size() || y - sz < 0 || y + sz >= img[0].size()) {
+                val = img[x][y][0];
+            } else {
+                std::vector<unsigned char> list;
 
-    // Padding size to handle corners
-    int padding = kernelSize / 2;
-
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
-            for (int k = 0; k < spectrum; ++k) {
-                unsigned char maxVal = 0;
-                for (int m = -padding; m <= padding; ++m) {
-                    for (int n = -padding; n <= padding; ++n) {
-                        int row = i + m;
-                        int col = j + n;
-
-                        // Check if within bounds, otherwise consider it as a padding value
-                        if (row >= 0 && row < height && col >= 0 && col < width) {
-                            if (kernel[m + padding][n + padding] == 1) {
-                                maxVal = std::max(maxVal, static_cast<unsigned char>(inputImgVec[row][col][k] * kernel[m + padding][n + padding]));
-                            }
+                for (int i = 0; i < kernel.size(); ++i) {
+                    for (int j = 0; j < kernel[i].size(); ++j) {
+                        if (kernel[i][j] == 1) {
+                            list.push_back(img[x + i - sz][y + j - sz][0]);
                         }
                     }
                 }
-                resultImg[i][j][k] = maxVal;
-            }
-        }
-    }
 
-    return resultImg;
-}
-
-imgVec erosion(Image& img)
-{
-    int height = img.getHeight();
-    int width = img.getWidth();
-    int spectrum = img.getSpectrum();
-
-    imgVec& inputImgVec = img.getImgVec();
-    imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 255))); // Initializing with maximum value
-
-    // Hardcoded kernel for erosion
-    std::vector<std::vector<int>> kernel = {
-        { 1, 1, 1 },
-        { 1, 1, 1 },
-        { 1, 1, 1 }
-    };
-
-    int kernelSize = kernel.size();
-
-    // Padding size to handle corners
-    int padding = kernelSize / 2;
-
-    for (int i = 0; i < height; ++i) {
-        for (int j = 0; j < width; ++j) {
-            for (int k = 0; k < spectrum; ++k) {
-                unsigned char minVal = 255; // Initializing with maximum value
-                bool performErosion = true;
-                for (int m = -padding; m <= padding; ++m) {
-                    for (int n = -padding; n <= padding; ++n) {
-                        int row = i + m;
-                        int col = j + n;
-
-                        // Check if within bounds, otherwise consider it as a padding value
-                        if (row >= 0 && row < height && col >= 0 && col < width) {
-                            if (kernel[m + padding][n + padding] == 1) {
-                                minVal = std::min(minVal, static_cast<unsigned char>(inputImgVec[row][col][k] * kernel[m + padding][n + padding]));
-                            }
-                        } else {
-                            // If any part of the kernel extends outside the image, erosion cannot be performed at this point
-                            performErosion = false;
-                        }
-                    }
-                }
-                if (performErosion) {
-                    resultImg[i][j][k] = minVal;
+                if (type == "dilation") {
+                    // this max function works as OR operator, if there is 1 in the list it will return 1
+                    val = *std::max_element(list.begin(), list.end());
+                } else if (type == "erosion") {
+                    // this min function works as AND operator, all values in the list must be 1, otherwise 0
+                    val = *std::min_element(list.begin(), list.end());
                 }
             }
+
+            outImage[x][y][0] = val;
         }
     }
-
-    return resultImg;
+    return outImage;
 }
 
-imgVec opening(Image& img)
+imgVec opening(Image& img, const std::vector<std::vector<unsigned char>>& kernel)
 {
-    imgVec erodedImg = erosion(img);
+    imgVec erodedImg = morph(img, kernel, "erosion");
     Image erodedImage(erodedImg);
-    imgVec openedImg = dilation(erodedImage);
-
+    imgVec openedImg = morph(erodedImage, kernel, "dilation");
     return openedImg;
 }
 
-imgVec closing(Image& img)
+imgVec closing(Image& img, const std::vector<std::vector<unsigned char>>& kernel)
 {
-    imgVec dilatedImg = dilation(img);
+    imgVec dilatedImg = morph(img, kernel, "dilation");
     Image dilatedImage(dilatedImg);
-    imgVec closedImg = erosion(dilatedImage);
+    imgVec closedImg = morph(dilatedImage, kernel, "erosion");
 
     return closedImg;
 }
@@ -148,25 +90,25 @@ ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2)
     return resultImg;
 }
 
-ImageProc::imgVec operationM1(ImageProc::Image& img)
-{
-    // (A dilation B) / A
-    imgVec dilatedImg = dilation(img);
-    imgVec resultImg1 = elementwiseDivision(dilatedImg, img.getImgVec());
-    Image resultImage1(resultImg1);
-
-    // A / (A erosion B)
-    imgVec erodedImg = erosion(resultImage1);
-    imgVec resultImg2 = elementwiseDivision(resultImg1, erodedImg);
-    Image resultImage2(resultImg2);
-
-    // (A dilation B) / (A erosion B)
-    dilatedImg = dilation(resultImage2);
-    erodedImg = erosion(resultImage2);
-    imgVec resultImg3 = elementwiseDivision(dilatedImg, erodedImg);
-
-    return resultImg3;
-}
+// ImageProc::imgVec operationM1(ImageProc::Image& img)
+//{
+//     // (A dilation B) / A
+//     imgVec dilatedImg = dilation(img);
+//     imgVec resultImg1 = elementwiseDivision(dilatedImg, img.getImgVec());
+//     Image resultImage1(resultImg1);
+//
+//     // A / (A erosion B)
+//     imgVec erodedImg = erosion(resultImage1);
+//     imgVec resultImg2 = elementwiseDivision(resultImg1, erodedImg);
+//     Image resultImage2(resultImg2);
+//
+//     // (A dilation B) / (A erosion B)
+//     dilatedImg = dilation(resultImage2);
+//     erodedImg = erosion(resultImage2);
+//     imgVec resultImg3 = elementwiseDivision(dilatedImg, erodedImg);
+//
+//     return resultImg3;
+// }
 
 imgVec hitOrMissTransformation(Image& img)
 {
@@ -236,7 +178,7 @@ imgVec hitOrMissTransformation(Image& img)
     return resultImg;
 }
 
-//add joining regions at the end, count neighbours, if more than visited, join 2 larger regions
+// add joining regions at the end, count neighbours, if more than visited, join 2 larger regions
 std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage)
 {
     std::vector<ImageProc::imgVec> regions;
