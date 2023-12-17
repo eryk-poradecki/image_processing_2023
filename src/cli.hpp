@@ -245,6 +245,18 @@ inline int cliMain(int argc, char** argv)
         convertToCimgAndCopyBack1Bit(erosionImage, erosionVec);
         erosionImage.save("erosion_image.bmp");
     }
+    if (input.cmdOptionExists("--opening")) {
+        imgVec openingVec = morph::opening(img);
+        CImg<unsigned char> openingImage(openingVec.size(), openingVec[0].size(), 1, openingVec[0][0].size(), 0);
+        convertToCimgAndCopyBack(openingImage, openingVec);
+        openingImage.save("opening_image.bmp");
+    }
+    if (input.cmdOptionExists("--closing")) {
+        imgVec closingVec = morph::closing(img);
+        CImg<unsigned char> closingImage(closingVec.size(), closingVec[0].size(), 1, closingVec[0][0].size(), 0);
+        convertToCimgAndCopyBack(closingImage, closingVec);
+        closingImage.save("closing_image.bmp");
+    }
     if (input.cmdOptionExists("--hmt")) {
         imgVec hmtVec = morph::hitOrMissTransformation(img);
         CImg<unsigned char> hmtImage(hmtVec.size(), hmtVec[0].size(), 1, hmtVec[0][0].size(), 0);
@@ -279,19 +291,24 @@ inline int cliMain(int argc, char** argv)
     }
     if (input.cmdOptionExists("--hexponent")) {
 
-        float alpha = std::stof(input.getCmdOption("--alpha"));
-        imgVec hexponentImageVec = histogram::finalProbabilityDensityFunction(img, alpha);
+        int gmin = std::stof(input.getCmdOption("--gmin"));
+        int gmax = std::stof(input.getCmdOption("--gmax"));
+
+        if (gmin < 0 || gmin > gmax) {
+            std::cout << "not correct values for gmin\n";
+            return -1;
+        }
+
+        if (gmax > 255 || gmax < gmin) {
+            std::cout << "not correct values for gmax\n";
+            return -1;
+        }
+        std::cout << gmax << " " << gmin << std::endl;
+
+        imgVec hexponentImageVec = histogram::finalProbabilityDensityFunction(img, gmin, gmax);
         CImg<unsigned char> cimgRobertsIIImage(hexponentImageVec.size(), hexponentImageVec[0].size(), 1, hexponentImageVec[0][0].size(), 0);
         convertToCimgAndCopyBack(cimgRobertsIIImage, hexponentImageVec);
         cimgRobertsIIImage.save("hexponent_image.bmp");
-    }
-    if (input.cmdOptionExists("--hexponentgray")) {
-
-        float alpha = std::stof(input.getCmdOption("--alpha"));
-        imgVec hexponentImageVec = histogram::finalProbabilityDensityFunction(img, alpha);
-        CImg<unsigned char> cimgRobertsIIImage(hexponentImageVec.size(), hexponentImageVec[0].size(), 1, hexponentImageVec[0][0].size(), 0);
-        convertToCimgAndCopyBack(cimgRobertsIIImage, hexponentImageVec);
-        cimgRobertsIIImage.save("hexponent_image_from_grayscale.bmp");
     }
     if (input.cmdOptionExists("--regionGrow")) {
         if (!input.cmdOptionExists("--seedPoints")) {
@@ -327,7 +344,7 @@ inline int cliMain(int argc, char** argv)
             seedPoints.push_back({ x, y });
         }
 
-        std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img.getImgVec());
+        std::vector<ImageProc::imgVec> regions = morph::regionGrowing(seedPoints, img);
 
         for (size_t i = 0; i < regions.size(); ++i) {
             CImg<unsigned char> cimgRegion(regions[i].size(), regions[i][0].size(), 1, regions[i][0][0].size(), 0);

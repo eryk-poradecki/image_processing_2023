@@ -4,6 +4,7 @@
 #include <cmath>
 #include <iostream>
 #include <matplot/matplot.h>
+#include <numeric>
 #include <string_view>
 #include <vector>
 
@@ -16,6 +17,9 @@ size_t firstNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist);
 
 template <int nBins, int chan>
 size_t sumFirstNHist(ImageProc::histogram::Histogram<nBins, chan>& hist, size_t n);
+
+template <int nBins, int chan>
+size_t lastNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist);
 
 namespace ImageProc::histogram {
 
@@ -72,7 +76,7 @@ std::vector<std::vector<unsigned char>> splitRGBImgToSaperateLayerRGB(const Imag
     return splitRGBVec;
 }
 
-ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image, const float alpha)
+ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image, const int gmin, const int gmax)
 {
     int width = image.getWidth();
     int height = image.getHeight();
@@ -86,13 +90,13 @@ ImageProc::imgVec finalProbabilityDensityFunction(const ImageProc::Image& image,
     Histogram<NUM_BINS, 3> histogram;
     auto histData = histogram.createHistogramFromImg(image);
 
+    float alpha = 1.0 / (gmax - gmin);
     for (int i = 0; i < spectrum; ++i) {
-        size_t minBrighness = firstNonZeroIndex(histData[i]);
         for (int j = 0; j < height; ++j) {
             for (int k = 0; k < width; ++k) {
                 float sumHist = sumFirstNHist(histData[i], inputImgVec[j][k][i]);
                 float factor = std::log(1 - (1.0 / numberOfPixels) * sumHist);
-                int newPixelValue = minBrighness - (1.0 / alpha) * factor;
+                int newPixelValue = gmin - (1.0 / alpha) * factor;
                 outputImgVec[j][k][i] = clipInt(newPixelValue, 0, 255);
             }
         }
@@ -116,6 +120,18 @@ size_t firstNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist)
 {
     size_t i = 0;
     for (; i < hist.size(); ++i) {
+        if (hist[i] != 0) {
+            break;
+        }
+    }
+    return i;
+}
+
+template <int nBins, int chan>
+size_t lastNonZeroIndex(ImageProc::histogram::Histogram<nBins, chan>& hist)
+{
+    size_t i = 255;
+    for (; i > hist.size(); --i) {
         if (hist[i] != 0) {
             break;
         }

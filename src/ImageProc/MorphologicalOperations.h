@@ -17,5 +17,5 @@ bool shouldMergeRegions(const unsigned char seedValue, const unsigned char neigh
 
 imgVec hitOrMissTransformation(Image& img);
 
-std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::imgVec& arrayImage);
+std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::Image& img);
 }
