@@ -11,7 +11,7 @@ ImageProc::imgVec closing(Image& img, const std::vector<std::vector<unsigned cha
 
 ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2);
 
-// ImageProc::imgVec operationM1(ImageProc::Image& img);
+ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vector<unsigned char>>& kernel);
 
 bool shouldMergeRegions(const unsigned char seedValue, const unsigned char neighborValue);
 
