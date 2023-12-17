@@ -34,3 +34,11 @@ void convertToCimgAndCopyBack(CImg<unsigned char>& cimgImage, const imgVec& imag
         }
     }
 }
+void convertToCimgAndCopyBack1Bit(CImg<unsigned char>& cimgImage, const imgVec& imageArray)
+{
+    for (int i = 0; i < imageArray.size(); i++) {
+        for (int j = 0; j < imageArray[0].size(); j++) {
+            cimgImage(i, j, 0, 0) = imageArray[i][j][0];
+        }
+    }
+}

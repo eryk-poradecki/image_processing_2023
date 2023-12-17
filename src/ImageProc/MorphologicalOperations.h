@@ -1,18 +1,17 @@
 #pragma once
 #include <ImageProc/Types.h>
+#include <string>
 
 namespace ImageProc::morph {
-ImageProc::imgVec dilation(ImageProc::Image& img);
 
-ImageProc::imgVec erosion(ImageProc::Image& img);
+ImageProc::imgVec morph(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, const std::string& type);
+ImageProc::imgVec opening(Image& img, const std::vector<std::vector<unsigned char>>& kernel);
 
-ImageProc::imgVec opening(ImageProc::Image& img);
-
-ImageProc::imgVec closing(ImageProc::Image& img);
+ImageProc::imgVec closing(Image& img, const std::vector<std::vector<unsigned char>>& kernel);
 
 ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2);
 
-ImageProc::imgVec operationM1(ImageProc::Image& img);
+// ImageProc::imgVec operationM1(ImageProc::Image& img);
 
 bool shouldMergeRegions(const unsigned char seedValue, const unsigned char neighborValue);
 
