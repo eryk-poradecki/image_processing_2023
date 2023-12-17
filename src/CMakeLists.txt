@@ -3,8 +3,10 @@ add_executable(ImageProcApp
     config.hpp)
 
 set(SOURCE_FILES
+	  cli.hpp
+	  files.hpp
     ImageProc/Types.cpp
-	ImageProc/Types.h
+	  ImageProc/Types.h
     ImageProc/ElementaryOperations.cpp
     ImageProc/ElementaryOperations.h
     ImageProc/GeometricOperations.h
@@ -17,9 +19,9 @@ set(SOURCE_FILES
     ImageProc/Exceptions.cpp
     ImageProc/ImgAnalysis.cpp
     ImageProc/ImgAnalysis.h
-	ImageProc/Histogram.cpp
-	ImageProc/Histogram.h
-	ImageProc/ImgCharacteristics.h
+	  ImageProc/Histogram.cpp
+	  ImageProc/Histogram.h
+	  ImageProc/ImgCharacteristics.h
     ImageProc/ImgCharacteristics.cpp
     ImageProc/NonLinearFilter.h
     ImageProc/NonLinearFilter.cpp
@@ -27,8 +29,8 @@ set(SOURCE_FILES
     ImageProc/ExtractionDetails.h
     ImageProc/MorphologicalOperations.h
     ImageProc/MorphologicalOperations.cpp
-	cli.hpp
-	files.hpp
+    ImageProc/kernels/kernels.cpp
+    ImageProc/kernels/kernels.h
     )
 
 add_library(ImageProc ${SOURCE_FILES})
