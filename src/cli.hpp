@@ -10,6 +10,7 @@
 #include "ImageProc/NoiseRemoval.h"
 #include "ImageProc/NonLinearFilter.h"
 #include "ImageProc/Types.h"
+#include "ImageProc/kernels/kernels.h"
 #include "config.hpp"
 #include "files.hpp"
 #include <CImg.h>
@@ -224,39 +225,37 @@ inline int cliMain(int argc, char** argv)
         }
     }
     if (input.cmdOptionExists("--dilation")) {
-        std::vector<std::vector<unsigned char>> kernel = {
-            { 0, 1, 0 },
-            { 1, 1, 1 },
-            { 0, 1, 0 }
-        };
+        int kernelNum = std::stoi(input.getCmdOption("--kernel"));
+        auto kernel = Kernels::allKernels[kernelNum];
         imgVec dilationVec = morph::morph(img, kernel, "dilation");
         CImg<unsigned char> dilationImage(dilationVec.size(), dilationVec[0].size(), 1, 1, 0);
         convertToCimgAndCopyBack1Bit(dilationImage, dilationVec);
         dilationImage.save("dilation_image.bmp");
     }
     if (input.cmdOptionExists("--erosion")) {
-        std::vector<std::vector<unsigned char>> kernel = {
-            { 0, 1, 0 },
-            { 1, 1, 1 },
-            { 0, 1, 0 }
-        };
+        int kernelNum = std::stoi(input.getCmdOption("--kernel"));
+        auto kernel = Kernels::allKernels[kernelNum];
         imgVec erosionVec = morph::morph(img, kernel, "erosion");
         CImg<unsigned char> erosionImage(erosionVec.size(), erosionVec[0].size(), 1, 1, 0);
         convertToCimgAndCopyBack1Bit(erosionImage, erosionVec);
         erosionImage.save("erosion_image.bmp");
     }
-    // if (input.cmdOptionExists("--opening")) {
-    //     imgVec openingVec = morph::opening(img);
-    //     CImg<unsigned char> openingImage(openingVec.size(), openingVec[0].size(), 1, openingVec[0][0].size(), 0);
-    //     convertToCimgAndCopyBack(openingImage, openingVec);
-    //     openingImage.save("opening_image.bmp");
-    // }
-    // if (input.cmdOptionExists("--closing")) {
-    //     imgVec closingVec = morph::closing(img);
-    //     CImg<unsigned char> closingImage(closingVec.size(), closingVec[0].size(), 1, closingVec[0][0].size(), 0);
-    //     convertToCimgAndCopyBack(closingImage, closingVec);
-    //     closingImage.save("closing_image.bmp");
-    // }
+    if (input.cmdOptionExists("--opening")) {
+        int kernelNum = std::stoi(input.getCmdOption("--kernel"));
+        auto kernel = Kernels::allKernels[kernelNum];
+        imgVec openingVec = morph::opening(img, kernel);
+        CImg<unsigned char> openingImage(openingVec.size(), openingVec[0].size(), 1, openingVec[0][0].size(), 0);
+        convertToCimgAndCopyBack1Bit(openingImage, openingVec);
+        openingImage.save("opening_image.bmp");
+    }
+    if (input.cmdOptionExists("--closing")) {
+        int kernelNum = std::stoi(input.getCmdOption("--kernel"));
+        auto kernel = Kernels::allKernels[kernelNum];
+        imgVec closingVec = morph::closing(img, kernel);
+        CImg<unsigned char> closingImage(closingVec.size(), closingVec[0].size(), 1, closingVec[0][0].size(), 0);
+        convertToCimgAndCopyBack1Bit(closingImage, closingVec);
+        closingImage.save("closing_image.bmp");
+    }
     if (input.cmdOptionExists("--hmt")) {
         imgVec hmtVec = morph::hitOrMissTransformation(img);
         CImg<unsigned char> hmtImage(hmtVec.size(), hmtVec[0].size(), 1, hmtVec[0][0].size(), 0);
