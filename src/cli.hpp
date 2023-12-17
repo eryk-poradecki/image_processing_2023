@@ -263,12 +263,17 @@ inline int cliMain(int argc, char** argv)
         convertToCimgAndCopyBack(hmtImage, hmtVec);
         hmtImage.save("hmt_image.bmp");
     }
-    // if (input.cmdOptionExists("--operationM1")) {
-    //     imgVec operationVec = morph::operationM1(img);
-    //     CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
-    //     convertToCimgAndCopyBack(operationImage, operationVec);
-    //     operationImage.save("operationM1_image.bmp");
-    // }
+    if (input.cmdOptionExists("--operationM1")) {
+        std::vector<std::vector<unsigned char>> kernel = {
+            { 0, 1, 0 },
+            { 1, 1, 1 },
+            { 0, 1, 0 }
+        };
+        imgVec operationVec = morph::operationM1(img, kernel);
+        CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
+        convertToCimgAndCopyBack1Bit(operationImage, operationVec);
+        operationImage.save("operationM1_image.bmp");
+    }
     if (input.cmdOptionExists("--slaplace")) {
         imgVec slaplace;
         if (input.cmdOptionExists("--opt")) {
