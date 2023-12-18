@@ -263,11 +263,8 @@ inline int cliMain(int argc, char** argv)
         hmtImage.save("hmt_image.bmp");
     }
     if (input.cmdOptionExists("--operationM1")) {
-        std::vector<std::vector<unsigned char>> kernel = {
-            { 0, 1, 0 },
-            { 1, 1, 1 },
-            { 0, 1, 0 }
-        };
+        int kernelNum = std::stoi(input.getCmdOption("--kernel"));
+        auto kernel = Kernels::allKernels[kernelNum];
         imgVec operationVec = morph::operationM1(img, kernel);
         CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
         convertToCimgAndCopyBack1Bit(operationImage, operationVec);
