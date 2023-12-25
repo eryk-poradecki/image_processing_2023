@@ -257,7 +257,19 @@ inline int cliMain(int argc, char** argv)
         closingImage.save("closing_image.bmp");
     }
     if (input.cmdOptionExists("--hmt")) {
-        imgVec hmtVec = morph::hitOrMissTransformation(img);
+        std::vector<std::vector<int>> hitKernel = {
+            { 0, 1, 0 },
+            { 1, 0, 1 },
+            { 0, 1, 0 }
+        };
+
+        std::vector<std::vector<int>> missKernel = {
+            { 0, 0, 0 },
+            { 0, 1, 0 },
+            { 0, 0, 0 }
+        };
+
+        imgVec hmtVec = morph::hitOrMissTransformation(img, hitKernel, missKernel);
         CImg<unsigned char> hmtImage(hmtVec.size(), hmtVec[0].size(), 1, hmtVec[0][0].size(), 0);
         convertToCimgAndCopyBack(hmtImage, hmtVec);
         hmtImage.save("hmt_image.bmp");

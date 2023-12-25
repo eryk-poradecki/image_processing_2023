@@ -109,7 +109,7 @@ ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vect
 
 std::array<unsigned char, 3> generateRandomColor();
 
-imgVec hitOrMissTransformation(Image& img)
+imgVec hitOrMissTransformation(Image& img, const std::vector<std::vector<int>>& hitKernel, const std::vector<std::vector<int>>& missKernel)
 {
     int height = img.getHeight();
     int width = img.getWidth();
@@ -118,20 +118,7 @@ imgVec hitOrMissTransformation(Image& img)
     imgVec& inputImgVec = img.getImgVec();
     imgVec resultImg(height, std::vector<std::vector<unsigned char>>(width, std::vector<unsigned char>(spectrum, 0)));
 
-    std::vector<std::vector<int>> hitKernel = {
-        { 0, 1, 0 },
-        { 1, 0, 1 },
-        { 0, 1, 0 }
-    };
-
-    std::vector<std::vector<int>> missKernel = {
-        { 0, 0, 0 },
-        { 0, 1, 0 },
-        { 0, 0, 0 }
-    };
-
     int kernelSize = hitKernel.size();
-
     int padding = kernelSize / 2;
 
     for (int i = 0; i < height; ++i) {
