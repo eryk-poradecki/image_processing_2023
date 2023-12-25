@@ -5,6 +5,7 @@
 namespace ImageProc::morph {
 
 ImageProc::imgVec morph(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, const std::string& type);
+ImageProc::imgVec morph1(Image& inImage, const std::string& type);
 ImageProc::imgVec opening(Image& img, const std::vector<std::vector<unsigned char>>& kernel);
 
 ImageProc::imgVec closing(Image& img, const std::vector<std::vector<unsigned char>>& kernel);

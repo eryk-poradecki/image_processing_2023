@@ -14,6 +14,37 @@ int clipPixel(int value, int minValue, int maxValue)
     return std::max(minValue, std::min(value, maxValue));
 }
 
+imgVec morph1(Image& inImage, const std::string& type)
+{
+    auto img = inImage.getImgVec();
+    // we can use copy for output cuz we go through all pixels
+
+    auto outImage(img);
+    for (int x = 0; x < img.size(); ++x) {
+        for (int y = 0; y < img[0].size(); ++y) {
+            unsigned char val = 0;
+
+            if (x + 1 >= img.size()) {
+                val = img[x][y][0];
+            } else {
+
+                if (type == "dilation") {
+                    if (img[x][y][0] == 255 || img[x + 1][y][0] == 255) {
+                        val = 255;
+                    }
+                } else if (type == "erosion") {
+                    if (img[x][y][0] == 255 && img[x + 1][y][0] == 255) {
+                        val = 255;
+                    }
+                }
+            }
+
+            outImage[x][y][0] = val;
+        }
+    }
+    return outImage;
+}
+
 // this fucn works only for 1 bit image
 imgVec morph(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, const std::string& type)
 {
@@ -81,7 +112,7 @@ ImageProc::imgVec setSubtraction1bit(const imgVec& img1, const imgVec& img2)
 
     for (int i = 0; i < height; ++i) {
         for (int j = 0; j < width; ++j) {
-                resultImg[i][j][0] = static_cast<unsigned char>(img1[i][j][0] - img2[i][j][0]);
+            resultImg[i][j][0] = static_cast<unsigned char>(img1[i][j][0] - img2[i][j][0]);
         }
     }
     return resultImg;
