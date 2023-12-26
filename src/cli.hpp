@@ -224,6 +224,18 @@ inline int cliMain(int argc, char** argv)
             displayTuple(characteristics::calculateInformationSourceEntropy(img), spectrum);
         }
     }
+    if (input.cmdOptionExists("--dilation1")) {
+        imgVec dilationVec = morph::morph1(img, "dilation");
+        CImg<unsigned char> dilationImage(dilationVec.size(), dilationVec[0].size(), 1, 1, 0);
+        convertToCimgAndCopyBack1Bit(dilationImage, dilationVec);
+        dilationImage.save("dilation_image.bmp");
+    }
+    if (input.cmdOptionExists("--erosion1")) {
+        imgVec erosionVec = morph::morph1(img, "erosion");
+        CImg<unsigned char> erosionImage(erosionVec.size(), erosionVec[0].size(), 1, 1, 0);
+        convertToCimgAndCopyBack1Bit(erosionImage, erosionVec);
+        erosionImage.save("erosion_image.bmp");
+    }
     if (input.cmdOptionExists("--dilation")) {
         int kernelNum = std::stoi(input.getCmdOption("--kernel"));
         auto kernel = Kernels::allKernels[kernelNum];
