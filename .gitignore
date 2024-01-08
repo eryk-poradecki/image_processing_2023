@@ -1,7 +1,0 @@
-build/*
-.cache/*
-libs/CImg.h.gch
-.vscode/settings.json
-Testing/Temporary
-.idea
-cmake-build-debug
