@@ -3,6 +3,7 @@
 #include <ImageProc/MorphologicalOperations.h>
 #include <algorithm>
 #include <array>
+#include <ostream>
 #include <random>
 #include <stack>
 
@@ -124,7 +125,6 @@ ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vect
     imgVec dilatedImg = morph(img, kernel, "dilation");
     imgVec resultImg1 = setSubtraction1bit(dilatedImg, img.getImgVec());
     Image resultImage1(resultImg1);
-
     // A - (A erosion B)
     imgVec erodedImg = morph(resultImage1, kernel, "erosion");
     imgVec resultImg2 = setSubtraction1bit(img.getImgVec(), erodedImg);
@@ -136,6 +136,76 @@ ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vect
     imgVec resultImg3 = setSubtraction1bit(dilatedImg, erodedImg);
 
     return resultImg3;
+}
+
+
+void displayImage(const ImageProc::imgVec& img) {
+    for (const auto& row : img) {
+        for (const auto& pixel : row) {
+            std::cout << (int)pixel[0] << " ";  // Assuming single-channel binary image
+        }
+        std::cout << std::endl;
+    }
+    std::cout << std::endl;
+}
+
+imgVec operationM2(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, int pX, int pY) {
+    // std::vector<std::vector<unsigned char>> kernelCross = {
+    //     { 0, 1, 0 },
+    //     { 1, 1, 1 },
+    //     { 0, 1, 0 }
+    // };
+
+    imgVec Xk = inImage.getImgVec();
+    for (auto& row : Xk) {
+        for (auto& pixel : row) {
+            pixel[0] = 0;
+        }
+    }
+    Xk[pX][pY][0] = 255;
+
+    imgVec Xk_prev;
+
+    imgVec Ac = inImage.getImgVec();
+    for (auto& row : Ac) {
+        for (auto& pixel : row) {
+            pixel[0] = 255 - pixel[0];
+        }
+    }
+
+    int iteration = 0;
+    do {
+        Xk_prev = Xk;
+
+        // dilation
+        Image tempImage(Xk_prev);
+        Xk = morph(tempImage, kernel, "dilation");
+        // std::cout<<"dilated:"<<std::endl;
+        // displayImage(Xk);
+
+        // intersection
+        for (int i = 0; i < Xk.size(); ++i) {
+            for (int j = 0; j < Xk[0].size(); ++j) {
+                Xk[i][j][0] = (Xk[i][j][0] == 255 && Ac[i][j][0] == 255) ? 255 : 0;
+            }
+        }
+
+        // std::cout << "subtracted: "<<std::endl;
+        // displayImage(Xk);
+
+    } while (!equal(Xk.begin(), Xk.end(), Xk_prev.begin())); // Check if Xk has changed
+
+    // union
+    imgVec A = inImage.getImgVec();
+    imgVec Y(A);
+    for (size_t i = 0; i < Y.size(); ++i) {
+        for (size_t j = 0; j < Y[i].size(); ++j) {
+            Y[i][j][0] = (A[i][j][0] == 255 || Xk[i][j][0] == 255) ? 255 : 0;
+            // displayImage(Y);
+        }
+    }
+
+    return Y;
 }
 
 std::array<unsigned char, 3> generateRandomColor();

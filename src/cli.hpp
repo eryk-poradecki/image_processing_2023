@@ -294,6 +294,16 @@ inline int cliMain(int argc, char** argv)
         convertToCimgAndCopyBack1Bit(operationImage, operationVec);
         operationImage.save("operationM1_image.bmp");
     }
+    if (input.cmdOptionExists("--operationM2")) {
+        int kernelNum = std::stoi(input.getCmdOption("--kernel"));
+        int pointX = std::stoi(input.getCmdOption("--pointX"));
+        int pointY = std::stoi(input.getCmdOption("--pointY"));
+        auto kernel = Kernels::allKernels[kernelNum];
+        imgVec operationVec = morph::operationM2(img, kernel, pointX, pointY);
+        CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
+        convertToCimgAndCopyBack1Bit(operationImage, operationVec);
+        operationImage.save("operationM2_image.bmp");
+    }
     if (input.cmdOptionExists("--slaplace")) {
         imgVec slaplace;
         if (input.cmdOptionExists("--opt")) {

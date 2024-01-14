@@ -14,9 +14,13 @@ ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2);
 
 ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vector<unsigned char>>& kernel);
 
+ImageProc::imgVec operationM2(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, int pX, int pY);
+
+void displayImage(const ImageProc::imgVec& img);
+
 bool shouldMergeRegions(const unsigned char seedValue, const unsigned char neighborValue);
 
-imgVec hitOrMissTransformation(Image& img, const std::vector<std::vector<int>>& hitKernel, const std::vector<std::vector<int>>& missKernel);
+ImageProc::imgVec hitOrMissTransformation(Image& img, const std::vector<std::vector<int>>& hitKernel, const std::vector<std::vector<int>>& missKernel);
 
 std::vector<ImageProc::imgVec> regionGrowing(const std::vector<std::pair<int, int>>& seedPointList, const ImageProc::Image& img);
 }
