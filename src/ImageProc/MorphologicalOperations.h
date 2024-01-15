@@ -14,7 +14,7 @@ ImageProc::imgVec elementwiseDivision(const imgVec& img1, const imgVec& img2);
 
 ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vector<unsigned char>>& kernel);
 
-ImageProc::imgVec operationM2(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, int pX, int pY);
+ImageProc::imgVec operationM2(ImageProc::Image& img, const std::vector<std::vector<unsigned char>>& kernel, int pX, int pY);
 
 void displayImage(const ImageProc::imgVec& img);
 

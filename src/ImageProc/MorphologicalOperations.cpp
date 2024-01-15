@@ -126,16 +126,16 @@ ImageProc::imgVec operationM1(ImageProc::Image& img, const std::vector<std::vect
     imgVec resultImg1 = setSubtraction1bit(dilatedImg, img.getImgVec());
     Image resultImage1(resultImg1);
     // A - (A erosion B)
-    imgVec erodedImg = morph(resultImage1, kernel, "erosion");
-    imgVec resultImg2 = setSubtraction1bit(img.getImgVec(), erodedImg);
-    Image resultImage2(resultImg2);
+    // imgVec erodedImg = morph(resultImage1, kernel, "erosion");
+    // imgVec resultImg2 = setSubtraction1bit(img.getImgVec(), erodedImg);
+    // Image resultImage2(resultImg2);
 
-    // (A dilation B) - (A erosion B)
-    dilatedImg = morph(resultImage2, kernel, "dilation");
-    erodedImg = morph(resultImage2, kernel, "erosion");
-    imgVec resultImg3 = setSubtraction1bit(dilatedImg, erodedImg);
+    // // (A dilation B) - (A erosion B)
+    // dilatedImg = morph(resultImage2, kernel, "dilation");
+    // erodedImg = morph(resultImage2, kernel, "erosion");
+    // imgVec resultImg3 = setSubtraction1bit(dilatedImg, erodedImg);
 
-    return resultImg3;
+    return resultImg1;
 }
 
 
@@ -149,31 +149,30 @@ void displayImage(const ImageProc::imgVec& img) {
     std::cout << std::endl;
 }
 
-imgVec operationM2(Image& inImage, const std::vector<std::vector<unsigned char>>& kernel, int pX, int pY) {
+imgVec operationM2(ImageProc::Image& img, const std::vector<std::vector<unsigned char>>& kernel, int pX, int pY) {
     // std::vector<std::vector<unsigned char>> kernelCross = {
     //     { 0, 1, 0 },
     //     { 1, 1, 1 },
     //     { 0, 1, 0 }
     // };
 
-    imgVec Xk = inImage.getImgVec();
+    imgVec Xk = img.getImgVec();
     for (auto& row : Xk) {
-        for (auto& pixel : row) {
-            pixel[0] = 0;
+        for (auto& column : row) {
+            column[0] = 0;
         }
     }
     Xk[pX][pY][0] = 255;
 
     imgVec Xk_prev;
 
-    imgVec Ac = inImage.getImgVec();
+    imgVec Ac = img.getImgVec();
     for (auto& row : Ac) {
-        for (auto& pixel : row) {
-            pixel[0] = 255 - pixel[0];
+        for (auto& column : row) {
+            column[0] = 255 - column[0];
         }
     }
 
-    int iteration = 0;
     do {
         Xk_prev = Xk;
 
@@ -190,16 +189,16 @@ imgVec operationM2(Image& inImage, const std::vector<std::vector<unsigned char>>
             }
         }
 
-        // std::cout << "subtracted: "<<std::endl;
+        // std::cout << "intersected: "<<std::endl;
         // displayImage(Xk);
 
-    } while (!equal(Xk.begin(), Xk.end(), Xk_prev.begin())); // Check if Xk has changed
+    } while (!equal(Xk.begin(), Xk.end(), Xk_prev.begin()));
 
     // union
-    imgVec A = inImage.getImgVec();
+    imgVec A = img.getImgVec();
     imgVec Y(A);
     for (size_t i = 0; i < Y.size(); ++i) {
-        for (size_t j = 0; j < Y[i].size(); ++j) {
+        for (size_t j = 0; j < Y[0].size(); ++j) {
             Y[i][j][0] = (A[i][j][0] == 255 || Xk[i][j][0] == 255) ? 255 : 0;
             // displayImage(Y);
         }

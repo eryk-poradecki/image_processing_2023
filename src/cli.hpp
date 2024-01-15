@@ -290,7 +290,7 @@ inline int cliMain(int argc, char** argv)
         int kernelNum = std::stoi(input.getCmdOption("--kernel"));
         auto kernel = Kernels::allKernels[kernelNum];
         imgVec operationVec = morph::operationM1(img, kernel);
-        CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
+        CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, 1, 0);
         convertToCimgAndCopyBack1Bit(operationImage, operationVec);
         operationImage.save("operationM1_image.bmp");
     }
@@ -300,7 +300,7 @@ inline int cliMain(int argc, char** argv)
         int pointY = std::stoi(input.getCmdOption("--pointY"));
         auto kernel = Kernels::allKernels[kernelNum];
         imgVec operationVec = morph::operationM2(img, kernel, pointX, pointY);
-        CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, operationVec[0][0].size(), 0);
+        CImg<unsigned char> operationImage(operationVec.size(), operationVec[0].size(), 1, 1, 0);
         convertToCimgAndCopyBack1Bit(operationImage, operationVec);
         operationImage.save("operationM2_image.bmp");
     }
