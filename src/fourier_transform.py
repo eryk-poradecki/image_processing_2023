@@ -11,10 +11,10 @@ def fft(x: np.ndarray) -> np.ndarray:
 
     t = np.exp(-2j * np.pi * np.arange(N) / N)
 
-    first_half = even + t[: N // 2] * odd
-    second_half = even + t[N // 2 :] * odd
-
-    return np.concatenate([first_half, second_half])
+    first = even + t[: N // 2] * odd
+    second = even + t[N // 2 :] * odd
+    res = np.concatenate([first, second])
+    return res
 
 
 def invfft(x: np.ndarray) -> np.ndarray:
@@ -27,10 +27,11 @@ def invfft(x: np.ndarray) -> np.ndarray:
 
     t = np.exp(2j * np.pi * np.arange(N) / N)
 
-    first_half = even + t[: N // 2] * odd
-    second_half = even + t[N // 2 :] * odd
+    res_even = even + t[: N // 2] * odd
+    res_odd = even + t[N // 2 :] * odd
+    res = np.concatenate([res_even, res_odd]) / 2
 
-    return np.concatenate([first_half, second_half]) / 2
+    return res
 
 
 def fft_2d(X: np.ndarray) -> np.ndarray:
