@@ -1,13 +1,13 @@
 import numpy as np
 
 
-def fft(x: np.ndarray) -> np.ndarray:
+def inv_fft(x: np.ndarray) -> np.ndarray:
     N = len(x)
     if N <= 1:
         return x
 
-    even = fft(x[0::2])
-    odd = fft(x[1::2])
+    even = inv_fft(x[0::2])
+    odd = inv_fft(x[1::2])
 
     t = np.exp(-2j * np.pi * np.arange(N) / N)
 
@@ -17,13 +17,13 @@ def fft(x: np.ndarray) -> np.ndarray:
     return res
 
 
-def invfft(x: np.ndarray) -> np.ndarray:
+def fft(x: np.ndarray) -> np.ndarray:
     N = len(x)
     if N <= 1:
         return x
 
-    even = invfft(x[::2])
-    odd = invfft(x[1::2])
+    even = fft(x[::2])
+    odd = fft(x[1::2])
 
     t = np.exp(2j * np.pi * np.arange(N) / N)
 
@@ -34,17 +34,17 @@ def invfft(x: np.ndarray) -> np.ndarray:
     return res
 
 
-def fft_2d(X: np.ndarray) -> np.ndarray:
-    x_fft_rows = np.apply_along_axis(fft, axis=1, arr=X)
+def inv_fft_2d(X: np.ndarray) -> np.ndarray:
+    inv_fft_rows = np.apply_along_axis(inv_fft, axis=1, arr=X)
 
-    x_fft_2d = np.apply_along_axis(fft, axis=0, arr=x_fft_rows)
+    X_fft_2d = np.apply_along_axis(inv_fft, axis=0, arr=inv_fft_rows)
 
-    return x_fft_2d
+    return X_fft_2d
 
 
-def invfft_2d(X):
-    x_invfft_cols = np.apply_along_axis(invfft, axis=0, arr=X)
+def fft_2d(X):
+    fft_cols = np.apply_along_axis(fft, axis=0, arr=X)
 
-    x_invfft_2d = np.apply_along_axis(invfft, axis=1, arr=x_invfft_cols)
+    X_fft_2d = np.apply_along_axis(fft, axis=1, arr=fft_cols)
 
-    return x_invfft_2d
+    return X_fft_2d
