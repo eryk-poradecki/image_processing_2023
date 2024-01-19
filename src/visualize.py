@@ -18,7 +18,7 @@ def save_fourier_spectrum(fft_2d):
 
     magnitude_spectrum = np.abs(fft_shifted)
 
-    plt.imshow(np.log1p(magnitude_spectrum), cmap="viridis", origin="lower")
+    plt.imshow(np.log1p(magnitude_spectrum), cmap="viridis")
     plt.colorbar()
     plt.title("Fourier Spectrum")
     plt.savefig("fourier.png")
