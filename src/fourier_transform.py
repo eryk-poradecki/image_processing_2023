@@ -1,6 +1,14 @@
 import numpy as np
 
 
+def fft_freq(x: np.ndarray) -> np.ndarray:
+    return inv_fft(x)
+
+
+def inv_fft_freq(x: np.ndarray) -> np.ndarray:
+    return fft(x)
+
+
 def inv_fft(x: np.ndarray) -> np.ndarray:
     N = len(x)
     if N <= 1:
