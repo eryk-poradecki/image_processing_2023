@@ -1,6 +1,14 @@
 import numpy as np
 
 
+def fft_freq_2d(x: np.ndarray) -> np.ndarray:
+    return inv_fft_2d(x)
+
+
+def inv_fft_freq_2d(x: np.ndarray) -> np.ndarray:
+    return fft_2d(x)
+
+
 def fft_freq(x: np.ndarray) -> np.ndarray:
     return inv_fft(x)
 
