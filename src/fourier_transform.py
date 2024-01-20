@@ -1,4 +1,6 @@
 import numpy as np
+from functools import partial
+from multiprocessing import Pool
 
 
 def fft_freq_2d(x: np.ndarray) -> np.ndarray:
@@ -64,3 +66,72 @@ def fft_2d(X):
     X_fft_2d = np.apply_along_axis(fft, axis=1, arr=fft_cols)
 
     return X_fft_2d
+
+
+def dft_2d(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 2
+    dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
+
+    N, M = arr.shape[0], arr.shape[1]
+    one_over_sqrt_NM: float = 1 / np.sqrt(N * M)
+
+    for i in range(N):
+        for k in range(M):
+            Wn = np.exp(-1j * 2 * np.pi * np.arange(N).reshape(-1, 1) * i / N)
+            Wm = np.exp(-1j * 2 * np.pi * np.arange(M) * k / M)
+            dft_ndarray[i, k] = one_over_sqrt_NM * (np.sum(arr * Wm * Wn))
+    return dft_ndarray
+
+
+def __dft_process_channel(arr, chan):
+    return dft_2d(arr[:, :, chan])
+
+
+def dft_3d_multiproc(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 3
+    dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
+
+    partial_process_channel = partial(__dft_process_channel, arr)
+    C = arr.shape[2]
+
+    with Pool() as pool:
+        result_list = pool.map(partial_process_channel, range(C))
+
+    for chan, result in zip(range(C), result_list):
+        dft_ndarray[:, :, chan] = result
+    return dft_ndarray
+
+
+def dft_3d(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 3
+    dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
+
+    C = arr.shape[2]
+    for chan in range(C):
+        dft_ndarray[:, :, chan] = dft_2d(arr[:, :, chan])
+    return dft_ndarray
+
+
+def inv_dft_3d(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 3
+    dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
+
+    C = arr.shape[2]
+    for chan in range(C):
+        dft_ndarray[:, :, chan] = inv_dft_2d(arr[:, :, chan])
+    return dft_ndarray
+
+
+def inv_dft_2d(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 2
+    inv_dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
+
+    N, M = arr.shape[0], arr.shape[1]
+    one_over_sqrt_NM: float = 1 / np.sqrt(N * M)
+
+    for i in range(N):
+        for k in range(M):
+            Wn = np.exp(1j * 2 * np.pi * np.arange(N).reshape(-1, 1) * i / N)
+            Wm = np.exp(1j * 2 * np.pi * np.arange(M) * k / M)
+            inv_dft_ndarray[i, k] = one_over_sqrt_NM * (np.sum(arr * Wm * Wn))
+    return inv_dft_ndarray
