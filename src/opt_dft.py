@@ -16,13 +16,29 @@ def inv_w_matrixN(N):
     return W
 
 
+def inv_dft_matrix(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 1
+    N = arr.shape[0]
+    Wn = inv_w_matrixN(N)
+    return Wn @ arr
+
+
+def dft_matrix(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 1
+    N = arr.shape[0]
+    Wn = w_matrixN(N)
+    return Wn @ arr
+
+
 def dft_2d_matrix(arr: np.ndarray) -> np.ndarray:
     assert arr.ndim == 2
 
     N, M = arr.shape[0], arr.shape[1]
     Wn = w_matrixN(N)
-    Wm = w_matrixN(M)
-    return Wn.dot(arr).dot(Wm.T)
+    Wm = Wn
+    if N != M:
+        Wm = w_matrixN(M)
+    return Wn @ arr @ Wm
 
 
 def inv_dft_2d_matrix(arr: np.ndarray) -> np.ndarray:
@@ -31,7 +47,7 @@ def inv_dft_2d_matrix(arr: np.ndarray) -> np.ndarray:
     N, M = arr.shape[0], arr.shape[1]
     Wn = inv_w_matrixN(N)
     Wm = inv_w_matrixN(M)
-    return Wn.dot(arr).dot(Wm.T)
+    return Wn.dot(arr).dot(Wm)
 
 
 def dft_3d_matrix(arr: np.ndarray) -> np.ndarray:
