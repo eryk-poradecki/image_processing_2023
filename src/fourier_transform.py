@@ -68,6 +68,32 @@ def fft_2d(X):
     return X_fft_2d
 
 
+def inv_dft(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 1
+
+    dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
+    N = arr.shape[0]
+    one_over_sqrt_N: float = 1 / np.sqrt(N)
+
+    for i in range(N):
+        Wn = np.exp(1j * 2 * np.pi * np.arange(N).reshape(-1, 1) * i / N)
+        dft_ndarray[i] = one_over_sqrt_N * (np.sum(arr * Wn))
+    return dft_ndarray
+
+
+def dft(arr: np.ndarray) -> np.ndarray:
+    assert arr.ndim == 1
+
+    dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
+    N = arr.shape[0]
+    one_over_sqrt_N: float = 1 / np.sqrt(N)
+
+    for i in range(N):
+        Wn = np.exp(-1j * 2 * np.pi * np.arange(N).reshape(-1, 1) * i / N)
+        dft_ndarray[i] = one_over_sqrt_N * (np.sum(arr * Wn))
+    return dft_ndarray
+
+
 def dft_2d(arr: np.ndarray) -> np.ndarray:
     assert arr.ndim == 2
     dft_ndarray = np.zeros_like(arr, dtype=np.complex64)
