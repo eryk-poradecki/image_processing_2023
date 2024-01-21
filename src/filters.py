@@ -1,5 +1,5 @@
 import numpy as np
-from .fourier_transform import fft_2d, inv_fft_2d
+from .fourier_transform import fft_freq_2d, inv_fft_freq_2d
 
 def create_hamming_window(image_side_length: int, band_size: int):
     n = np.arange(0, image_side_length)
@@ -9,11 +9,11 @@ def create_hamming_window(image_side_length: int, band_size: int):
     return hamming2D
 
 def low_pass_filter(image: np.ndarray, band_size: int) -> np.ndarray:
-    fft_result = fft_2d(image)
+    fft_result = fft_freq_2d(image)
     fft_shifted = np.fft.fftshift(fft_result)
     fft_shifted *= create_hamming_window(len(fft_shifted), band_size)
     fft_unshifted = np.fft.ifftshift(fft_shifted)
-    inv_fft_result = inv_fft_2d(fft_unshifted)
+    inv_fft_result = inv_fft_freq_2d(fft_unshifted)
     result = np.abs(inv_fft_result)
     result -= result.min()
     result = result * 255 / result.max()
@@ -42,29 +42,29 @@ def band_cut_filter(image: np.ndarray, band_size_low: int, band_size_high: int) 
     return result.clip(0, 255)
 
 def high_pass_filter_edge(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
-    fft_result = fft_2d(image)
+    fft_result = fft_freq_2d(image)
     image_lpf = fft_result * mask
     image_hp = fft_result - image_lpf
     image_hp = np.fft.fftshift(image_hp)
-    image_hp = inv_fft_2d(image_hp)
+    image_hp = fft_freq_2d(image_hp)
     result = np.abs(image_hp)
     result -= result.min()
     result = result * 255 / result.max()
     return result
 
 def phase_modifying_filter(image: np.ndarray, l: int, k: int) -> np.ndarray:
-    fft_result = fft_2d(image)
+    fft_result = fft_freq_2d(image)
     fft_shifted = np.fft.fftshift(fft_result)
     N, M = image.shape
     mask = np.zeros((N, M))
     for n in range(N):
         for m in range(M):
             P = np.exp(1j * ((-n*k*2*np.pi)/N + (-m*l*2*np.pi)/M + (k + l) * np.pi))
-            mask[n, m] = np.exp(1j * P)
+            mask[n, m] = P #np.exp(1j * P)
 
     fft_shifted *= mask
     fft_unshifted = np.fft.ifftshift(fft_shifted)
-    inv_fft_result = inv_fft_2d(fft_unshifted)
+    inv_fft_result = inv_fft_freq_2d(fft_unshifted)
 
     result = np.abs(inv_fft_result)
     result -= result.min()
