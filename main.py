@@ -3,7 +3,6 @@ import numpy as np
 from src.argparser import ConsoleParser
 from src.image import ImageReader, ImageWriter
 from src.filters import low_pass_filter, high_pass_filter, band_pass_filter, band_cut_filter, apply_filter, high_pass_filter_edge, phase_modifying_filter
-from src.numpy_filters import low_pass_filter_np, high_pass_filter_np, band_pass_filter_np, band_cut_filter_np, phase_modifying_filter_np
 
 if __name__ == "__main__":
     parser = ConsoleParser()
