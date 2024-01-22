@@ -6,7 +6,6 @@ from src.filters import low_pass_filter, high_pass_filter, band_pass_filter, ban
 from src.visualize import visualize_fourier_spectrum, save_fourier_spectrum
 from src.fourier_transform import fft_2d
 
-
 if __name__ == "__main__":
     parser = ConsoleParser()
     args = parser.parse_args()
