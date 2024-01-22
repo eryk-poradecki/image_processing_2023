@@ -2,7 +2,7 @@ import numpy as np
 
 from src.argparser import ConsoleParser
 from src.image import ImageReader, ImageWriter
-from src.filters import low_pass_filter, high_pass_filter, band_pass_filter, band_cut_filter, apply_filter, high_pass_filter_edge, phase_modifying_filter
+from src.filters import low_pass_filter, high_pass_filter, band_pass_filter, band_cut_filter, apply_filter, high_pass_filter_edge, phase_modifying_filter ,high_pass_filter_edge_dynamic
 from src.visualize import visualize_fourier_spectrum, save_fourier_spectrum
 from src.fourier_transform import fft_2d
 
@@ -13,6 +13,13 @@ if __name__ == "__main__":
 
     img = ImageReader.read(args.filename)
     mask = ImageReader.read(args.mask) if args.mask else None
+
+    result_1 = high_pass_filter_edge_dynamic(img, 30, 255, 30, 90)
+    original_fft = fft_2d(img)
+    save_fourier_spectrum(original_fft, "before.png")
+    filtered_fft = fft_2d(result_1)
+    save_fourier_spectrum(filtered_fft, "after.png")
+    ImageWriter.write("dynamic.png", result_1.astype(np.uint8))
 
     if args.visualize:
         original_fft = fft_2d(img)
