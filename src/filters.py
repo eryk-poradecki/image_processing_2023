@@ -1,6 +1,7 @@
 import numpy as np
 from .fourier_transform import fft_freq_2d, inv_fft_freq_2d
-from .test import generate_mask_angles
+from .test import generate_mask_angles, generate_mask_angles_3d
+import matplotlib.pyplot as plt
 
 
 def create_hamming_window(image_side_length: int, band_size: int):
@@ -53,6 +54,7 @@ def band_cut_filter(
 
 
 def high_pass_filter_edge(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
+    print(mask.shape)
     fft_result = fft_freq_2d(image)
     image_lpf = fft_result * mask
     image_hp = fft_result - image_lpf
@@ -66,10 +68,16 @@ def high_pass_filter_edge(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
 
 def high_pass_filter_edge_dynamic(image: np.ndarray, r1: int, r2: int, a1: int, a2: int) -> np.ndarray:
     fft_result = fft_freq_2d(image)
-    image_array = generate_mask_angles(r1, r2, np.radians(a1), np.radians(a2), image.shape[0])
-    mirrored_image_array = np.flipud(np.fliplr(image_array))
-    mask = image_array + mirrored_image_array
-    mask.resize(image.shape)
+    mask = generate_mask_angles(r1, r2, np.radians(a1), np.radians(a2), N=image.shape[0])
+    mirrored_image_array = np.flipud(np.fliplr(mask))
+    mask = mask + mirrored_image_array
+    mask = np.stack([mask]*3, axis=-1)
+    # mask.resize(image.shape)
+    # print(mask.shape)
+    # plt.imshow(mask, cmap='gray', interpolation='nearest')
+    # plt.title('dynamic mask')
+    # plt.show()
+    plt.imsave('mask.png', mask, cmap='gray')
 
     image_lpf = fft_result * mask
     image_hp = fft_result - image_lpf
