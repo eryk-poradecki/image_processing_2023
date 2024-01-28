@@ -1,15 +1,65 @@
+import matplotlib.pyplot as plt
 import numpy as np
+
 from .fourier_transform import fft_freq_2d, inv_fft_freq_2d
 from .test import generate_mask_angles, generate_mask_angles_3d
-import matplotlib.pyplot as plt
 
 
 def create_hamming_window(image_side_length: int, band_size: int):
     n = np.arange(0, image_side_length)
     hamming1D = 0.54 - 0.46 * np.cos(2 * np.pi * n / (image_side_length - 1))
     hamming2D = np.sqrt(np.outer(hamming1D, hamming1D)) ** band_size
-
+    # plt.imshow(hamming2D)
+    # plt.show()
     return hamming2D
+
+
+def create_step_function_window(image_side_length: int, step_size: int):
+    print(step_size)
+    image_side_length = image_side_length // 2
+    n = np.linspace(-1 * image_side_length, image_side_length, image_side_length * 2)
+    for i in range(len(n)):
+        if n[i] < step_size // 2 and n[i] > -1 * step_size // 2:
+            n[i] = 1
+        else:
+            n[i] = 0
+    d2 = np.outer(n, n)
+    # plt.imshow(d2)
+    # plt.show()
+    return d2
+
+
+def create_circle_function_window(shape, radius):
+    x, y = np.meshgrid(np.arange(shape), np.arange(shape))
+
+    distance_from_center = np.sqrt((x - shape / 2) ** 2 + (y - shape / 2) ** 2)
+
+    array = np.zeros((shape, shape))
+    array[distance_from_center < radius] = 1
+
+    return array
+
+
+def high_pass_filter_sharp(image: np.ndarray, band_size: int) -> np.ndarray:
+    low_pass_result = low_pass_filter_sharp(image, band_size)
+    result = image - low_pass_result
+    result = result - result.min()
+    result = result * 255 / result.max()
+    return result.clip(0, 255)
+
+
+def low_pass_filter_sharp(image: np.ndarray, band_size: int) -> np.ndarray:
+    fft_result = fft_freq_2d(image)
+    fft_shifted = np.fft.fftshift(fft_result)
+    mask = create_step_function_window(len(fft_shifted), band_size)
+
+    fft_shifted *= mask
+    fft_unshifted = np.fft.ifftshift(fft_shifted)
+    inv_fft_result = inv_fft_freq_2d(fft_unshifted)
+    result = np.abs(inv_fft_result)
+    result -= result.min()
+    result = result * 255 / result.max()
+    return result.clip(0, 255)
 
 
 def low_pass_filter(image: np.ndarray, band_size: int) -> np.ndarray:
@@ -66,18 +116,22 @@ def high_pass_filter_edge(image: np.ndarray, mask: np.ndarray) -> np.ndarray:
     return result
 
 
-def high_pass_filter_edge_dynamic(image: np.ndarray, r1: int, r2: int, a1: int, a2: int) -> np.ndarray:
+def high_pass_filter_edge_dynamic(
+    image: np.ndarray, r1: int, r2: int, a1: int, a2: int
+) -> np.ndarray:
     fft_result = fft_freq_2d(image)
-    mask = generate_mask_angles(r1, r2, np.radians(a1), np.radians(a2), N=image.shape[0])
+    mask = generate_mask_angles(
+        r1, r2, np.radians(a1), np.radians(a2), N=image.shape[0]
+    )
     mirrored_image_array = np.flipud(np.fliplr(mask))
     mask = mask + mirrored_image_array
-    mask = np.stack([mask]*3, axis=-1)
+    mask = np.stack([mask] * 3, axis=-1)
     # mask.resize(image.shape)
     # print(mask.shape)
     # plt.imshow(mask, cmap='gray', interpolation='nearest')
     # plt.title('dynamic mask')
     # plt.show()
-    plt.imsave('mask.png', mask, cmap='gray')
+    plt.imsave("mask.png", mask, cmap="gray")
 
     image_lpf = fft_result * mask
     image_hp = fft_result - image_lpf
