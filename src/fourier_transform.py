@@ -47,7 +47,7 @@ def fft(x: np.ndarray) -> np.ndarray:
 
     res_even = even + t[: N // 2] * odd
     res_odd = even + t[N // 2 :] * odd
-    res = np.concatenate([res_even, res_odd]) / 2
+    res = np.concatenate([res_even, res_odd])
 
     return res
 
